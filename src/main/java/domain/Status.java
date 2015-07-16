@@ -8,4 +8,12 @@ public class Status {
         this.statusCode = statusCode;
         this.description = description;
     }
+
+    public StatusCode getStatusCode() {
+        return statusCode;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 }

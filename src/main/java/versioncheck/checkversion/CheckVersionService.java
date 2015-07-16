@@ -47,8 +47,8 @@ public class CheckVersionService {
 
         for (MonitoringApplications app : MonitoringApplications.getApplications()) {
             String url = location
-                    .replaceFirst("$GROUP_ID", app.getGroupId())
-                    .replaceFirst("$ARTIFACT_ID", app.getArtifactId());
+                    .replace("$GROUP_ID", app.getGroupId())
+                    .replace("$ARTIFACT_ID", app.getArtifactId());
 
             HttpURLConnection connection = null;
             try {
@@ -57,54 +57,63 @@ public class CheckVersionService {
                 connection = (HttpURLConnection) request.openConnection();
                 connection.setConnectTimeout(CONNECTION_TIMEOUT);
                 connection.setReadTimeout(DATARETRIEVAL_TIMEOUT);
-                connection.setRequestMethod("application/json");
+                connection.setRequestMethod("GET");
+                connection.setRequestProperty("Accept", "application/json");
 
                 if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
                     statuses.add(new Status(StatusCode.CRITICAL, "Can not establish connection to chekc for updates."));
                 }
                 InputStream stream = new BufferedInputStream(connection.getInputStream());
 
-                JSONObject json = new JSONObject(new Scanner(stream).useDelimiter("\\A").next());
+                JSONObject json = (JSONObject) new JSONObject(new Scanner(stream).useDelimiter("\\A").next()).get("data");
+                ApplicationList downloadedApps = ioUtil.retrieve(enviroment.getRequiredProperty("monitoring.fordownload.file"));
 
-                ApplicationList downloadedApps = ioUtil.retrieve(enviroment.getRequiredProperty("monitoring.apps.file"));
                 boolean found = false;
-                for (ApplicationData downloaded : downloadedApps.getApplications()) {
-                    if (downloaded.getName().getGroupId().equals(json.getString("groupId"))
-                            && downloaded.getName().getArtifactId().equals(json.getString("artifactId"))) {
-                        if (downloaded.getActiveVersion().equals(json.getString("version"))) {
-                            statuses.add(new Status(StatusCode.SUCCESS,
-                                    String.format("Application %s already have latest version", app.getArtifactId())));
-                            found = true;
+                String latestVersion = json.getString("version");
+
+                if (downloadedApps != null) {
+                    for (ApplicationData downloaded : downloadedApps.getApplications()) {
+                        if (downloaded.getName().getGroupId().equals(json.getString("groupId")) && downloaded.getName().getArtifactId().equals(json.getString("artifactId"))) {
+                            if (downloaded.getActiveVersion() == null
+                                    || downloaded.getActiveVersion().equals(latestVersion)) {
+                                statuses.add(new Status(StatusCode.SUCCESS, String.format("Application %s already have latest version", app.getArtifactId())));
+                                found = true;
+                            }
+                            break;
                         }
-                        break;
                     }
                 }
 
                 if (found) {
-                    ApplicationData data = new ApplicationData();
-                    data.setName(MonitoringApplications.SPRINGFRAMEWORK_JDBC);
-                    applicationsToDownload.add(data);
                     statuses.add(new Status(StatusCode.SUCCESS,
                             String.format("Latest version of %s is already downloaded.", url)));
                 }
                 else {
+                    ApplicationData data = new ApplicationData();
+                    data.setName(MonitoringApplications.SPRINGFRAMEWORK_JDBC);
+                    data.setActiveVersion(latestVersion);
+                    applicationsToDownload.add(data);
+
+                    System.out.println(data);
+
                     statuses.add(new Status(StatusCode.SUCCESS,
                             String.format("Application %s is set for download.", app.getArtifactId())));
                 }
             }
             catch (MalformedURLException e) {
-                statuses.add(new Status(StatusCode.ERROR, String.format("Failed to compose url: %s", url)));
+                statuses.add(new Status(StatusCode.ERROR,
+                        String.format("Failed to compose url: %s Reason: %s", url, e.getMessage())));
             }
             catch (SocketTimeoutException e) {
                 statuses.add(new Status(StatusCode.ERROR,
-                        String.format("Timeout occured. Took too long to read from %s", url)));
+                        String.format("Timeout occured. Took too long to read from %s Reason: %s", url, e.getMessage())));
             }
             catch (IOException e) {
-                statuses.add(new Status(StatusCode.ERROR, String.format("Failed to retrieve data from %s", url)));
+                statuses.add(new Status(StatusCode.ERROR,
+                        String.format("Failed to retrieve data from %s Reason: %s", url, e.getMessage())));
             }
             catch (JSONException e) {
-                statuses.add(new Status(StatusCode.CRITICAL,
-                        String.format("Result returned from %s is not JSON.", url)));
+                statuses.add(new Status(StatusCode.CRITICAL, String.format("Result returned from %s is not JSON. Reason: %s", url, e.getMessage())));
             }
             finally {
                 if (connection != null) {
@@ -120,7 +129,7 @@ public class CheckVersionService {
             ioUtil.save(forDownload, enviroment.getRequiredProperty("monitoring.fordownload.file"));
         }
         catch (IOException e) {
-            statuses.add(new Status(StatusCode.CRITICAL, "Failed to save download list."));
+            statuses.add(new Status(StatusCode.CRITICAL, String.format("Failed to save download list. Reason: %s", e.getMessage())));
         }
 
         return statuses;

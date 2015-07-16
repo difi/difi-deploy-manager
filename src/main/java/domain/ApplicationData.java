@@ -1,8 +1,9 @@
 package domain;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class ApplicationData {
+public class ApplicationData implements Serializable {
     MonitoringApplications name;
     String activeVersion;
     List<DownloadedVersion> downloadedVersions;
