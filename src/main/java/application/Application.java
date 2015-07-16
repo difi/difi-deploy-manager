@@ -11,9 +11,4 @@ public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
-
-    @Scheduled(fixedRate = 10000)
-    public void test() {
-        System.out.println("Running ");
-    }
 }
