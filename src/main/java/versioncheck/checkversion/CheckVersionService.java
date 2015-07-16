@@ -66,7 +66,10 @@ public class CheckVersionService {
                 InputStream stream = new BufferedInputStream(connection.getInputStream());
 
                 JSONObject json = (JSONObject) new JSONObject(new Scanner(stream).useDelimiter("\\A").next()).get("data");
-                ApplicationList downloadedApps = ioUtil.retrieve(enviroment.getRequiredProperty("monitoring.fordownload.file"));
+                ApplicationList downloadedApps = ioUtil.retrieve(
+                        enviroment.getRequiredProperty("monitoring.local.path"),
+                        enviroment.getRequiredProperty("monitoring.fordownload.file")
+                );
 
                 boolean found = false;
                 String latestVersion = json.getString("version");
@@ -126,7 +129,11 @@ public class CheckVersionService {
         forDownload.setApplications(applicationsToDownload);
 
         try {
-            ioUtil.save(forDownload, enviroment.getRequiredProperty("monitoring.fordownload.file"));
+            ioUtil.save(
+                    forDownload,
+                    enviroment.getRequiredProperty("monitoring.local.path"),
+                    enviroment.getRequiredProperty("monitoring.fordownload.file")
+            );
         }
         catch (IOException e) {
             statuses.add(new Status(StatusCode.CRITICAL, String.format("Failed to save download list. Reason: %s", e.getMessage())));

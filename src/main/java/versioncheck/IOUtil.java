@@ -1,6 +1,5 @@
 package versioncheck;
 
-import domain.ApplicationData;
 import domain.ApplicationList;
 import org.springframework.stereotype.Component;
 
@@ -8,11 +7,11 @@ import java.io.*;
 
 @Component
 public class IOUtil {
-    public ApplicationList retrieve(String filename) throws IOException {
+    public ApplicationList retrieve(String folder, String filename) throws IOException {
         ObjectInputStream ois = null;
         try {
             String path = System.getProperty("user.dir");
-            File file = new File(path + filename);
+            File file = new File(path + folder + filename);
 
             if (!file.exists() || !file.isFile()) {
                 return null;
@@ -22,7 +21,6 @@ public class IOUtil {
             return (ApplicationList) ois.readObject();
         }
         catch (ClassNotFoundException e) {
-            //TODO: Should be logged.
             return null;
         }
         finally {
@@ -32,15 +30,15 @@ public class IOUtil {
         }
     }
 
-    public void save(ApplicationList applicationList, String filename) throws IOException {
+    public void save(ApplicationList applicationList, String folder, String filename) throws IOException {
         String path = System.getProperty("user.dir");
 
         //Make sure that folder exists before creating file.
-        File pathStructure = new File(path + "/data");
+        File pathStructure = new File(path + folder);
         if (!pathStructure.exists()) {
             pathStructure.mkdir();
         }
-        File file = new File(path + filename);
+        File file = new File(path + folder + filename);
 
         ObjectOutputStream oos = new ObjectOutputStream(
                 new FileOutputStream(file, false)
