@@ -16,7 +16,6 @@ import versioncheck.IOUtil;
 import versioncheck.exception.ConnectionFailedException;
 
 import java.io.File;
-import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -71,12 +70,12 @@ public class CheckVersionDtoIntegrationTest {
 
     @Test(expected = ConnectionFailedException.class)
     public void should_get_connection_exception_when_connection_fails() throws Exception {
-        checkVersionDto.retrieveMonitoringAppLastVersion(failVersionUrl);
+        checkVersionDto.retrieveExternalArtifactStatus(failVersionUrl);
     }
 
     @Test
     public void should_retrieve_external_version_when_new_list_is_available() throws Exception {
-        JSONObject json = checkVersionDto.retrieveMonitoringAppLastVersion(successVersionUrl);
+        JSONObject json = checkVersionDto.retrieveExternalArtifactStatus(successVersionUrl);
 
         assertTrue(json.keySet().contains("version"));
         assertEquals(json.get("groupId"), TEST_GROUP_ID);

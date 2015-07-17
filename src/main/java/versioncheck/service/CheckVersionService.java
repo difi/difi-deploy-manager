@@ -42,7 +42,7 @@ public class CheckVersionService {
             String url = location.replace("$GROUP_ID", app.getGroupId()).replace("$ARTIFACT_ID", app.getArtifactId());
 
             try {
-                JSONObject json = checkVersionDto.retrieveMonitoringAppLastVersion(url);
+                JSONObject json = checkVersionDto.retrieveExternalArtifactStatus(url);
                 ApplicationList downloadedApps = checkVersionDto.retrievePreviousDownloadedList();
 
                 if (isDownloaded(json, downloadedApps, json.getString("version"))) {

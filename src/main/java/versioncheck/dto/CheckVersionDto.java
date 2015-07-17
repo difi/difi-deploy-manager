@@ -31,7 +31,7 @@ public class CheckVersionDto {
         this.ioUtil = ioUtil;
     }
 
-    public JSONObject retrieveMonitoringAppLastVersion(String url) throws IOException, ConnectionFailedException {
+    public JSONObject retrieveExternalArtifactStatus(String url) throws IOException, ConnectionFailedException {
         URL request = new URL(url);
 
         connection = createConnection(request);
