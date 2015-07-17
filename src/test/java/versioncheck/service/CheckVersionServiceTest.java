@@ -1,10 +1,11 @@
-package versioncheck.checkversion;
+package versioncheck.service;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.springframework.core.env.Environment;
 import versioncheck.IOUtil;
+import versioncheck.dto.CheckVersionDto;
 
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
@@ -14,13 +15,13 @@ public class CheckVersionServiceTest {
     private CheckVersionService service;
 
     @Mock Environment environmentMock;
-    @Mock IOUtil ioUtilMock;
+    @Mock CheckVersionDto checkVersionDtoMock;
 
     @Before
     public void setUp() {
         initMocks(this);
 
-        service = new CheckVersionService(environmentMock, ioUtilMock);
+        service = new CheckVersionService(environmentMock, checkVersionDtoMock);
     }
 
     @Test

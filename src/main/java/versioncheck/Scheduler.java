@@ -4,7 +4,7 @@ import domain.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import versioncheck.checkversion.CheckVersionService;
+import versioncheck.service.CheckVersionService;
 
 import java.util.List;
 
@@ -24,6 +24,7 @@ public class Scheduler {
     @Scheduled(cron = CRON_RUN_EVERY_1MIN)
     public void checkForNewVersion() {
         List<Status> result = checkVersionService.execute();
+        System.out.println(result);
     }
 
     public void downloadNewVersion() {

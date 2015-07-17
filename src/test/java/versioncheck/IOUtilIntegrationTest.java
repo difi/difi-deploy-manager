@@ -1,16 +1,14 @@
 package versioncheck;
 
 import domain.ApplicationData;
-import domain.ApplicationList;
-import domain.MonitoringApplications;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
 
-import static java.util.Arrays.asList;
 import static org.junit.Assert.*;
+import static versioncheck.testUtils.ObjectMotherApplicationList.createApplicationListWithData;
 
 //Requirements for this test class is access to write on disk. Doing a real test for file IO operations.
 public class IOUtilIntegrationTest {
@@ -62,16 +60,5 @@ public class IOUtilIntegrationTest {
         if (!new File(SELF_PATH + TESTFOLDER).delete()) {
             fail(String.format("Cleanup of folder %s failed. Maually cleanup necessary!", TESTFOLDER));
         }
-    }
-
-    private ApplicationList createApplicationListWithData() {
-        ApplicationData data = new ApplicationData();
-        data.setName(MonitoringApplications.SPRINGFRAMEWORK_JDBC);
-        data.setActiveVersion("1.2.3");
-
-        ApplicationList list = new ApplicationList();
-        list.setApplications(asList(data));
-
-        return list;
     }
 }

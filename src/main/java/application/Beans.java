@@ -6,7 +6,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import versioncheck.IOUtil;
 import versioncheck.Scheduler;
-import versioncheck.checkversion.CheckVersionService;
+import versioncheck.dto.CheckVersionDto;
+import versioncheck.service.CheckVersionService;
 
 @Component
 public class Beans {
@@ -14,7 +15,12 @@ public class Beans {
 
     @Bean(name = "checkVersionService")
     public CheckVersionService checkVersionServiceBean() {
-        return new CheckVersionService(enviroment, ioUtilBean());
+        return new CheckVersionService(enviroment, checkVersionDtoBean());
+    }
+
+    @Bean(name = "checkVersionDto")
+    public CheckVersionDto checkVersionDtoBean() {
+        return new CheckVersionDto(enviroment, ioUtilBean());
     }
 
     @Bean(name = "scheduler")
