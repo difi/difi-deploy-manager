@@ -1,4 +1,4 @@
-package versioncheck;
+package util;
 
 import domain.ApplicationList;
 import org.springframework.stereotype.Component;

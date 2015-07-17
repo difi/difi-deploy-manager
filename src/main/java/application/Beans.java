@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-import versioncheck.IOUtil;
+import util.IOUtil;
 import versioncheck.Scheduler;
 import versioncheck.dto.CheckVersionDto;
 import versioncheck.service.CheckVersionService;
