@@ -1,7 +1,7 @@
 package schedule;
 
 import domain.Status;
-import download.DownloadService;
+import download.service.DownloadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

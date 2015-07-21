@@ -1,6 +1,7 @@
 package domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ApplicationData implements Serializable {
@@ -25,6 +26,9 @@ public class ApplicationData implements Serializable {
     }
 
     public List<DownloadedVersion> getDownloadedVersions() {
+        if (downloadedVersions == null) {
+            downloadedVersions = new ArrayList<>();
+        }
         return downloadedVersions;
     }
 

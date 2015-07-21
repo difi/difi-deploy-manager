@@ -23,7 +23,7 @@ public class CheckVersionDto {
     private final Environment environment;
     private final IOUtil ioUtil;
 
-    HttpURLConnection connection;
+    private HttpURLConnection connection;
 
     @Autowired
     public CheckVersionDto(Environment environment, IOUtil ioUtil) {
@@ -44,30 +44,15 @@ public class CheckVersionDto {
         return (JSONObject) new JSONObject(new Scanner(stream).useDelimiter("\\A").next()).get("data");
     }
 
-    public void saveDownloadList(ApplicationList forDownload) throws IOException {
+    public void saveMonitoringList(ApplicationList applicationList) throws IOException {
         ioUtil.save(
-                forDownload,
-                environment.getRequiredProperty("monitoring.base.path"),
-                environment.getRequiredProperty("monitoring.fordownload.file")
-        );
-    }
-
-    public ApplicationList retrieveDownloadList() throws IOException {
-        return ioUtil.retrieve(
-                environment.getRequiredProperty("monitoring.base.path"),
-                environment.getRequiredProperty("monitoring.fordownload.file")
-        );
-    }
-
-    public void savePreviousDownloadedList(ApplicationList forDownload) throws IOException {
-        ioUtil.save(
-                forDownload,
+                applicationList,
                 environment.getRequiredProperty("monitoring.base.path"),
                 environment.getRequiredProperty("monitoring.downloaded.file")
         );
     }
 
-    public ApplicationList retrievePreviousDownloadedList() throws IOException {
+    public ApplicationList retrieveMonitoringList() throws IOException {
         return ioUtil.retrieve(
                 environment.getRequiredProperty("monitoring.base.path"),
                 environment.getRequiredProperty("monitoring.downloaded.file")

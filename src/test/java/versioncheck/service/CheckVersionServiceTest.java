@@ -4,6 +4,7 @@ import domain.ApplicationData;
 import domain.ApplicationList;
 import domain.Status;
 import domain.StatusCode;
+import download.dto.DownloadDto;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -30,6 +31,7 @@ public class CheckVersionServiceTest {
 
     @Mock Environment environmentMock;
     @Mock CheckVersionDto checkVersionDtoMock;
+    @Mock DownloadDto downloadDtoMock;
 
     @Before
     public void setUp() {
@@ -37,7 +39,7 @@ public class CheckVersionServiceTest {
 
         when(environmentMock.getRequiredProperty("location.version")).thenReturn(TEST_URL);
 
-        service = new CheckVersionService(environmentMock, checkVersionDtoMock);
+        service = new CheckVersionService(environmentMock, checkVersionDtoMock, downloadDtoMock);
     }
 
     @Test
@@ -114,7 +116,7 @@ public class CheckVersionServiceTest {
         );
 
         when(checkVersionDtoMock.retrieveExternalArtifactStatus(anyString())).thenReturn(jsonObject);
-        when(checkVersionDtoMock.retrievePreviousDownloadedList()).thenReturn(sameList);
+        when(downloadDtoMock.retrieveDownloadList()).thenReturn(sameList);
 
         Status actual = service.execute().get(0);
 
@@ -132,7 +134,7 @@ public class CheckVersionServiceTest {
         );
 
         when(checkVersionDtoMock.retrieveExternalArtifactStatus(anyString())).thenReturn(jsonObject);
-        when(checkVersionDtoMock.retrievePreviousDownloadedList()).thenReturn(otherVersionList);
+        when(downloadDtoMock.retrieveDownloadList()).thenReturn(otherVersionList);
 
         Status actual = service.execute().get(0);
 

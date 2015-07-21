@@ -1,6 +1,7 @@
 package versioncheck.service;
 
 import domain.*;
+import download.dto.DownloadDto;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,16 +17,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.String.format;
+import static util.Common.replacePropertyParams;
 
 @Service
 public class CheckVersionService {
     private final Environment environment;
     private final CheckVersionDto checkVersionDto;
+    private final DownloadDto downloadDto;
 
     @Autowired
-    public CheckVersionService(Environment environment, CheckVersionDto checkVersionDto) {
+    public CheckVersionService(Environment environment, CheckVersionDto checkVersionDto, DownloadDto downloadDto) {
         this.environment = environment;
         this.checkVersionDto = checkVersionDto;
+        this.downloadDto = downloadDto;
     }
 
     public List<Status> execute() {
@@ -41,13 +45,13 @@ public class CheckVersionService {
         }
 
         for (MonitoringApplications app : MonitoringApplications.getApplications()) {
-            String url = location.replace("$GROUP_ID", app.getGroupId()).replace("$ARTIFACT_ID", app.getArtifactId());
+            String url = replacePropertyParams(location, app.getGroupId(), app.getArtifactId());
 
             try {
                 JSONObject json = checkVersionDto.retrieveExternalArtifactStatus(url);
-                ApplicationList downloadedApps = checkVersionDto.retrievePreviousDownloadedList();
+                ApplicationList downloadedApps = checkVersionDto.retrieveMonitoringList();
 
-                if (isInDownloadList(json, checkVersionDto.retrieveDownloadList())) {
+                if (isInDownloadList(json, downloadDto.retrieveDownloadList())) {
                     statuses.add(new Status(StatusCode.SUCCESS, format("%s is already in download list", url)));
                 }
                 if (isDownloaded(json, downloadedApps)) {
@@ -85,7 +89,7 @@ public class CheckVersionService {
         forDownload.setApplications(applicationsToDownload);
 
         try {
-            checkVersionDto.saveDownloadList(forDownload);
+            downloadDto.saveDownloadList(forDownload);
         } catch (IOException e) {
             statuses.add(new Status(StatusCode.CRITICAL, format("Failed to save download list. Reason: %s", e.getMessage())));
         }
