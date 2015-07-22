@@ -4,10 +4,23 @@ import domain.ApplicationList;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
+import java.util.List;
 
 @Component
 public class IOUtil {
-    public ApplicationList retrieve(String folder, String filename) throws IOException {
+    public ApplicationList retrieveApplicationList(String folder, String filename) throws IOException {
+        return (ApplicationList) retrieve(folder, filename);
+    }
+
+    public void saveApplicationList(ApplicationList applicationList, String folder, String filename) throws IOException {
+        save(applicationList, folder, filename);
+    }
+
+    public List<Process> retrieveRunningProcesses() {
+        return null;
+    }
+
+    private Object retrieve(String folder, String filename) throws IOException {
         ObjectInputStream ois = null;
         try {
             String path = System.getProperty("user.dir");
@@ -18,7 +31,7 @@ public class IOUtil {
             }
             ois = new ObjectInputStream(new FileInputStream(file));
 
-            return (ApplicationList) ois.readObject();
+            return ois.readObject();
         }
         catch (ClassNotFoundException e) {
             return null;
@@ -30,7 +43,7 @@ public class IOUtil {
         }
     }
 
-    public void save(ApplicationList applicationList, String folder, String filename) throws IOException {
+    private void save(Object objectToSave, String folder, String filename) throws IOException {
         String path = System.getProperty("user.dir");
 
         //Make sure that folder exists before creating file.
@@ -44,7 +57,7 @@ public class IOUtil {
                 new FileOutputStream(file, false)
         );
 
-        oos.writeObject(applicationList);
+        oos.writeObject(objectToSave);
 
         oos.close();
     }

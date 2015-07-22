@@ -45,7 +45,7 @@ public class CheckVersionDto {
     }
 
     public void saveMonitoringList(ApplicationList applicationList) throws IOException {
-        ioUtil.save(
+        ioUtil.saveApplicationList(
                 applicationList,
                 environment.getRequiredProperty("monitoring.base.path"),
                 environment.getRequiredProperty("monitoring.downloaded.file")
@@ -53,7 +53,7 @@ public class CheckVersionDto {
     }
 
     public ApplicationList retrieveMonitoringList() throws IOException {
-        return ioUtil.retrieve(
+        return ioUtil.retrieveApplicationList(
                 environment.getRequiredProperty("monitoring.base.path"),
                 environment.getRequiredProperty("monitoring.downloaded.file")
         );

@@ -33,7 +33,7 @@ public class DownloadService {
 
     public List<Status> execute() {
         String url;
-        List<ApplicationData> restartList = new ArrayList<>();
+        List<ApplicationData> restartList;
 
         try {
             url = environment.getRequiredProperty("location.download");
@@ -52,6 +52,8 @@ public class DownloadService {
                 notDownloaded.setApplications(updateNotDownloadedList(restartList, forDownload));
                 downloadDto.saveDownloadList(notDownloaded);
 
+                saveRestartList(restartList);
+
             } else {
                 statuses.add(new Status(StatusCode.SUCCESS, "Nothing to download."));
             }
@@ -59,8 +61,6 @@ public class DownloadService {
         catch (IOException e) {
             statuses.add(new Status(StatusCode.ERROR, format("Failed to retrieve download list. Reason: %s", e.getMessage())));
         }
-
-        saveRestartList(restartList);
 
         return statuses;
     }
@@ -82,7 +82,7 @@ public class DownloadService {
         return notDownloaded;
     }
 
-    private void saveRestartList(List<ApplicationData> restartList) {
+    private void saveRestartList(List<ApplicationData> restartList) throws IOException {
         if (restartList != null && restartList.size() != 0) {
             ApplicationList applicationsForRestart = new ApplicationList();
             applicationsForRestart.setApplications(restartList);

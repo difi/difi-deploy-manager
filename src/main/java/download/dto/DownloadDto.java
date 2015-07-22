@@ -28,7 +28,7 @@ public class DownloadDto {
     }
 
     public void saveDownloadList(ApplicationList forDownload) throws IOException {
-        ioUtil.save(
+        ioUtil.saveApplicationList(
                 forDownload,
                 environment.getRequiredProperty("monitoring.base.path"),
                 environment.getRequiredProperty("monitoring.fordownload.file")
@@ -36,7 +36,7 @@ public class DownloadDto {
     }
 
     public ApplicationList retrieveDownloadList() throws IOException {
-        return ioUtil.retrieve(
+        return ioUtil.retrieveApplicationList(
                 environment.getRequiredProperty("monitoring.base.path"),
                 environment.getRequiredProperty("monitoring.fordownload.file")
         );

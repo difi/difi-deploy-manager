@@ -37,7 +37,7 @@ public class IOUtilIntegrationTest {
     }
 
     public void should_create_path_and_file_when_not_existing() throws Exception {
-        ioUtil.save(createApplicationListWithData(), TESTFOLDER, TESTFILENAME);
+        ioUtil.saveApplicationList(createApplicationListWithData(), TESTFOLDER, TESTFILENAME);
 
         assertTrue(new File(SELF_PATH + TESTFOLDER).exists());
         assertTrue(new File(SELF_PATH + TESTFOLDER).isDirectory());
@@ -47,7 +47,7 @@ public class IOUtilIntegrationTest {
     public void should_retrieve_object_with_same_data_that_was_saved() throws Exception {
         ApplicationData expected = createApplicationListWithData().getApplications().get(0);
 
-        ApplicationData actual = ioUtil.retrieve(TESTFOLDER, TESTFILENAME).getApplications().get(0);
+        ApplicationData actual = ioUtil.retrieveApplicationList(TESTFOLDER, TESTFILENAME).getApplications().get(0);
 
         assertEquals(expected.getName(), actual.getName());
         assertTrue(expected.getActiveVersion().equals(actual.getActiveVersion()));

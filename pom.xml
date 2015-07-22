@@ -6,7 +6,12 @@
 
   <groupId>difi-deploy-wrapper</groupId>
   <artifactId>no.difi.deploywrapper</artifactId>
+  <packaging>pom</packaging>
   <version>0.9.0-SNAPSHOT</version>
+
+  <modules>
+    <module>deploywrapper-healthcheck</module>
+  </modules>
 
   <parent>
     <groupId>org.springframework.boot</groupId>

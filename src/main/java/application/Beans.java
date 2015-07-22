@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import restart.dto.RestartDto;
+import restart.service.RestartService;
 import schedule.Scheduler;
 import util.IOUtil;
 import versioncheck.dto.CheckVersionDto;
@@ -36,14 +37,19 @@ public class Beans {
         return new DownloadDto(enviroment, ioUtilBean());
     }
 
+    @Bean(name = "restartService")
+    public RestartService restartServiceBean() {
+        return new RestartService(restartDtoBean());
+    }
+
     @Bean(name = "restartDto")
     public RestartDto restartDtoBean() {
-        return new RestartDto();
+        return new RestartDto(enviroment, ioUtilBean());
     }
 
     @Bean(name = "scheduler")
     public Scheduler schedulerBean() {
-        return new Scheduler(checkVersionServiceBean(), downloadServiceBean());
+        return new Scheduler(checkVersionServiceBean(), downloadServiceBean(), restartServiceBean());
     }
 
     @Bean(name = "ioUtil")

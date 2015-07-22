@@ -8,6 +8,7 @@ public class ApplicationData implements Serializable {
     MonitoringApplications name;
     String activeVersion;
     List<DownloadedVersion> downloadedVersions;
+    private String filename;
 
     public MonitoringApplications getName() {
         return name;
@@ -25,13 +26,20 @@ public class ApplicationData implements Serializable {
         this.activeVersion = activeVersion;
     }
 
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
     public List<DownloadedVersion> getDownloadedVersions() {
         if (downloadedVersions == null) {
             downloadedVersions = new ArrayList<>();
         }
         return downloadedVersions;
     }
-
     public void setDownloadedVersions(List<DownloadedVersion> downloadedVersions) {
         this.downloadedVersions = downloadedVersions;
     }

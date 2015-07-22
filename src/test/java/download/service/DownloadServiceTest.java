@@ -19,9 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static versioncheck.testUtils.ObjectMotherApplicationList.createApplicationListEmpty;
 import static versioncheck.testUtils.ObjectMotherApplicationList.createApplicationListWithData;
@@ -101,7 +99,7 @@ public class DownloadServiceTest {
 
         service.execute().get(0);
 
-        verify(restartDtoMock, times(0)).saveRestartList(any(ApplicationList.class));
+        verify(restartDtoMock, never()).saveRestartList(any(ApplicationList.class));
     }
 
     @Test
