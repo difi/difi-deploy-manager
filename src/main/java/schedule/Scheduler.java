@@ -17,9 +17,9 @@ public class Scheduler {
     public static final String CRON_RESTART_APPLICATIONS = "30 * * * * MON-FRI";
     public static final String CRON_RUN_EVERY_1MIN = "1 * * * * MON-FRI";
 
-    private final CheckVersionService checkVersionService;
-    private final DownloadService downloadService;
-    private final RestartService restartService;
+    private final versioncheck.service.CheckVersionService checkVersionService;
+    private final download.service.DownloadService downloadService;
+    private final restart.service.RestartService restartService;
 
     @Autowired
     public Scheduler(CheckVersionService checkVersionService, DownloadService downloadService, RestartService restartService) {
@@ -44,13 +44,5 @@ public class Scheduler {
     @Scheduled(cron = CRON_RUN_EVERY_1MIN)
     public void restartApplications() {
         List<Status> result = restartService.execute();
-    }
-
-    public void installNewVersion() {
-
-    }
-
-    public void restartNewVersion() {
-
     }
 }

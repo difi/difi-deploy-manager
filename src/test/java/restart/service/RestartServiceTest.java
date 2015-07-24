@@ -15,13 +15,13 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
-import static versioncheck.testUtils.ObjectMotherApplicationList.createApplicationListEmpty;
-import static versioncheck.testUtils.ObjectMotherApplicationList.createApplicationListWithData;
+import static versioncheck.testUtils.ObjectMotherApplicationList.*;
 
 public class RestartServiceTest {
     private RestartService service;
 
-    @Mock RestartDto restartDtoMock;
+    @Mock
+    RestartDto restartDtoMock;
 
     @Before
     public void setUp() {
@@ -52,7 +52,7 @@ public class RestartServiceTest {
 
         service.execute();
 
-        verify(restartDtoMock, times(1)).executeRestart(any(ApplicationData.class));
+        verify(restartDtoMock, times(1)).executeRestart(any(ApplicationData.class), any(ApplicationData.class));
     }
 
     @Test
@@ -61,12 +61,13 @@ public class RestartServiceTest {
 
         service.execute();
 
-        verify(restartDtoMock, never()).executeRestart(any(ApplicationData.class));
+        verify(restartDtoMock, never()).executeRestart(any(ApplicationData.class), any(ApplicationData.class));
     }
 
     @Test
     public void should_get_status_success_when_restart_of_application_has_occured() throws Exception {
         when(restartDtoMock.retrieveRestartList()).thenReturn(createApplicationListWithData());
+        when(restartDtoMock.executeRestart(any(ApplicationData.class), any(ApplicationData.class))).thenReturn(true);
 
         Status result = service.execute().get(0);
 
