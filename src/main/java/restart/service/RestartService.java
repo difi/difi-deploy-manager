@@ -60,7 +60,7 @@ public class RestartService {
                 }
             }
         } catch (IOException e) {
-            statuses.add(new Status(StatusCode.ERROR, "Local error when retrieving list of applications to no.difi.deploymanager.restart"));
+            statuses.add(new Status(StatusCode.ERROR, "Local error when retrieving list of applications to restart"));
         }
         return statuses;
     }
