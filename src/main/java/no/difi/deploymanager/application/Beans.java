@@ -39,7 +39,7 @@ public class Beans {
 
     @Bean(name = "restartService")
     public RestartService restartServiceBean() {
-        return new RestartService(restartDtoBean());
+        return new RestartService(restartDtoBean(), checkVersionDtoBean());
     }
 
     @Bean(name = "restartDto")

@@ -27,24 +27,30 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static no.difi.deploymanager.testutils.CustomAssert.assertApplicationList;
 import static no.difi.deploymanager.testutils.ObjectMotherApplicationList.createApplicationListWithData;
+import static org.junit.Assert.fail;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
 public class RestartDtoIntegrationTest {
-    private static final String TEST_APPLICATION_FILENAME = "deploy-manager-health-check-0.9.0.jar";
-    private static final int MILLIS_WAITING_FOR_OTHER_PROCESSES = 5000;
-    public static final String TEMP_TEST_JAR_FILE = "./bin/deploy-manager-health-check-0.9.0.jar";
-    public static final String PERM_TEST_JAR_FILE = "./bin-test/deploy-manager-health-check-0.9.0.jar";
-
     private RestartDto restartDto;
 
     @Autowired Environment environment;
     @Autowired IOUtil ioUtil;
 
-    private static final String BASE_DIR = System.getProperty("user.dir");
+    private static final int MILLIS_WAITING_FOR_OTHER_PROCESSES_TO_BE_DONE = 5000;
+    private static final String TEST_APPLICATION_FILENAME = "deploy-manager-health-check-0.9.0.jar";
+    private static final String TEMP_TEST_JAR_FILE = "./bin/" + TEST_APPLICATION_FILENAME;
+    private static final String PERM_TEST_JAR_FILE = "./bin-test/" + TEST_APPLICATION_FILENAME;
+    private static String basePath;
+    private static String forRestartPathAndFile;
+    private static String runningPathAndFile;
 
     @Before
     public void setUp() {
+        basePath = System.getProperty("user.dir") + environment.getRequiredProperty("monitoring.base.path");
+        forRestartPathAndFile = basePath + environment.getRequiredProperty("monitoring.forrestart.file");
+        runningPathAndFile = basePath + environment.getRequiredProperty("monitoring.running.file");
+
         restartDto = new RestartDto(environment, ioUtil);
     }
 
@@ -78,7 +84,8 @@ public class RestartDtoIntegrationTest {
     }
 
     private boolean applicationIsRunning() throws InterruptedException, MalformedURLException {
-        Thread.sleep(MILLIS_WAITING_FOR_OTHER_PROCESSES); //Let other processes like startup/stop finish before checking.
+        //Let other processes like startup/stop finish before checking.
+        Thread.sleep(MILLIS_WAITING_FOR_OTHER_PROCESSES_TO_BE_DONE);
 
         URL request = new URL("http://localhost:9999/health");
         String result;
@@ -86,8 +93,8 @@ public class RestartDtoIntegrationTest {
         try {
             HttpURLConnection connection;
             connection = (HttpURLConnection) request.openConnection();
-            connection.setConnectTimeout(2000);
-            connection.setReadTimeout(2000);
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Accept", "application/json");
 
@@ -106,9 +113,20 @@ public class RestartDtoIntegrationTest {
 
     @AfterClass
     public static void tearDownAfterRun() {
-        String monitoring = BASE_DIR + "/data/updating.difi";
+        File forRestartFile = new File(forRestartPathAndFile);
+        File runningFile = new File(runningPathAndFile);
 
-        new File(monitoring).delete();
-        new File(TEMP_TEST_JAR_FILE).delete();
+        forRestartFile.delete();
+        runningFile.delete();
+
+        if (forRestartFile.exists() || runningFile.exists()) {
+            fail(String.format("Cleanup of files in path %s failed. Manually cleanup necessary!", basePath));
+        }
+
+        File testJarFile = new File(TEMP_TEST_JAR_FILE);
+        testJarFile.delete();
+        if (testJarFile.exists()) {
+            fail(String.format("Cleanup of test jar %s in bin folder failed. Manually cleanup necessary!", TEMP_TEST_JAR_FILE));
+        }
     }
 }

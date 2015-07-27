@@ -32,7 +32,7 @@ public class CheckVersionDtoIntegrationTest {
     @Autowired Environment environment;
     @Autowired IOUtil ioUtil;
 
-    private static final String BASE_DIR = System.getProperty("user.dir");
+    private static String TEST_PATH;
     private static final String TEST_GROUP_ID = "org.springframework";
     private static final String TEST_ARTIFACT_ID = "spring-jdbc";
     private static String failVersionUrl;
@@ -40,6 +40,10 @@ public class CheckVersionDtoIntegrationTest {
 
     @Before
     public void setUp() {
+        TEST_PATH = System.getProperty("user.dir")
+                + environment.getRequiredProperty("monitoring.base.path")
+                + environment.getRequiredProperty("monitoring.running.file");
+
         failVersionUrl = environment.getProperty("location.version");
         successVersionUrl = Common.replacePropertyParams(
                 environment.getProperty("location.version"),
@@ -54,8 +58,8 @@ public class CheckVersionDtoIntegrationTest {
     public void should_save_and_retrieve_monitoring_application_list() throws Exception {
         ApplicationList expected = createApplicationListWithData();
 
-        checkVersionDto.saveMonitoringList(expected);
-        ApplicationList actual = checkVersionDto.retrieveMonitoringList();
+        checkVersionDto.saveRunningAppsList(expected);
+        ApplicationList actual = checkVersionDto.retrieveRunningAppsList();
 
         assertApplicationList(expected, actual);
     }
@@ -73,17 +77,12 @@ public class CheckVersionDtoIntegrationTest {
         assertEquals(json.get("groupId"), TEST_GROUP_ID);
     }
 
-    @After
-    public void tearDown() {
-        checkVersionDto.closeConnection();
-    }
-
     @AfterClass
     public static void tearDownAfterRun() {
-        String monitoring = BASE_DIR + "/data/monitoring.difi";
-
-        if (!new File(monitoring).delete()) {
-            fail(String.format("Cleanup of file %s failed. Manually cleanup necessary!", monitoring));
+        File file = new File(TEST_PATH);
+        file.delete();
+        if (file.exists()) {
+            fail(String.format("Cleanup of file %s failed. Manually cleanup necessary!", TEST_PATH));
         }
     }
 }

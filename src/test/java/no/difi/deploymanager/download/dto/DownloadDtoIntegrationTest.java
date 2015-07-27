@@ -20,6 +20,7 @@ import java.io.File;
 import static org.junit.Assert.assertTrue;
 import static no.difi.deploymanager.testutils.CustomAssert.assertApplicationList;
 import static no.difi.deploymanager.testutils.ObjectMotherApplicationList.createApplicationListWithData;
+import static org.junit.Assert.fail;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
@@ -30,6 +31,7 @@ public class DownloadDtoIntegrationTest {
     @Autowired IOUtil ioUtil;
 
     private static final String BASE_DIR = System.getProperty("user.dir");
+    private static String testDataPath;
     private static String downloadPath;
     private static String failVersionUrl;
     private static String successVersionUrl;
@@ -38,6 +40,10 @@ public class DownloadDtoIntegrationTest {
 
     @Before
     public void setUp() {
+        testDataPath = System.getProperty("user.dir")
+                + environment.getRequiredProperty("monitoring.base.path")
+                + environment.getRequiredProperty("monitoring.fordownload.file");
+
         downloadPath = BASE_DIR + environment.getProperty("download.base.path");
         failVersionUrl = environment.getProperty("location.download");
         successVersionUrl = Common.replacePropertyParams(
@@ -79,13 +85,17 @@ public class DownloadDtoIntegrationTest {
 
     @AfterClass
     public static void tearDownAfterRun() {
-        String forDownloadFile = BASE_DIR + "/data/download.difi";
+        String forDownloadFile = testDataPath;
         File binFolder = new File(downloadPath);
 
         for(File file : binFolder.listFiles()) {
             file.delete();
         }
 
-        new File(forDownloadFile).delete();
+        File downloadFile = new File(forDownloadFile);
+        downloadFile.delete();
+        if (downloadFile.exists()) {
+            fail(String.format("Cleanup of file %s failed. Manually cleanup necessary!", testDataPath));
+        }
     }
 }

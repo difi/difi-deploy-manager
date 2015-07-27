@@ -34,13 +34,13 @@ public class RestartDto {
         ioUtil.saveApplicationList(
                 restartList,
                 environment.getRequiredProperty("monitoring.base.path"),
-                environment.getRequiredProperty("monitoring.forupdate.file"));
+                environment.getRequiredProperty("monitoring.forrestart.file"));
     }
 
     public ApplicationList retrieveRestartList() throws IOException {
         return ioUtil.retrieveApplicationList(
                 environment.getRequiredProperty("monitoring.base.path"),
-                environment.getRequiredProperty("monitoring.forupdate.file"));
+                environment.getRequiredProperty("monitoring.forrestart.file"));
     }
 
     public boolean executeRestart(ApplicationData oldVersion, ApplicationData newVersion) throws IOException, InterruptedException {
@@ -78,7 +78,7 @@ public class RestartDto {
             }
             else {
                 if (!isEmpty(processId)) {
-                    String killCommand = "kill -9 " + processId;
+                    String killCommand = "kill 9 " + processId;
                     Process process = Runtime.getRuntime().exec(killCommand);
                     process.waitFor();
                     process.destroy();
@@ -101,8 +101,8 @@ public class RestartDto {
             if (!isEmpty(running)) {
                 if (running.contains(version.getFilename()) && !running.contains(ROOT_PATH_FOR_SH)) {
                     List<String> processParts = asList(running.split(" "));
-                    processParts.get(1);
-                    return processParts.get(1);
+
+                    return processParts.get(0);
                 }
             }
         }

@@ -41,25 +41,29 @@ public class CheckVersionDto {
         }
         InputStream stream = new BufferedInputStream(connection.getInputStream());
 
-        return (JSONObject) new JSONObject(new Scanner(stream).useDelimiter("\\A").next()).get("data");
+        JSONObject data = (JSONObject) new JSONObject(new Scanner(stream).useDelimiter("\\A").next()).get("data");
+
+        closeConnection();
+
+        return data;
     }
 
-    public void saveMonitoringList(ApplicationList applicationList) throws IOException {
+    public void saveRunningAppsList(ApplicationList applicationList) throws IOException {
         ioUtil.saveApplicationList(
                 applicationList,
                 environment.getRequiredProperty("monitoring.base.path"),
-                environment.getRequiredProperty("monitoring.downloaded.file")
+                environment.getRequiredProperty("monitoring.running.file")
         );
     }
 
-    public ApplicationList retrieveMonitoringList() throws IOException {
+    public ApplicationList retrieveRunningAppsList() throws IOException {
         return ioUtil.retrieveApplicationList(
                 environment.getRequiredProperty("monitoring.base.path"),
-                environment.getRequiredProperty("monitoring.downloaded.file")
+                environment.getRequiredProperty("monitoring.running.file")
         );
     }
 
-    public void closeConnection() {
+    private void closeConnection() {
         if (connection != null) {
             connection.disconnect();
         }

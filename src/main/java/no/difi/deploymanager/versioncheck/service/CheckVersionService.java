@@ -44,12 +44,13 @@ public class CheckVersionService {
             return statuses;
         }
 
+        //TODO: Need to capture remote file list. This should replace the enum MonitoringApplicatoins.
         for (MonitoringApplications app : MonitoringApplications.getApplications()) {
             String url = replacePropertyParams(location, app.getGroupId(), app.getArtifactId());
 
             try {
                 JSONObject json = checkVersionDto.retrieveExternalArtifactStatus(url);
-                ApplicationList downloadedApps = checkVersionDto.retrieveMonitoringList();
+                ApplicationList downloadedApps = checkVersionDto.retrieveRunningAppsList();
 
                 if (isInDownloadList(json, downloadDto.retrieveDownloadList())) {
                     statuses.add(new Status(StatusCode.SUCCESS, format("%s is already in download list", url)));
@@ -79,9 +80,6 @@ public class CheckVersionService {
             } catch (JSONException e) {
                 statuses.add(new Status(StatusCode.CRITICAL,
                         format("Result returned from %s is not JSON. Reason: %s", url, e.getMessage())));
-            }
-            finally {
-                checkVersionDto.closeConnection();
             }
         }
 

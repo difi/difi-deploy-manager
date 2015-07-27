@@ -53,7 +53,6 @@ public class DownloadService {
                 downloadDto.saveDownloadList(notDownloaded);
 
                 saveRestartList(restartList);
-
             } else {
                 statuses.add(new Status(StatusCode.SUCCESS, "Nothing to download."));
             }
@@ -68,6 +67,7 @@ public class DownloadService {
     private List<ApplicationData> updateNotDownloadedList(List<ApplicationData> restartList, ApplicationList forDownload) {
         List<ApplicationData> notDownloaded = new ArrayList<>();
 
+        //Update list for applications that failed download.
         for (ApplicationData checklist : restartList) {
             boolean found = false;
             for (ApplicationData worklist : forDownload.getApplications()) {
@@ -89,7 +89,7 @@ public class DownloadService {
 
             restartDto.saveRestartList(applicationsForRestart);
 
-            statuses.add(new Status(StatusCode.SUCCESS, format("Downloaded apps prepared for restart.")));
+            statuses.add(new Status(StatusCode.SUCCESS, format("Downloaded apps, prepared for restart.")));
         }
         else {
             statuses.add(new Status(StatusCode.SUCCESS, format("No applications set for download.")));
