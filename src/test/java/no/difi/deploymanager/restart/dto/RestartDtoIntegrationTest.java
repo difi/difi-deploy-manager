@@ -5,6 +5,7 @@ import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.ApplicationList;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,7 @@ public class RestartDtoIntegrationTest {
         assertApplicationList(expected, actual);
     }
 
+    @Ignore("Long-running test. Un-ignore to test full running cycle.")
     @Test
     public void should_start_and_restart_and_stop_running_process_on_current_OS() throws Exception {
         if (!System.getProperty("os.name").toLowerCase().contains("windows")) {
