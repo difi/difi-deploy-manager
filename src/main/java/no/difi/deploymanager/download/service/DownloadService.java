@@ -45,7 +45,7 @@ public class DownloadService {
         try {
             ApplicationList forDownload = downloadDto.retrieveDownloadList();
 
-            if (forDownload.getApplications() != null) {
+            if (forDownload != null && forDownload.getApplications() != null) {
                 restartList = downloadApplications(url, forDownload);
 
                 ApplicationList notDownloaded = new ApplicationList();

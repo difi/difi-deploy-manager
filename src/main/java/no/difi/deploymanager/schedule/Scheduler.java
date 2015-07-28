@@ -36,7 +36,6 @@ public class Scheduler {
         this.restartService = restartService;
     }
 
-
     @Scheduled(cron = CRON_RUN_CHECK_FOR_VERSION)
     public void checkForNewVersion() {
         LocalDateTime start = LocalDateTime.now();
