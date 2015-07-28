@@ -2,7 +2,6 @@ package no.difi.deploymanager.download.dto;
 
 import no.difi.deploymanager.application.Application;
 import no.difi.deploymanager.domain.ApplicationList;
-import no.difi.deploymanager.domain.MonitoringApplications;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,8 +47,8 @@ public class DownloadDtoIntegrationTest {
         failVersionUrl = environment.getProperty("location.download");
         successVersionUrl = Common.replacePropertyParams(
                 environment.getProperty("location.download"),
-                MonitoringApplications.SPRINGFRAMEWORK_JDBC.getGroupId(),
-                MonitoringApplications.SPRINGFRAMEWORK_JDBC.getArtifactId()
+                "org.springframework",
+                "spring-jdbc"
         );
 
         downloadDto = new DownloadDto(environment, ioUtil);

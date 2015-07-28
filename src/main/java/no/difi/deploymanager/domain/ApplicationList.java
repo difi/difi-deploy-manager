@@ -1,7 +1,5 @@
 package no.difi.deploymanager.domain;
 
-import no.difi.deploymanager.domain.ApplicationData;
-
 import java.io.Serializable;
 import java.util.List;
 

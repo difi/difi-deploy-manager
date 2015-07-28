@@ -2,6 +2,7 @@ package no.difi.deploymanager.versioncheck.service;
 
 import no.difi.deploymanager.download.dto.DownloadDto;
 import no.difi.deploymanager.domain.*;
+import no.difi.deploymanager.remotelist.service.RemoteListService;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +23,14 @@ import static no.difi.deploymanager.util.Common.replacePropertyParams;
 @Service
 public class CheckVersionService {
     private final Environment environment;
+    private final RemoteListService remoteListService;
     private final CheckVersionDto checkVersionDto;
     private final DownloadDto downloadDto;
 
     @Autowired
-    public CheckVersionService(Environment environment, CheckVersionDto checkVersionDto, DownloadDto downloadDto) {
+    public CheckVersionService(Environment environment, RemoteListService remoteListService, CheckVersionDto checkVersionDto, DownloadDto downloadDto) {
         this.environment = environment;
+        this.remoteListService = remoteListService;
         this.checkVersionDto = checkVersionDto;
         this.downloadDto = downloadDto;
     }
@@ -45,8 +48,8 @@ public class CheckVersionService {
         }
 
         //TODO: Need to capture remote file list. This should replace the enum MonitoringApplicatoins.
-        for (MonitoringApplications app : MonitoringApplications.getApplications()) {
-            String url = replacePropertyParams(location, app.getGroupId(), app.getArtifactId());
+        for (ApplicationData remoteApp : remoteListService.execute().getApplications()) {
+            String url = replacePropertyParams(location, remoteApp.getGroupId(), remoteApp.getArtifactId());
 
             try {
                 JSONObject json = checkVersionDto.retrieveExternalArtifactStatus(url);
@@ -60,7 +63,9 @@ public class CheckVersionService {
                             format("Latest version of %s is already downloaded.", url)));
                 } else {
                     ApplicationData data = new ApplicationData();
-                    data.setName(MonitoringApplications.SPRINGFRAMEWORK_JDBC);
+                    data.setName(remoteApp.getName());
+                    data.setGroupId(remoteApp.getGroupId());
+                    data.setArtifactId(remoteApp.getArtifactId());
                     data.setActiveVersion(json.getString("version"));
                     applicationsToDownload.add(data);
 
@@ -98,8 +103,8 @@ public class CheckVersionService {
     private boolean isInDownloadList(JSONObject json, ApplicationList applicationList) {
         if (applicationList != null && applicationList.getApplications() != null) {
             for (ApplicationData data : applicationList.getApplications()) {
-                if (data.getName().getArtifactId().equals(json.getString("groupId"))
-                    && data.getName().getGroupId().equals(json.getString("artifactId")))
+                if (data.getArtifactId().equals(json.getString("groupId"))
+                    && data.getGroupId().equals(json.getString("artifactId")))
                     if (data.getActiveVersion() != null && data.getActiveVersion().equals(json.getString("version"))) {
                         return true;
                 }
@@ -111,8 +116,8 @@ public class CheckVersionService {
     private boolean isDownloaded(JSONObject json, ApplicationList downloadedApps) {
         if (downloadedApps != null) {
             for (ApplicationData downloaded : downloadedApps.getApplications()) {
-                if (downloaded.getName().getGroupId().equals(json.getString("groupId"))
-                        && downloaded.getName().getArtifactId().equals(json.getString("artifactId"))) {
+                if (downloaded.getGroupId().equals(json.getString("groupId"))
+                        && downloaded.getArtifactId().equals(json.getString("artifactId"))) {
                     if (downloaded.getActiveVersion() == null
                             || downloaded.getActiveVersion().equals(json.getString("version"))) {
                         return true;

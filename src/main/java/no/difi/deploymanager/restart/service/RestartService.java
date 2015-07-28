@@ -47,7 +47,7 @@ public class RestartService {
                                 statuses.add(new Status(
                                         StatusCode.SUCCESS,
                                         format("Application %s updated to version %s",
-                                                newApp.getName().getArtifactId(), newApp.getActiveVersion())));
+                                                newApp.getArtifactId(), newApp.getActiveVersion())));
                             }
                         }
                         else {
@@ -56,7 +56,7 @@ public class RestartService {
                                 statuses.add(new Status(
                                         StatusCode.SUCCESS,
                                         String.format("%s with version %s is started.",
-                                                newApp.getName().getArtifactId(), newApp.getActiveVersion())
+                                                newApp.getArtifactId(), newApp.getActiveVersion())
                                 ));
                             }
                         }
@@ -81,7 +81,7 @@ public class RestartService {
     private ApplicationData findAppForRestart(ApplicationList runningAppList, ApplicationData newApp) {
         ApplicationData appWithNewVersion = null;
         for (ApplicationData oldApp : runningAppList.getApplications()) {
-            if (newApp.getName().getGroupId().equals(oldApp.getName().getGroupId()) && newApp.getName().getArtifactId().equals(oldApp.getName().getArtifactId())) {
+            if (newApp.getGroupId().equals(oldApp.getGroupId()) && newApp.getArtifactId().equals(oldApp.getArtifactId())) {
                 appWithNewVersion = oldApp;
                 break;
             }

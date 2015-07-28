@@ -5,6 +5,7 @@ import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.domain.Status;
 import no.difi.deploymanager.domain.StatusCode;
 import no.difi.deploymanager.download.dto.DownloadDto;
+import no.difi.deploymanager.remotelist.service.RemoteListService;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -29,6 +30,7 @@ public class CheckVersionServiceTest {
     private CheckVersionService service;
 
     @Mock Environment environmentMock;
+    @Mock RemoteListService remoteListServiceMock;
     @Mock CheckVersionDto checkVersionDtoMock;
     @Mock DownloadDto downloadDtoMock;
 
@@ -37,8 +39,9 @@ public class CheckVersionServiceTest {
         initMocks(this);
 
         when(environmentMock.getRequiredProperty("location.version")).thenReturn(TEST_URL);
+        when(remoteListServiceMock.execute()).thenReturn(createApplicationListWithData());
 
-        service = new CheckVersionService(environmentMock, checkVersionDtoMock, downloadDtoMock);
+        service = new CheckVersionService(environmentMock, remoteListServiceMock, checkVersionDtoMock, downloadDtoMock);
     }
 
     @Test
@@ -110,8 +113,8 @@ public class CheckVersionServiceTest {
         ApplicationData sameData = sameList.getApplications().get(0);
         JSONObject jsonObject = createJsonObject(
                 sameData.getActiveVersion(),
-                sameData.getName().getGroupId(),
-                sameData.getName().getArtifactId()
+                sameData.getGroupId(),
+                sameData.getArtifactId()
         );
 
         when(checkVersionDtoMock.retrieveExternalArtifactStatus(anyString())).thenReturn(jsonObject);
@@ -128,8 +131,8 @@ public class CheckVersionServiceTest {
         ApplicationData otherVersionData = otherVersionList.getApplications().get(0);
         JSONObject jsonObject = createJsonObject(
                 "someVersion",
-                otherVersionData.getName().getGroupId(),
-                otherVersionData.getName().getArtifactId()
+                otherVersionData.getGroupId(),
+                otherVersionData.getArtifactId()
         );
 
         when(checkVersionDtoMock.retrieveExternalArtifactStatus(anyString())).thenReturn(jsonObject);

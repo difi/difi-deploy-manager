@@ -2,6 +2,8 @@ package no.difi.deploymanager.application;
 
 import no.difi.deploymanager.download.dto.DownloadDto;
 import no.difi.deploymanager.download.service.DownloadService;
+import no.difi.deploymanager.remotelist.dao.RemoteListDto;
+import no.difi.deploymanager.remotelist.service.RemoteListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
@@ -19,7 +21,7 @@ public class Beans {
 
     @Bean(name = "checkVersionService")
     public CheckVersionService checkVersionServiceBean() {
-        return new CheckVersionService(enviroment, checkVersionDtoBean(), downloadDtoBean());
+        return new CheckVersionService(enviroment, remoteListServiceBean(), checkVersionDtoBean(), downloadDtoBean());
     }
 
     @Bean(name = "checkVersionDto")
@@ -45,6 +47,16 @@ public class Beans {
     @Bean(name = "restartDto")
     public RestartDto restartDtoBean() {
         return new RestartDto(enviroment, ioUtilBean());
+    }
+
+    @Bean(name = "remoteListService")
+    public RemoteListService remoteListServiceBean() {
+        return new RemoteListService(enviroment, remoteListDtoBean());
+    }
+
+    @Bean(name = "remoteListDto")
+    public RemoteListDto remoteListDtoBean() {
+        return new RemoteListDto();
     }
 
     @Bean(name = "scheduler")

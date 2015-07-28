@@ -23,7 +23,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 
-import static no.difi.deploymanager.domain.MonitoringApplications.SPRINGFRAMEWORK_JDBC;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static no.difi.deploymanager.testutils.CustomAssert.assertApplicationList;
@@ -73,7 +72,7 @@ public class RestartDtoIntegrationTest {
         }
 
         ApplicationData application = new ApplicationData();
-        application.setName(SPRINGFRAMEWORK_JDBC);
+        application.setName("no.difi.deploymanager");
         application.setFilename(TEST_APPLICATION_FILENAME);
         application.setActiveVersion("0.9.0");
 

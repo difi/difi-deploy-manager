@@ -5,17 +5,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ApplicationData implements Serializable {
-    MonitoringApplications name;
+    String name;
+    String groupId;
+    String artifactId;
     String activeVersion;
     List<DownloadedVersion> downloadedVersions;
     private String filename;
 
-    public MonitoringApplications getName() {
+    public String getName() {
         return name;
     }
 
-    public void setName(MonitoringApplications name) {
+    public void setName(String name) {
         this.name = name;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getArtifactId() {
+        return artifactId;
+    }
+
+    public void setArtifactId(String artifactId) {
+        this.artifactId = artifactId;
     }
 
     public String getActiveVersion() {
@@ -40,6 +58,7 @@ public class ApplicationData implements Serializable {
         }
         return downloadedVersions;
     }
+
     public void setDownloadedVersions(List<DownloadedVersion> downloadedVersions) {
         this.downloadedVersions = downloadedVersions;
     }
