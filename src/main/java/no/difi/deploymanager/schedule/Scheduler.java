@@ -3,6 +3,7 @@ package no.difi.deploymanager.schedule;
 import no.difi.deploymanager.domain.Status;
 import no.difi.deploymanager.domain.StatusCode;
 import no.difi.deploymanager.download.service.DownloadService;
+import no.difi.deploymanager.restart.dto.RestartDto;
 import no.difi.deploymanager.restart.service.RestartService;
 import no.difi.deploymanager.versioncheck.service.CheckVersionService;
 import org.apache.logging.log4j.Level;

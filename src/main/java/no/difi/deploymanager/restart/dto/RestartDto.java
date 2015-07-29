@@ -2,6 +2,7 @@ package no.difi.deploymanager.restart.dto;
 
 import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.ApplicationList;
+import no.difi.deploymanager.domain.Self;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Repository;
@@ -44,6 +45,14 @@ public class RestartDto {
     }
 
     public boolean executeRestart(ApplicationData oldVersion, ApplicationData newVersion) throws IOException, InterruptedException {
+        Self thisApp = findAppVersion();
+        if (oldVersion.getName().equals(thisApp.getName())
+                && !oldVersion.getActiveVersion().contains(thisApp.getVersion())) {
+            //Have to be opposite from normal restart when self.
+            startProcess(newVersion);
+            return stopProcess(oldVersion);
+        }
+
         stopProcess(oldVersion);
         return startProcess(newVersion);
     }
@@ -93,7 +102,7 @@ public class RestartDto {
         return false;
     }
 
-    public String findProcessId(ApplicationData version) throws IOException, InterruptedException {
+    private String findProcessId(ApplicationData version) throws IOException, InterruptedException {
         final boolean isWindows = System.getProperty("os.name").toLowerCase().contains("windows");
         List<String> runningProcesses = findProcess(version, isWindows);
 
@@ -144,5 +153,9 @@ public class RestartDto {
         }
 
         return processes;
+    }
+
+    public Self findAppVersion() {
+        return ioUtil.getVersion();
     }
 }

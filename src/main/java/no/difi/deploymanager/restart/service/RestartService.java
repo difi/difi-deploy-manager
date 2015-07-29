@@ -1,9 +1,6 @@
 package no.difi.deploymanager.restart.service;
 
-import no.difi.deploymanager.domain.ApplicationData;
-import no.difi.deploymanager.domain.ApplicationList;
-import no.difi.deploymanager.domain.Status;
-import no.difi.deploymanager.domain.StatusCode;
+import no.difi.deploymanager.domain.*;
 import no.difi.deploymanager.versioncheck.dto.CheckVersionDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,8 +52,7 @@ public class RestartService {
                             if (result) {
                                 statuses.add(new Status(
                                         StatusCode.SUCCESS,
-                                        String.format("%s with version %s is started.",
-                                                newApp.getArtifactId(), newApp.getActiveVersion())
+                                        String.format("%s with version %s is started.", newApp.getArtifactId(), newApp.getActiveVersion())
                                 ));
                             }
                         }

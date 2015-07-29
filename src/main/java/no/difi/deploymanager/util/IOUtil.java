@@ -1,10 +1,12 @@
 package no.difi.deploymanager.util;
 
 import no.difi.deploymanager.domain.ApplicationList;
+import no.difi.deploymanager.domain.Self;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.util.List;
+import java.util.Properties;
 
 @Component
 public class IOUtil {
@@ -60,5 +62,27 @@ public class IOUtil {
         oos.writeObject(objectToSave);
 
         oos.close();
+    }
+
+    public synchronized Self getVersion() {
+        Self self = new Self();
+
+        Package pack = getClass().getPackage();
+        if (pack != null) {
+            self.setName(pack.getName());
+            if (self.getName() == null) {
+                self.setName(pack.getImplementationTitle());
+                if (self.getName() == null) {
+                    self.setName(pack.getSpecificationTitle());
+                }
+            }
+
+            self.setVersion(pack.getImplementationVersion());
+            if (self.getVersion() == null) {
+                self.setVersion(pack.getSpecificationVersion());
+            }
+        }
+
+        return self;
     }
 }
