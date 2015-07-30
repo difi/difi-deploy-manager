@@ -58,18 +58,11 @@ public class RestartDto {
     }
 
     public boolean startProcess(ApplicationData processToStart) {
-        final boolean isWindows = System.getProperty("os.name").toLowerCase().contains("windows");
         try {
-            if (isWindows) {
-                //TODO: Implement startProcess for Windows
-                System.out.println("Not implemented startup for windows yet");
-                return true;
-            } else {
-                String startCommand = "java -jar " + System.getProperty("user.dir") + environment.getProperty("download.base.path") + "/" + processToStart.getFilename();
+            String startCommand = "java -jar " + System.getProperty("user.dir") + environment.getProperty("download.base.path") + "/" + processToStart.getFilename();
 
-                Process process = Runtime.getRuntime().exec(new String[]{ROOT_PATH_FOR_SH, "-c", startCommand});
-                return process.isAlive();
-            }
+            Process process = Runtime.getRuntime().exec(new String[]{ROOT_PATH_FOR_SH, "-c", startCommand});
+            return process.isAlive();
         } catch (IOException e) {
             return false;
         }
@@ -79,27 +72,28 @@ public class RestartDto {
         String processId;
         final boolean isWindows = System.getProperty("os.name").toLowerCase().contains("windows");
         try {
-            processId = findProcessId(oldVersion);
+            String killCommand = "";
             if (isWindows) {
-                //TODO: Windows version of shutdown is not implemented.
-                System.out.println("Not implemented shutdown of process for windows");
-                return true;
+                killCommand = "taskkill /pid ";
             }
             else {
-                if (!isEmpty(processId)) {
-                    String killCommand = "kill 9 " + processId;
-                    Process process = Runtime.getRuntime().exec(killCommand);
-                    process.waitFor();
-                    process.destroy();
-                    return true;
-                }
+                killCommand = "kill 9 ";
             }
+
+            processId = findProcessId(oldVersion);
+            if (!isEmpty(processId)) {
+                Process process = Runtime.getRuntime().exec(killCommand + processId);
+                process.waitFor();
+                process.destroy();
+                return true;
+            }
+            return false;
+
         } catch (IOException io) {
             return false;
         } catch (InterruptedException e) {
             return false;
         }
-        return false;
     }
 
     private String findProcessId(ApplicationData version) throws IOException, InterruptedException {
@@ -111,7 +105,12 @@ public class RestartDto {
                 if (running.contains(version.getFilename()) && !running.contains(ROOT_PATH_FOR_SH)) {
                     List<String> processParts = asList(running.split(" "));
 
-                    return processParts.get(0);
+                    if (isWindows) {
+                        return processParts.get(1);
+                    }
+                    else {
+                        return processParts.get(0);
+                    }
                 }
             }
         }
@@ -125,10 +124,12 @@ public class RestartDto {
         String line;
 
         if (isWindows) {
-            //TODO: Not implemented finding process for windows yet.
-            System.out.println("Not implemented find process for windows yet.");
-            String findWindowsApp = "";
-            //            process = Runtime.getRuntime().exec(findWindowsApp);
+            String[] findWindowsApp = new String[] {
+                    "tasklist /v /fo csv",
+                    "| findstr /i" + oldVersion.getFilename()
+
+            };
+            process = Runtime.getRuntime().exec(findWindowsApp);
         }
         else {
             String[] findUnixApp = new String[] {
@@ -138,19 +139,19 @@ public class RestartDto {
             };
 
             process = Runtime.getRuntime().exec(findUnixApp);
-            InputStream input = process.getInputStream();
-            BufferedReader stdout = new BufferedReader(new InputStreamReader(input));
+        }
 
-            do {
-                line = stdout.readLine();
-                processes.add(line);
-            }
-            while (line != null);
+        InputStream input = process.getInputStream();
+        BufferedReader stdout = new BufferedReader(new InputStreamReader(input));
+
+        do {
+            line = stdout.readLine();
+            processes.add(line);
         }
-        if (process != null) {
-            process.waitFor();
-            process.destroy();
-        }
+        while (line != null);
+
+        process.waitFor();
+        process.destroy();
 
         return processes;
     }
