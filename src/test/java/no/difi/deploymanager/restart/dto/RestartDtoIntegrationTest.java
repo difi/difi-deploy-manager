@@ -3,6 +3,7 @@ package no.difi.deploymanager.restart.dto;
 import no.difi.deploymanager.application.Application;
 import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.ApplicationList;
+import org.apache.logging.log4j.core.util.FileUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import no.difi.deploymanager.util.IOUtil;
+import org.springframework.util.FileCopyUtils;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -41,7 +43,10 @@ public class RestartDtoIntegrationTest {
     private static final String TEST_APPLICATION_FILENAME = "deploy-manager-health-check-0.9.0.jar";
     private static final String TEMP_TEST_JAR_FILE = "./bin/" + TEST_APPLICATION_FILENAME;
     private static final String PERM_TEST_JAR_FILE = "./bin-test/" + TEST_APPLICATION_FILENAME;
+    private static final String TEMP_TEST_JAR_FILE_WIN = System.getProperty("user.dir") + "\\bin\\" + TEST_APPLICATION_FILENAME;
+    private static final String PERM_TEST_JAR_FILE_WIN = System.getProperty("user.dir") + "\\bin-test\\" + TEST_APPLICATION_FILENAME;
     private static String basePath;
+    private static String windowsBinTestPath;
     private static String forRestartPathAndFile;
     private static String runningPathAndFile;
 
@@ -69,6 +74,9 @@ public class RestartDtoIntegrationTest {
     public void should_start_and_restart_and_stop_running_process_on_current_OS() throws Exception {
         if (!System.getProperty("os.name").toLowerCase().contains("windows")) {
             Runtime.getRuntime().exec(new String[]{"cp", PERM_TEST_JAR_FILE, TEMP_TEST_JAR_FILE});
+        }
+        else {
+            Runtime.getRuntime().exec("cmd /c copy " + PERM_TEST_JAR_FILE_WIN + " "  + TEMP_TEST_JAR_FILE_WIN);
         }
 
         ApplicationData application = new ApplicationData();

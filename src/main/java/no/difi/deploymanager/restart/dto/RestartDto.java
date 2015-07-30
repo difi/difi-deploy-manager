@@ -16,10 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static org.springframework.util.StringUtils.getFilename;
 import static org.springframework.util.StringUtils.isEmpty;
 
 @Repository
 public class RestartDto {
+    public static final int PROCESS_DELAY_MILLIS = 1000;
     private static String ROOT_PATH_FOR_SH = "/bin/sh";
 
     private final Environment environment;
@@ -58,10 +60,19 @@ public class RestartDto {
     }
 
     public boolean startProcess(ApplicationData processToStart) {
+        final boolean isWindows = System.getProperty("os.name").toLowerCase().contains("windows");
         try {
-            String startCommand = "java -jar " + System.getProperty("user.dir") + environment.getProperty("download.base.path") + "/" + processToStart.getFilename();
+            Process process;
+            if (isWindows) {
+                String[] startCommand = new String[] {"java", "-jar",
+                        (System.getProperty("user.dir") + environment.getProperty("download.base.path") + "/" + processToStart.getFilename()).replace("/", "\\")};
+                process = Runtime.getRuntime().exec(startCommand);
+            }
+            else {
+                String startCommand = "java -jar " + System.getProperty("user.dir") + environment.getProperty("download.base.path") + "/" + processToStart.getFilename();
+                process = Runtime.getRuntime().exec(new String[]{ROOT_PATH_FOR_SH, "-c", startCommand});
+            }
 
-            Process process = Runtime.getRuntime().exec(new String[]{ROOT_PATH_FOR_SH, "-c", startCommand});
             return process.isAlive();
         } catch (IOException e) {
             return false;
@@ -102,13 +113,39 @@ public class RestartDto {
 
         for (String running : runningProcesses) {
             if (!isEmpty(running)) {
-                if (running.contains(version.getFilename()) && !running.contains(ROOT_PATH_FOR_SH)) {
-                    List<String> processParts = asList(running.split(" "));
+                if (isWindows) {
+                    List<String> processParts = asList(asList(running.split(" ")).get(0).split(","));
 
-                    if (isWindows) {
-                        return processParts.get(1);
+                    //When windows, we have to do a bit more to find the correct process.
+                    String pid = processParts.get(1);
+
+                    String[] command = new String[] {"wmic", "process", "where", "processid", "=", pid, "get", "commandline"};
+                    Process checkProcess = Runtime.getRuntime().exec(command);
+
+                    InputStream input = checkProcess.getInputStream();
+                    BufferedReader stdout = new BufferedReader(new InputStreamReader(input));
+
+                    String line;
+                    String pidToKill = "";
+                    do {
+                        line = stdout.readLine();
+                        if (line != null && line.contains(version.getFilename())) {
+                            pidToKill = pid;
+                            break;
+                        }
                     }
-                    else {
+                    while (line != null);
+
+                    checkProcess.waitFor();
+                    checkProcess.destroy();
+
+                    return pidToKill;
+                }
+                else {
+                    if (running.contains(version.getFilename()) && !running.contains(ROOT_PATH_FOR_SH)) {
+                        List<String> processParts = asList(running.split(" "));
+
+                        // Only one process will be fuond when nix-based system.
                         return processParts.get(0);
                     }
                 }
@@ -120,14 +157,14 @@ public class RestartDto {
 
     private List<String> findProcess(ApplicationData oldVersion, boolean isWindows) throws IOException, InterruptedException {
         Process process = null;
-        List<String> processes = new ArrayList<>();
-        String line;
+        List<String> output = new ArrayList<>();
 
         if (isWindows) {
             String[] findWindowsApp = new String[] {
-                    "tasklist /v /fo csv",
-                    "| findstr /i" + oldVersion.getFilename()
-
+                    "tasklist",
+                    "/v",
+                    "/fo",
+                    "csv"
             };
             process = Runtime.getRuntime().exec(findWindowsApp);
         }
@@ -143,17 +180,20 @@ public class RestartDto {
 
         InputStream input = process.getInputStream();
         BufferedReader stdout = new BufferedReader(new InputStreamReader(input));
+        String line;
 
         do {
             line = stdout.readLine();
-            processes.add(line);
+            if (isWindows && line != null && line.contains("java.exe")) {
+                output.add(line);
+            }
         }
         while (line != null);
 
         process.waitFor();
         process.destroy();
 
-        return processes;
+        return output;
     }
 
     public Self findAppVersion() {
