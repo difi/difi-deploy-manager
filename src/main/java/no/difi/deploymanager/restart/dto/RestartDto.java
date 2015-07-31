@@ -183,7 +183,7 @@ public class RestartDto {
 
         do {
             line = stdout.readLine();
-            if (IS_WINDOWS && line != null && line.contains("java.exe")) {
+            if (IS_WINDOWS && line != null && line.contains("java.exe") || !IS_WINDOWS) {
                 output.add(line);
             }
         }
