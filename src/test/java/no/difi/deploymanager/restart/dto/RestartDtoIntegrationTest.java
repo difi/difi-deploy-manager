@@ -99,12 +99,6 @@ public class RestartDtoIntegrationTest {
         File forRestartFile = new File(forRestartPathAndFile);
         File runningFile = new File(runningPathAndFile);
 
-
-
-        System.out.println("**********");
-        System.out.println(forRestartPathAndFile);
-        System.out.println(runningPathAndFile);
-
         forRestartFile.delete();
         runningFile.delete();
 
