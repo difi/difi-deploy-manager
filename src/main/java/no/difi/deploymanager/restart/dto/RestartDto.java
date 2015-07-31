@@ -85,7 +85,7 @@ public class RestartDto {
         try {
             String killCommand = "";
             if (isWindows) {
-                killCommand = "taskkill /pid ";
+                killCommand = "taskkill /F /pid ";
             }
             else {
                 killCommand = "kill 9 ";
@@ -93,7 +93,7 @@ public class RestartDto {
 
             processId = findProcessId(oldVersion);
             if (!isEmpty(processId)) {
-                Process process = Runtime.getRuntime().exec(killCommand + processId);
+                Process process = Runtime.getRuntime().exec(killCommand + processId.replace("\"", ""));
                 process.waitFor();
                 process.destroy();
                 return true;
@@ -110,6 +110,7 @@ public class RestartDto {
     private String findProcessId(ApplicationData version) throws IOException, InterruptedException {
         final boolean isWindows = System.getProperty("os.name").toLowerCase().contains("windows");
         List<String> runningProcesses = findProcess(version, isWindows);
+        String processIdPart = "";
 
         for (String running : runningProcesses) {
             if (!isEmpty(running)) {
@@ -119,18 +120,17 @@ public class RestartDto {
                     //When windows, we have to do a bit more to find the correct process.
                     String pid = processParts.get(1);
 
-                    String[] command = new String[] {"wmic", "process", "where", "processid", "=", pid, "get", "commandline"};
+                    String command = "wmic process where processid=" + pid.replace("\"", "") + " get commandline";
                     Process checkProcess = Runtime.getRuntime().exec(command);
 
                     InputStream input = checkProcess.getInputStream();
                     BufferedReader stdout = new BufferedReader(new InputStreamReader(input));
 
                     String line;
-                    String pidToKill = "";
                     do {
                         line = stdout.readLine();
                         if (line != null && line.contains(version.getFilename())) {
-                            pidToKill = pid;
+                            processIdPart = pid;
                             break;
                         }
                     }
@@ -139,7 +139,9 @@ public class RestartDto {
                     checkProcess.waitFor();
                     checkProcess.destroy();
 
-                    return pidToKill;
+                    if (!isEmpty(processIdPart)) {
+                        return processIdPart;
+                    }
                 }
                 else {
                     if (running.contains(version.getFilename()) && !running.contains(ROOT_PATH_FOR_SH)) {
