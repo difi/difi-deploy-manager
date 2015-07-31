@@ -4,13 +4,13 @@ Pull project and build with
 <pre>mvn clean install </pre>
 
 JAR is generated in target folder. To run from project root:
-<pre>java -jar ./target/no.difi.deploymanager-0.9.0-SNAPSHOT.jar
+<pre>java -jar ./target/no.difi.deploymanager-0.9.0-SNAPSHOT.jar</pre>
 
 ##Limitations
 Alpha version (PoC)
 
 Restarting of JAR-files. Application using command:
-<pre>java -jar name-of-app</pre>
+<pre>java -jar [name-of-app]</pre>
 
 ##Compability
 Working for Linux, Mac and Windows
