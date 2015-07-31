@@ -10,7 +10,7 @@ JAR is generated in target folder. To run from project root:
 Alpha version (PoC)
 
 Restarting of JAR-files. Application using command:
-<pre>java -jar [name]</pre>
+<pre>java -jar name-of-app</pre>
 
 ##Compability
 Working for Linux, Mac and Windows
