@@ -21,7 +21,7 @@ import static org.springframework.util.StringUtils.isEmpty;
 
 @Repository
 public class RestartDto {
-    public static final int PROCESS_DELAY_MILLIS = 1000;
+    public static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
     private static String ROOT_PATH_FOR_SH = "/bin/sh";
 
     private final Environment environment;
@@ -60,10 +60,9 @@ public class RestartDto {
     }
 
     public boolean startProcess(ApplicationData processToStart) {
-        final boolean isWindows = System.getProperty("os.name").toLowerCase().contains("windows");
         try {
             Process process;
-            if (isWindows) {
+            if (IS_WINDOWS) {
                 String[] startCommand = new String[] {"java", "-jar",
                         (System.getProperty("user.dir") + environment.getProperty("download.base.path") + "/" + processToStart.getFilename()).replace("/", "\\")};
                 process = Runtime.getRuntime().exec(startCommand);
@@ -81,10 +80,9 @@ public class RestartDto {
 
     public boolean stopProcess(ApplicationData oldVersion) {
         String processId;
-        final boolean isWindows = System.getProperty("os.name").toLowerCase().contains("windows");
         try {
             String killCommand = "";
-            if (isWindows) {
+            if (IS_WINDOWS) {
                 killCommand = "taskkill /F /pid ";
             }
             else {
@@ -108,13 +106,12 @@ public class RestartDto {
     }
 
     private String findProcessId(ApplicationData version) throws IOException, InterruptedException {
-        final boolean isWindows = System.getProperty("os.name").toLowerCase().contains("windows");
-        List<String> runningProcesses = findProcess(version, isWindows);
+        List<String> runningProcesses = findProcess(version);
         String processIdPart = "";
 
         for (String running : runningProcesses) {
             if (!isEmpty(running)) {
-                if (isWindows) {
+                if (IS_WINDOWS) {
                     List<String> processParts = asList(asList(running.split(" ")).get(0).split(","));
 
                     //When windows, we have to do a bit more to find the correct process.
@@ -157,11 +154,11 @@ public class RestartDto {
         return "";
     }
 
-    private List<String> findProcess(ApplicationData oldVersion, boolean isWindows) throws IOException, InterruptedException {
+    private List<String> findProcess(ApplicationData oldVersion) throws IOException, InterruptedException {
         Process process = null;
         List<String> output = new ArrayList<>();
 
-        if (isWindows) {
+        if (IS_WINDOWS) {
             String[] findWindowsApp = new String[] {
                     "tasklist",
                     "/v",
@@ -186,7 +183,7 @@ public class RestartDto {
 
         do {
             line = stdout.readLine();
-            if (isWindows && line != null && line.contains("java.exe")) {
+            if (IS_WINDOWS && line != null && line.contains("java.exe")) {
                 output.add(line);
             }
         }
