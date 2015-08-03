@@ -3,32 +3,21 @@ package no.difi.deploymanager.restart.dto;
 import no.difi.deploymanager.application.Application;
 import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.ApplicationList;
-import org.apache.logging.log4j.core.util.FileUtils;
+import no.difi.deploymanager.util.IOUtil;
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import no.difi.deploymanager.util.IOUtil;
-import org.springframework.util.FileCopyUtils;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Scanner;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static no.difi.deploymanager.testutils.CustomAssert.assertApplicationList;
 import static no.difi.deploymanager.testutils.ObjectMotherApplicationList.createApplicationListWithData;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 @RunWith(SpringJUnit4ClassRunner.class)

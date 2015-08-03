@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.util.List;
-import java.util.Properties;
 
 @Component
 public class IOUtil {

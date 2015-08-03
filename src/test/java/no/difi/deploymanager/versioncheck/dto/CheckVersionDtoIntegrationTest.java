@@ -2,8 +2,10 @@ package no.difi.deploymanager.versioncheck.dto;
 
 import no.difi.deploymanager.application.Application;
 import no.difi.deploymanager.domain.ApplicationList;
+import no.difi.deploymanager.util.Common;
+import no.difi.deploymanager.util.IOUtil;
+import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
 import org.json.JSONObject;
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,17 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import no.difi.deploymanager.util.Common;
-import no.difi.deploymanager.util.IOUtil;
-import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
 
 import java.io.File;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static no.difi.deploymanager.testutils.CustomAssert.assertApplicationList;
 import static no.difi.deploymanager.testutils.ObjectMotherApplicationList.createApplicationListWithData;
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)

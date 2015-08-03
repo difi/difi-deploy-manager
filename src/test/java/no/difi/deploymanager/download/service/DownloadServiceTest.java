@@ -4,23 +4,22 @@ import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.domain.Status;
 import no.difi.deploymanager.domain.StatusCode;
 import no.difi.deploymanager.download.dto.DownloadDto;
+import no.difi.deploymanager.restart.dto.RestartDto;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.springframework.core.env.Environment;
-import no.difi.deploymanager.restart.dto.RestartDto;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 
+import static no.difi.deploymanager.testutils.ObjectMotherApplicationList.createApplicationListEmpty;
+import static no.difi.deploymanager.testutils.ObjectMotherApplicationList.createApplicationListWithData;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
-import static no.difi.deploymanager.testutils.ObjectMotherApplicationList.createApplicationListEmpty;
-import static no.difi.deploymanager.testutils.ObjectMotherApplicationList.createApplicationListWithData;
 
 public class DownloadServiceTest {
     private DownloadService service;

@@ -4,12 +4,11 @@ import no.difi.deploymanager.domain.ApplicationData;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import no.difi.deploymanager.util.IOUtil;
 
 import java.io.File;
 
-import static org.junit.Assert.*;
 import static no.difi.deploymanager.testutils.ObjectMotherApplicationList.createApplicationListWithData;
+import static org.junit.Assert.*;
 
 //Requirements for this test class is access to write on disk. Doing a real test for file IO operations.
 public class IOUtilIntegrationTest {

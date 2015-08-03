@@ -3,20 +3,20 @@ package no.difi.deploymanager.restart.service;
 import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.Status;
 import no.difi.deploymanager.domain.StatusCode;
+import no.difi.deploymanager.restart.dto.RestartDto;
 import no.difi.deploymanager.versioncheck.dto.CheckVersionDto;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import no.difi.deploymanager.restart.dto.RestartDto;
 
 import java.io.IOException;
 
+import static no.difi.deploymanager.testutils.ObjectMotherApplicationList.createApplicationListEmpty;
+import static no.difi.deploymanager.testutils.ObjectMotherApplicationList.createApplicationListWithData;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
-import static no.difi.deploymanager.testutils.ObjectMotherApplicationList.*;
 
 public class RestartServiceTest {
     private RestartService service;

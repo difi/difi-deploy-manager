@@ -4,17 +4,16 @@ import no.difi.deploymanager.download.dto.DownloadDto;
 import no.difi.deploymanager.download.service.DownloadService;
 import no.difi.deploymanager.remotelist.dao.RemoteListDto;
 import no.difi.deploymanager.remotelist.service.RemoteListService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Component;
 import no.difi.deploymanager.restart.dto.RestartDto;
 import no.difi.deploymanager.restart.service.RestartService;
 import no.difi.deploymanager.schedule.Scheduler;
 import no.difi.deploymanager.util.IOUtil;
 import no.difi.deploymanager.versioncheck.dto.CheckVersionDto;
 import no.difi.deploymanager.versioncheck.service.CheckVersionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 @Configuration
 public class Beans {

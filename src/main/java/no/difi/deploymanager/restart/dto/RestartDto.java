@@ -3,10 +3,10 @@ package no.difi.deploymanager.restart.dto;
 import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.domain.Self;
+import no.difi.deploymanager.util.IOUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Repository;
-import no.difi.deploymanager.util.IOUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static org.springframework.util.StringUtils.getFilename;
 import static org.springframework.util.StringUtils.isEmpty;
 
 @Repository
@@ -61,7 +60,6 @@ public class RestartDto {
 
     public boolean startProcess(ApplicationData processToStart) {
         try {
-            Process process;
             if (IS_WINDOWS) {
                 String[] startCommand = new String[] {"java", "-jar",
                         (System.getProperty("user.dir") + environment.getProperty("download.base.path") + "/" + processToStart.getFilename()).replace("/", "\\")};
@@ -81,7 +79,7 @@ public class RestartDto {
     public boolean stopProcess(ApplicationData oldVersion) {
         String processId;
         try {
-            String killCommand = "";
+            String killCommand;
             if (IS_WINDOWS) {
                 killCommand = "taskkill /F /pid ";
             }
