@@ -4,7 +4,7 @@ Pull project and build with
 <pre>mvn clean install </pre>
 
 JAR is generated in target folder. To run from project root:
-<pre>java -jar ./target/no.difi.deploymanager-0.9.0-SNAPSHOT.jar</pre>
+<pre>java -jar ./target/no.difi.deploymanager-0.9.1-SNAPSHOT.jar</pre>
 
 ##Limitations
 Alpha version (PoC)

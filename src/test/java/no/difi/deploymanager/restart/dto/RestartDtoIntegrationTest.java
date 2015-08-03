@@ -76,7 +76,7 @@ public class RestartDtoIntegrationTest {
         ApplicationData application = new ApplicationData();
         application.setName("no.difi.deploymanager");
         application.setFilename(TEST_APPLICATION_FILENAME);
-        application.setActiveVersion("0.9.0");
+        application.setActiveVersion("0.9.1");
 
         assertTrue(restartDto.startProcess(application));
         assertTrue(restartDto.executeRestart(application, application));

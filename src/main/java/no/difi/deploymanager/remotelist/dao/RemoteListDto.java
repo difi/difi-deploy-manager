@@ -24,7 +24,7 @@ public class RemoteListDto {
         remoteApp2.setName("difi-deploy-manager");
         remoteApp2.setGroupId("difi-deploy-manager");
         remoteApp2.setArtifactId("no.difi.deploymanager");
-        remoteApp2.setActiveVersion("0.9.0-SNAPSHOT");
+        remoteApp2.setActiveVersion("0.9.1-SNAPSHOT");
 
         return remoteApplicationList;
     }
