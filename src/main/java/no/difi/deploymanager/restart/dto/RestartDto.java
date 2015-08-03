@@ -134,13 +134,16 @@ public class RestartDto {
                     checkProcess.waitFor();
                     checkProcess.destroy();
 
+                    // Give process time to destroy itself.
+                    Thread.sleep(100);
+
                     if (!isEmpty(processIdPart)) {
                         return processIdPart;
                     }
                 }
                 else {
+                    List<String> processParts = asList(running.split(" "));
                     if (running.contains(version.getFilename()) && !running.contains(ROOT_PATH_FOR_SH)) {
-                        List<String> processParts = asList(running.split(" "));
 
                         // Only one process will be fuond when nix-based system.
                         return processParts.get(0);
