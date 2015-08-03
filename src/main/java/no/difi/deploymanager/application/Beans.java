@@ -6,6 +6,7 @@ import no.difi.deploymanager.remotelist.dao.RemoteListDto;
 import no.difi.deploymanager.remotelist.service.RemoteListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import no.difi.deploymanager.restart.dto.RestartDto;
@@ -15,7 +16,7 @@ import no.difi.deploymanager.util.IOUtil;
 import no.difi.deploymanager.versioncheck.dto.CheckVersionDto;
 import no.difi.deploymanager.versioncheck.service.CheckVersionService;
 
-@Component
+@Configuration
 public class Beans {
     @Autowired Environment enviroment;
 
@@ -35,7 +36,7 @@ public class Beans {
     }
 
     @Bean(name = "downloadDto")
-    private DownloadDto downloadDtoBean() {
+    public DownloadDto downloadDtoBean() {
         return new DownloadDto(enviroment, ioUtilBean());
     }
 

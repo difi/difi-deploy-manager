@@ -3,18 +3,18 @@ package no.difi.deploymanager.schedule;
 import no.difi.deploymanager.domain.Status;
 import no.difi.deploymanager.domain.StatusCode;
 import no.difi.deploymanager.download.service.DownloadService;
-import no.difi.deploymanager.restart.dto.RestartDto;
 import no.difi.deploymanager.restart.service.RestartService;
 import no.difi.deploymanager.versioncheck.service.CheckVersionService;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joda.time.DateTime;
+import org.joda.time.Duration;
+import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -39,38 +39,38 @@ public class Scheduler {
 
     @Scheduled(cron = CRON_RUN_CHECK_FOR_VERSION)
     public void checkForNewVersion() {
-        LocalDateTime start = LocalDateTime.now();
+        DateTime start = new DateTime();
 
         logStatus(checkVersionService.execute());
 
-        LocalDateTime stop = LocalDateTime.now();
-        Duration timeUsed = Duration.between(start, stop);
+        DateTime stop = new DateTime();
+        Duration duration = new Duration(start, stop);
 
-        logger.log(Level.INFO, String.format("Checking for new versions took %d sec to run.", timeUsed.getSeconds()));
+        logger.log(Level.INFO, String.format("Checking for new versions took %d sec to run.", duration.getStandardSeconds()));
     }
 
     @Scheduled(cron = CRON_RUN_DOWNLOAD_NEW_VERSION)
     public void downloadNewVersion() {
-        LocalDateTime start = LocalDateTime.now();
+        DateTime start = new DateTime();
 
         logStatus(downloadService.execute());
 
-        LocalDateTime stop = LocalDateTime.now();
-        Duration timeUsed = Duration.between(start, stop);
+        DateTime stop = new DateTime();
+        Duration duration = new Duration(start, stop);
 
-        logger.log(Level.INFO, String.format("Checking for new versions took %d sec to run.", timeUsed.getSeconds()));
+        logger.log(Level.INFO, String.format("Checking for new versions took %d sec to run.", duration.getStandardSeconds()));
     }
 
     @Scheduled(cron = CRON_RESTART_APPLICATIONS)
     public void restartApplications() {
-        LocalDateTime start = LocalDateTime.now();
+        DateTime start = new DateTime();
 
         logStatus(restartService.execute());
 
-        LocalDateTime stop = LocalDateTime.now();
-        Duration timeUsed = Duration.between(start, stop);
+        DateTime stop = new DateTime();
+        Duration duration = new Duration(start, stop);
 
-        logger.log(Level.INFO, String.format("Checking for new versions took %d sec to run.", timeUsed.getSeconds()));
+        logger.log(Level.INFO, String.format("Checking for new versions took %d sec to run.", duration.getStandardSeconds()));
     }
 
     private void logStatus(List<Status> result) {

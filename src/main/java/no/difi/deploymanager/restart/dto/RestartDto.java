@@ -65,14 +65,14 @@ public class RestartDto {
             if (IS_WINDOWS) {
                 String[] startCommand = new String[] {"java", "-jar",
                         (System.getProperty("user.dir") + environment.getProperty("download.base.path") + "/" + processToStart.getFilename()).replace("/", "\\")};
-                process = Runtime.getRuntime().exec(startCommand);
+                Runtime.getRuntime().exec(startCommand);
             }
             else {
                 String startCommand = "java -jar " + System.getProperty("user.dir") + environment.getProperty("download.base.path") + "/" + processToStart.getFilename();
-                process = Runtime.getRuntime().exec(new String[]{ROOT_PATH_FOR_SH, "-c", startCommand});
+                Runtime.getRuntime().exec(new String[]{ROOT_PATH_FOR_SH, "-c", startCommand});
             }
 
-            return process.isAlive();
+            return true;
         } catch (IOException e) {
             return false;
         }
