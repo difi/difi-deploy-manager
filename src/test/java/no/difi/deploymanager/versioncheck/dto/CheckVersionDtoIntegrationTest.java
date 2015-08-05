@@ -1,6 +1,6 @@
 package no.difi.deploymanager.versioncheck.dto;
 
-import no.difi.deploymanager.application.Application;
+import no.difi.deploymanager.artifact.Application;
 import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.util.Common;
 import no.difi.deploymanager.util.IOUtil;

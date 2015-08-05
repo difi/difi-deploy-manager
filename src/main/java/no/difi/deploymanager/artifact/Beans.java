@@ -1,4 +1,4 @@
-package no.difi.deploymanager.application;
+package no.difi.deploymanager.artifact;
 
 import no.difi.deploymanager.download.dto.DownloadDto;
 import no.difi.deploymanager.download.service.DownloadService;

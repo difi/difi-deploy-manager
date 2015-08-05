@@ -1,4 +1,4 @@
-package no.difi.deploymanager.application;
+package no.difi.deploymanager.artifact;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
