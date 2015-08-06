@@ -8,6 +8,7 @@ import no.difi.deploymanager.restart.dto.RestartDto;
 import no.difi.deploymanager.restart.service.RestartService;
 import no.difi.deploymanager.schedule.Scheduler;
 import no.difi.deploymanager.util.IOUtil;
+import no.difi.deploymanager.util.JsonUtil;
 import no.difi.deploymanager.versioncheck.dto.CheckVersionDto;
 import no.difi.deploymanager.versioncheck.service.CheckVersionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class Beans {
 
     @Bean(name = "checkVersionDto")
     public CheckVersionDto checkVersionDtoBean() {
-        return new CheckVersionDto(enviroment, ioUtilBean());
+        return new CheckVersionDto(enviroment, ioUtilBean(), jsonUtilBean());
     }
 
     @Bean(name = "downloadService")
@@ -67,5 +68,10 @@ public class Beans {
     @Bean(name = "ioUtil")
     public IOUtil ioUtilBean() {
         return new IOUtil();
+    }
+
+    @Bean(name = "jsonUtil")
+    public JsonUtil jsonUtilBean() {
+        return new JsonUtil();
     }
 }

@@ -4,6 +4,7 @@ import no.difi.deploymanager.artifact.Application;
 import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.util.Common;
 import no.difi.deploymanager.util.IOUtil;
+import no.difi.deploymanager.util.JsonUtil;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
 import org.json.JSONObject;
 import org.junit.AfterClass;
@@ -28,6 +29,7 @@ public class CheckVersionDtoIntegrationTest {
 
     @Autowired Environment environment;
     @Autowired IOUtil ioUtil;
+    @Autowired JsonUtil jsonUtil;
 
     private static String TEST_PATH;
     private static final String TEST_GROUP_ID = "org.springframework";
@@ -48,7 +50,7 @@ public class CheckVersionDtoIntegrationTest {
                 TEST_ARTIFACT_ID
         );
 
-        checkVersionDto = new CheckVersionDto(environment, ioUtil);
+        checkVersionDto = new CheckVersionDto(environment, ioUtil, jsonUtil);
     }
 
     @Test

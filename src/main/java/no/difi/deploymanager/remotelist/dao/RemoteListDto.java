@@ -4,11 +4,14 @@ import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.ApplicationList;
 import org.springframework.stereotype.Repository;
 
+import java.net.URL;
 import java.util.List;
 
 @Repository
 public class RemoteListDto {
     public ApplicationList getRemoteList() {
+
+
         //TODO: Returning mock for application list. Replace when point to retrieve from is decided.
 
         ApplicationList remoteApplicationList = new ApplicationList();
