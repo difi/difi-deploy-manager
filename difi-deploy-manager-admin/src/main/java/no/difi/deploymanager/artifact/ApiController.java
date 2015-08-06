@@ -24,7 +24,6 @@ public class ApiController {
         this.applicationService = applicationService;
     }
 
-
     @RequestMapping(method = RequestMethod.GET, value = "/app")
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody
@@ -33,29 +32,28 @@ public class ApiController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/app")
-    public @ResponseBody int updateArtifact(
-            @RequestParam String name,
-            @RequestParam String groupId,
-            @RequestParam String artifactId,
-            @RequestParam String version,
-            @RequestParam ArtifactType type,
-            @RequestParam String startParams) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public @ResponseBody boolean updateArtifact(@RequestParam String name,
+                          @RequestParam String version,
+                          @RequestParam ArtifactType type,
+                          @RequestParam(required = false) String groupId,
+                          @RequestParam(required = false) String artifactId,
+                          @RequestParam(required = false) String startParams) {
         try {
             validateUpdateInput(name, groupId, artifactId, version, type);
         }
         catch (IllegalArgumentException e) {
             logger.warn("Validation failed.", e.getCause());
-            return Response.SC_EXPECTATION_FAILED;
+
+            return false;
         }
 
-        applicationService.updateArtifact(mapApplicationFromInput(name, groupId, artifactId, version, type, startParams));
-
-        return Response.SC_CREATED;
+        return applicationService.updateArtifact(mapApplicationFromInput(name, groupId, artifactId, version, type, startParams));
     }
 
     private void validateUpdateInput(String name, String groupId, String artifactId, String version, ArtifactType type) {
         if (isBlank(name) || isBlank(version)) {
-            throw new IllegalArgumentException("Required parameter name and/or version is missing.");
+            throw new IllegalArgumentException("Required parameter version is missing.");
         }
 
         if (type == null) {
