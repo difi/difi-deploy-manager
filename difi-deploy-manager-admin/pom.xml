@@ -10,7 +10,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>difi-deploy-manager-admin</groupId>
+  <groupId>no.difi.deploymanager.admin</groupId>
   <artifactId>difi.deploy.manager.admin</artifactId>
   <version>0.9.1-SNAPSHOT</version>
 

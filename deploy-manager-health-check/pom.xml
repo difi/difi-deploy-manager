@@ -11,7 +11,7 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>difi-deploy-manager-health-check</groupId>
+  <groupId>no.difi.deploymanager.healthchekc</groupId>
   <artifactId>deploy-manager-health-check</artifactId>
   <version>0.9.1</version>
 
