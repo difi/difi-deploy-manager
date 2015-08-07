@@ -42,6 +42,7 @@ public class RemoteListDto {
                 app.setGroupId(convert(dataObject, "groupId"));
                 app.setArtifactId(convert(dataObject, "artifactId"));
                 app.setActiveVersion(convert(dataObject, "version"));
+                app.artifactType(convert(dataObject, "applicationType"));
                 app.setFilename(convert(dataObject, "filename"));
                 app.setStartParameters(convert(dataObject, "startParameters"));
 

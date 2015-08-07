@@ -5,13 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ApplicationData implements Serializable {
-    String name;
-    String groupId;
-    String artifactId;
-    String activeVersion;
-    List<DownloadedVersion> downloadedVersions;
+    private String name;
+    private String groupId;
+    private String artifactId;
+    private String activeVersion;
+    private List<DownloadedVersion> downloadedVersions;
     private String filename;
     private String startParameters;
+    private String artifactType;
 
     public String getName() {
         return name;
@@ -70,5 +71,13 @@ public class ApplicationData implements Serializable {
 
     public String getStartParameters() {
         return startParameters;
+    }
+
+    public void artifactType(String artifactType) {
+        this.artifactType = artifactType;
+    }
+
+    public String getArtifactType() {
+        return this.artifactType;
     }
 }
