@@ -5,6 +5,7 @@ import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.domain.Status;
 import no.difi.deploymanager.domain.StatusCode;
 import no.difi.deploymanager.download.dto.DownloadDto;
+import no.difi.deploymanager.remotelist.exception.RemoteApplicationListException;
 import no.difi.deploymanager.remotelist.service.RemoteListService;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,7 +36,7 @@ public class CheckVersionServiceTest {
     @Mock DownloadDto downloadDtoMock;
 
     @Before
-    public void setUp() {
+    public void setUp() throws RemoteApplicationListException {
         initMocks(this);
 
         when(environmentMock.getRequiredProperty("location.version")).thenReturn(TEST_URL);

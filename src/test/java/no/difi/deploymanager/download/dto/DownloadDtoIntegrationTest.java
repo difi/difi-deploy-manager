@@ -1,6 +1,6 @@
 package no.difi.deploymanager.download.dto;
 
-import no.difi.deploymanager.application.Application;
+import no.difi.deploymanager.artifact.Application;
 import no.difi.deploymanager.domain.ApplicationList;
 import org.junit.AfterClass;
 import org.junit.Before;

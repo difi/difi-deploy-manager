@@ -2,9 +2,13 @@ package no.difi.deploymanager.remotelist.service;
 
 import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.remotelist.dao.RemoteListDto;
+import no.difi.deploymanager.remotelist.exception.RemoteApplicationListException;
+import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
 
 @Service
 public class RemoteListService {
@@ -17,7 +21,7 @@ public class RemoteListService {
         this.remoteListDto = remoteListDto;
     }
 
-    public ApplicationList execute() {
+    public ApplicationList execute() throws RemoteApplicationListException {
         return remoteListDto.getRemoteList();
     }
 }

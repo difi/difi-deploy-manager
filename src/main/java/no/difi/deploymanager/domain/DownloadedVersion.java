@@ -1,7 +1,7 @@
 package no.difi.deploymanager.domain;
 
 public class DownloadedVersion {
-    String version;
+    private String version;
 
     public String getVersion() {
         return version;
