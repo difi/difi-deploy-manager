@@ -36,7 +36,8 @@ public class Scheduler {
         this.restartService = restartService;
     }
 
-    @Scheduled(cron = CRON_RUN_CHECK_FOR_VERSION)
+//    @Scheduled(cron = CRON_RUN_CHECK_FOR_VERSION)
+    @Scheduled(cron = CRON_RUN_EVERY_1MIN)
     public void checkForNewVersion() {
         DateTime start = new DateTime();
 

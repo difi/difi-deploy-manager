@@ -19,7 +19,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().authorizeRequests()
                     .antMatchers("/api/login").permitAll()
                     .antMatchers("/api/app").permitAll()
-                    .anyRequest().authenticated()
+                    .anyRequest().permitAll()
                 .and()
                     .formLogin()
                     .loginProcessingUrl("/api/login").usernameParameter("user").passwordParameter("pass")

@@ -28,7 +28,8 @@ public class JsonUtil {
         }
         InputStream stream = new BufferedInputStream(connection.getInputStream());
 
-        JSONObject json = new JSONObject(new Scanner(stream).useDelimiter("\\A").next());
+        String next = new Scanner(stream).useDelimiter("\\A").next();
+        JSONObject json = new JSONObject(next);
 
         closeConnection();
 

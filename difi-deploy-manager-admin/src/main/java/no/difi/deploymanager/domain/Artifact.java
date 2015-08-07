@@ -7,6 +7,7 @@ public class Artifact {
     private String version;
     private ArtifactType applicationType;
     private String startParams;
+    private String filename;
 
     public String getName() {
         return name;
@@ -54,5 +55,13 @@ public class Artifact {
 
     public void setStartParameters(String startParams) {
         this.startParams = startParams;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 }

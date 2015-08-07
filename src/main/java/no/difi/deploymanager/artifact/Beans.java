@@ -57,7 +57,7 @@ public class Beans {
 
     @Bean(name = "remoteListDto")
     public RemoteListDto remoteListDtoBean() {
-        return new RemoteListDto();
+        return new RemoteListDto(jsonUtilBean());
     }
 
     @Bean(name = "scheduler")

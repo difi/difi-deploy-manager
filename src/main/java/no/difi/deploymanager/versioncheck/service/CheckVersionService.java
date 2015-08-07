@@ -2,6 +2,7 @@ package no.difi.deploymanager.versioncheck.service;
 
 import no.difi.deploymanager.download.dto.DownloadDto;
 import no.difi.deploymanager.domain.*;
+import no.difi.deploymanager.remotelist.exception.RemoteApplicationListException;
 import no.difi.deploymanager.remotelist.service.RemoteListService;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,45 +48,48 @@ public class CheckVersionService {
             return statuses;
         }
 
-        //TODO: Need to capture remote file list. This should replace the enum MonitoringApplicatoins.
-        for (ApplicationData remoteApp : remoteListService.execute().getApplications()) {
-            String url = replacePropertyParams(location, remoteApp.getGroupId(), remoteApp.getArtifactId());
+        try {
+            for (ApplicationData remoteApp : remoteListService.execute().getApplications()) {
+                String url = replacePropertyParams(location, remoteApp.getGroupId(), remoteApp.getArtifactId());
 
-            try {
-                JSONObject json = checkVersionDto.retrieveExternalArtifactStatus(url);
-                ApplicationList downloadedApps = checkVersionDto.retrieveRunningAppsList();
+                try {
+                    JSONObject json = checkVersionDto.retrieveExternalArtifactStatus(url);
+                    ApplicationList downloadedApps = checkVersionDto.retrieveRunningAppsList();
 
-                if (isInDownloadList(json, downloadDto.retrieveDownloadList())) {
-                    statuses.add(new Status(StatusCode.SUCCESS, format("%s is already in download list", url)));
+                    if (isInDownloadList(json, downloadDto.retrieveDownloadList())) {
+                        statuses.add(new Status(StatusCode.SUCCESS, format("%s is already in download list", url)));
+                    }
+                    if (isDownloaded(json, downloadedApps)) {
+                        statuses.add(new Status(StatusCode.SUCCESS,
+                                format("Latest version of %s is already downloaded.", url)));
+                    } else {
+                        ApplicationData data = new ApplicationData();
+                        data.setName(remoteApp.getName());
+                        data.setGroupId(remoteApp.getGroupId());
+                        data.setArtifactId(remoteApp.getArtifactId());
+                        data.setActiveVersion(json.getString("version"));
+                        applicationsToDownload.add(data);
+
+                        statuses.add(new Status(StatusCode.SUCCESS,
+                                format("Application %s is set for download.", data.getName())));
+                    }
+                } catch (MalformedURLException e) {
+                    statuses.add(new Status(StatusCode.ERROR,
+                            format("Failed to compose url: %s Reason: %s", url, e.getMessage())));
+                } catch (SocketTimeoutException e) {
+                    statuses.add(new Status(StatusCode.ERROR,
+                            format("Timeout occured. Took too long to read from %s Reason: %s", url, e.getMessage())));
                 }
-                if (isDownloaded(json, downloadedApps)) {
-                    statuses.add(new Status(StatusCode.SUCCESS,
-                            format("Latest version of %s is already downloaded.", url)));
-                } else {
-                    ApplicationData data = new ApplicationData();
-                    data.setName(remoteApp.getName());
-                    data.setGroupId(remoteApp.getGroupId());
-                    data.setArtifactId(remoteApp.getArtifactId());
-                    data.setActiveVersion(json.getString("version"));
-                    applicationsToDownload.add(data);
-
-                    statuses.add(new Status(StatusCode.SUCCESS,
-                            format("Application %s is set for download.", data.getName())));
+                catch (IOException | ConnectionFailedException e) {
+                    statuses.add(new Status(StatusCode.ERROR,
+                            format("Failed to retrieve data from %s Reason: %s", url, e.getMessage())));
+                } catch (JSONException e) {
+                    statuses.add(new Status(StatusCode.CRITICAL,
+                            format("Result returned from %s is not JSON. Reason: %s", url, e.getMessage())));
                 }
-            } catch (MalformedURLException e) {
-                statuses.add(new Status(StatusCode.ERROR,
-                        format("Failed to compose url: %s Reason: %s", url, e.getMessage())));
-            } catch (SocketTimeoutException e) {
-                statuses.add(new Status(StatusCode.ERROR,
-                        format("Timeout occured. Took too long to read from %s Reason: %s", url, e.getMessage())));
             }
-            catch (IOException | ConnectionFailedException e) {
-                statuses.add(new Status(StatusCode.ERROR,
-                        format("Failed to retrieve data from %s Reason: %s", url, e.getMessage())));
-            } catch (JSONException e) {
-                statuses.add(new Status(StatusCode.CRITICAL,
-                        format("Result returned from %s is not JSON. Reason: %s", url, e.getMessage())));
-            }
+        } catch (RemoteApplicationListException e) {
+            statuses.add(new Status(StatusCode.CRITICAL, format("Can not fetch remote application list with versions.%s", e.getCause())));
         }
 
         ApplicationList forDownload = new ApplicationList();

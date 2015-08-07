@@ -11,6 +11,7 @@ public class ApplicationData implements Serializable {
     String activeVersion;
     List<DownloadedVersion> downloadedVersions;
     private String filename;
+    private String startParameters;
 
     public String getName() {
         return name;
@@ -61,5 +62,13 @@ public class ApplicationData implements Serializable {
 
     public void setDownloadedVersions(List<DownloadedVersion> downloadedVersions) {
         this.downloadedVersions = downloadedVersions;
+    }
+
+    public void setStartParameters(String startParameters) {
+        this.startParameters = startParameters;
+    }
+
+    public String getStartParameters() {
+        return startParameters;
     }
 }
