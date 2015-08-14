@@ -1,13 +1,12 @@
 package no.difi.deploymanager.restart.dto;
 
-import no.difi.deploymanager.testutils.ObjectMotherApplicationList;
 import no.difi.deploymanager.artifact.Application;
 import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.ApplicationList;
+import no.difi.deploymanager.testutils.ObjectMotherApplicationList;
 import no.difi.deploymanager.util.IOUtil;
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +64,6 @@ public class RestartDtoIntegrationTest {
         assertApplicationList(expected, actual);
     }
 
-    @Ignore
     @Test
     public void should_start_and_restart_and_stop_running_process_on_current_OS() throws Exception {
         if (!IS_WINDOWS) {
