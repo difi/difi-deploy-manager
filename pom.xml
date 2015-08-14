@@ -6,8 +6,11 @@
 
   <groupId>difi-deploy-manager</groupId>
   <artifactId>no.difi.deploymanager</artifactId>
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
   <version>0.9.1-SNAPSHOT</version>
+  <modules>
+    <module>deploy-manager</module>
+  </modules>
 
   <parent>
     <groupId>org.springframework.boot</groupId>
