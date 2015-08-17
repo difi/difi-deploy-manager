@@ -1,9 +1,9 @@
-package no.difi.deploymanager.versioncheck.dto;
+package no.difi.deploymanager.versioncheck.repository;
 
-import no.difi.deploymanager.testutils.CustomAssert;
-import no.difi.deploymanager.testutils.ObjectMotherApplicationList;
 import no.difi.deploymanager.artifact.Application;
 import no.difi.deploymanager.domain.ApplicationList;
+import no.difi.deploymanager.testutils.CustomAssert;
+import no.difi.deploymanager.testutils.ObjectMotherApplicationList;
 import no.difi.deploymanager.util.Common;
 import no.difi.deploymanager.util.IOUtil;
 import no.difi.deploymanager.util.JsonUtil;
@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
 public class CheckVersionDtoIntegrationTest {
-    private CheckVersionDto checkVersionDto;
+    private CheckVersionRepository checkVersionDto;
 
     @Autowired Environment environment;
     @Autowired IOUtil ioUtil;
@@ -50,7 +50,7 @@ public class CheckVersionDtoIntegrationTest {
                 TEST_ARTIFACT_ID
         );
 
-        checkVersionDto = new CheckVersionDto(environment, ioUtil, jsonUtil);
+        checkVersionDto = new CheckVersionRepository(environment, ioUtil, jsonUtil);
     }
 
     @Test

@@ -1,16 +1,16 @@
 package no.difi.deploymanager.artifact;
 
 import no.difi.deploymanager.download.dto.DownloadDto;
+import no.difi.deploymanager.download.service.DownloadService;
+import no.difi.deploymanager.remotelist.dao.RemoteListDto;
 import no.difi.deploymanager.remotelist.service.RemoteListService;
+import no.difi.deploymanager.restart.dto.RestartDto;
 import no.difi.deploymanager.restart.service.RestartService;
 import no.difi.deploymanager.schedule.Scheduler;
 import no.difi.deploymanager.util.IOUtil;
-import no.difi.deploymanager.versioncheck.service.CheckVersionService;
-import no.difi.deploymanager.download.service.DownloadService;
-import no.difi.deploymanager.remotelist.dao.RemoteListDto;
-import no.difi.deploymanager.restart.dto.RestartDto;
 import no.difi.deploymanager.util.JsonUtil;
-import no.difi.deploymanager.versioncheck.dto.CheckVersionDto;
+import no.difi.deploymanager.versioncheck.repository.CheckVersionRepository;
+import no.difi.deploymanager.versioncheck.service.CheckVersionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,8 +26,8 @@ public class Beans {
     }
 
     @Bean(name = "checkVersionDto")
-    public CheckVersionDto checkVersionDtoBean() {
-        return new CheckVersionDto(enviroment, ioUtilBean(), jsonUtilBean());
+    public CheckVersionRepository checkVersionDtoBean() {
+        return new CheckVersionRepository(enviroment, ioUtilBean(), jsonUtilBean());
     }
 
     @Bean(name = "downloadService")

@@ -1,4 +1,4 @@
-package no.difi.deploymanager.versioncheck.dto;
+package no.difi.deploymanager.versioncheck.repository;
 
 import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.util.IOUtil;
@@ -12,13 +12,13 @@ import org.springframework.stereotype.Repository;
 import java.io.IOException;
 
 @Repository
-public class CheckVersionDto {
+public class CheckVersionRepository {
     private final Environment environment;
     private final IOUtil ioUtil;
     private final JsonUtil jsonUtil;
 
     @Autowired
-    public CheckVersionDto(Environment environment, IOUtil ioUtil, JsonUtil jsonUtil) {
+    public CheckVersionRepository(Environment environment, IOUtil ioUtil, JsonUtil jsonUtil) {
         this.environment = environment;
         this.ioUtil = ioUtil;
         this.jsonUtil = jsonUtil;

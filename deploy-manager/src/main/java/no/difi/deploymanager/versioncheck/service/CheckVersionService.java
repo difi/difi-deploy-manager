@@ -5,16 +5,16 @@ import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.domain.Status;
 import no.difi.deploymanager.domain.StatusCode;
 import no.difi.deploymanager.download.dto.DownloadDto;
+import no.difi.deploymanager.remotelist.exception.RemoteApplicationListException;
 import no.difi.deploymanager.remotelist.service.RemoteListService;
 import no.difi.deploymanager.util.Common;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
-import no.difi.deploymanager.remotelist.exception.RemoteApplicationListException;
+import no.difi.deploymanager.versioncheck.repository.CheckVersionRepository;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
-import no.difi.deploymanager.versioncheck.dto.CheckVersionDto;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -28,11 +28,11 @@ import static java.lang.String.format;
 public class CheckVersionService {
     private final Environment environment;
     private final RemoteListService remoteListService;
-    private final CheckVersionDto checkVersionDto;
+    private final CheckVersionRepository checkVersionDto;
     private final DownloadDto downloadDto;
 
     @Autowired
-    public CheckVersionService(Environment environment, RemoteListService remoteListService, CheckVersionDto checkVersionDto, DownloadDto downloadDto) {
+    public CheckVersionService(Environment environment, RemoteListService remoteListService, CheckVersionRepository checkVersionDto, DownloadDto downloadDto) {
         this.environment = environment;
         this.remoteListService = remoteListService;
         this.checkVersionDto = checkVersionDto;

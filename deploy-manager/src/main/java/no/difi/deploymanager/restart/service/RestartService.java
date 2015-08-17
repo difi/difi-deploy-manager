@@ -4,10 +4,10 @@ import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.domain.Status;
 import no.difi.deploymanager.domain.StatusCode;
-import no.difi.deploymanager.versioncheck.dto.CheckVersionDto;
+import no.difi.deploymanager.restart.dto.RestartDto;
+import no.difi.deploymanager.versioncheck.repository.CheckVersionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import no.difi.deploymanager.restart.dto.RestartDto;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,12 +18,12 @@ import static java.lang.String.format;
 @Service
 public class RestartService {
     private final RestartDto restartDto;
-    private final CheckVersionDto checkVersionDto;
+    private final CheckVersionRepository checkVersionDto;
 
     private List<Status> statuses = new ArrayList<>();
 
     @Autowired
-    public RestartService(RestartDto restartDto, CheckVersionDto checkVersionDto) {
+    public RestartService(RestartDto restartDto, CheckVersionRepository checkVersionDto) {
         this.restartDto = restartDto;
         this.checkVersionDto = checkVersionDto;
     }

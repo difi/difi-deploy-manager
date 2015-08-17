@@ -1,6 +1,5 @@
 package no.difi.deploymanager.versioncheck.service;
 
-import no.difi.deploymanager.testutils.ObjectMotherApplicationList;
 import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.domain.Status;
@@ -8,14 +7,15 @@ import no.difi.deploymanager.domain.StatusCode;
 import no.difi.deploymanager.download.dto.DownloadDto;
 import no.difi.deploymanager.remotelist.exception.RemoteApplicationListException;
 import no.difi.deploymanager.remotelist.service.RemoteListService;
+import no.difi.deploymanager.testutils.ObjectMotherApplicationList;
+import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
+import no.difi.deploymanager.versioncheck.repository.CheckVersionRepository;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.springframework.core.env.Environment;
-import no.difi.deploymanager.versioncheck.dto.CheckVersionDto;
-import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -32,7 +32,8 @@ public class CheckVersionServiceTest {
 
     @Mock Environment environmentMock;
     @Mock RemoteListService remoteListServiceMock;
-    @Mock CheckVersionDto checkVersionDtoMock;
+    @Mock
+    CheckVersionRepository checkVersionDtoMock;
     @Mock DownloadDto downloadDtoMock;
 
     @Before

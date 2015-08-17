@@ -1,11 +1,11 @@
 package no.difi.deploymanager.restart.service;
 
-import no.difi.deploymanager.testutils.ObjectMotherApplicationList;
 import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.Status;
 import no.difi.deploymanager.domain.StatusCode;
 import no.difi.deploymanager.restart.dto.RestartDto;
-import no.difi.deploymanager.versioncheck.dto.CheckVersionDto;
+import no.difi.deploymanager.testutils.ObjectMotherApplicationList;
+import no.difi.deploymanager.versioncheck.repository.CheckVersionRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -21,7 +21,8 @@ public class RestartServiceTest {
     private RestartService service;
 
     @Mock RestartDto restartDtoMock;
-    @Mock CheckVersionDto checkVersionDtoMock;
+    @Mock
+    CheckVersionRepository checkVersionDtoMock;
 
     @Before
     public void setUp() {
