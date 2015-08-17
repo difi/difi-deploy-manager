@@ -32,8 +32,7 @@ public class CheckVersionServiceTest {
 
     @Mock Environment environmentMock;
     @Mock RemoteListService remoteListServiceMock;
-    @Mock
-    CheckVersionRepository checkVersionDtoMock;
+    @Mock CheckVersionRepository checkVersionDtoMock;
     @Mock DownloadDto downloadDtoMock;
 
     @Before
@@ -47,17 +46,8 @@ public class CheckVersionServiceTest {
     }
 
     @Test
-    public void should_get_critical_fail_when_property_for_location_not_found() {
-        when(environmentMock.getRequiredProperty(anyString())).thenThrow(new IllegalStateException());
-
-        Status actual = service.execute().get(0);
-
-        assertEquals(StatusCode.CRITICAL, actual.getStatusCode());
-    }
-
-    @Test
     public void should_get_error_when_url_is_malformed() throws Exception {
-        when(checkVersionDtoMock.retrieveExternalArtifactStatus(anyString())).thenThrow(new MalformedURLException());
+        when(checkVersionDtoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenThrow(new MalformedURLException());
 
         Status actual = service.execute().get(0);
 
@@ -66,7 +56,7 @@ public class CheckVersionServiceTest {
 
     @Test
     public void should_get_error_when_socket_timeout_occur() throws Exception {
-        when(checkVersionDtoMock.retrieveExternalArtifactStatus(anyString())).thenThrow(new SocketTimeoutException());
+        when(checkVersionDtoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenThrow(new SocketTimeoutException());
 
         Status actual = service.execute().get(0);
 
@@ -75,7 +65,7 @@ public class CheckVersionServiceTest {
 
     @Test
     public void should_get_error_when_IOException_occur() throws Exception {
-        when(checkVersionDtoMock.retrieveExternalArtifactStatus(anyString())).thenThrow(new IOException());
+        when(checkVersionDtoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenThrow(new IOException());
 
         Status actual = service.execute().get(0);
 
@@ -84,7 +74,7 @@ public class CheckVersionServiceTest {
 
     @Test
     public void should_get_error_when_connection_failed_exception_occur() throws Exception {
-        when(checkVersionDtoMock.retrieveExternalArtifactStatus(anyString())).thenThrow(new ConnectionFailedException("Message"));
+        when(checkVersionDtoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenThrow(new ConnectionFailedException("Message"));
 
         Status actual = service.execute().get(0);
 
@@ -93,7 +83,7 @@ public class CheckVersionServiceTest {
 
     @Test
     public void should_get_critical_error_when_JSON_exception_occur() throws Exception {
-        when(checkVersionDtoMock.retrieveExternalArtifactStatus(anyString())).thenThrow(new JSONException("Message"));
+        when(checkVersionDtoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenThrow(new JSONException("Message"));
 
         Status actual = service.execute().get(0);
 
@@ -102,7 +92,7 @@ public class CheckVersionServiceTest {
 
     @Test
     public void should_get_critical_error_when_returned_object_is_not_valid_JSON() throws Exception{
-        when(checkVersionDtoMock.retrieveExternalArtifactStatus(anyString())).thenReturn(new JSONObject());
+        when(checkVersionDtoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenReturn(new JSONObject());
 
         Status actual = service.execute().get(0);
 
@@ -119,7 +109,7 @@ public class CheckVersionServiceTest {
                 sameData.getArtifactId()
         );
 
-        when(checkVersionDtoMock.retrieveExternalArtifactStatus(anyString())).thenReturn(jsonObject);
+        when(checkVersionDtoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenReturn(jsonObject);
         when(downloadDtoMock.retrieveDownloadList()).thenReturn(sameList);
 
         Status actual = service.execute().get(0);
@@ -137,7 +127,7 @@ public class CheckVersionServiceTest {
                 otherVersionData.getArtifactId()
         );
 
-        when(checkVersionDtoMock.retrieveExternalArtifactStatus(anyString())).thenReturn(jsonObject);
+        when(checkVersionDtoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenReturn(jsonObject);
         when(downloadDtoMock.retrieveDownloadList()).thenReturn(otherVersionList);
 
         Status actual = service.execute().get(0);

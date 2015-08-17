@@ -1,6 +1,7 @@
 package no.difi.deploymanager.versioncheck.repository;
 
 import no.difi.deploymanager.domain.ApplicationList;
+import no.difi.deploymanager.util.Common;
 import no.difi.deploymanager.util.IOUtil;
 import no.difi.deploymanager.util.JsonUtil;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
@@ -24,7 +25,10 @@ public class CheckVersionRepository {
         this.jsonUtil = jsonUtil;
     }
 
-    public JSONObject retrieveExternalArtifactStatus(String url) throws IOException, ConnectionFailedException {
+    public JSONObject retrieveExternalArtifactStatus(String groupId, String artifactId) throws IOException, ConnectionFailedException {
+        String location = environment.getRequiredProperty("location.version");
+        String url = Common.replacePropertyParams(location, groupId, artifactId);
+
         JSONObject json = jsonUtil.retrieveJsonObject(url);
 
         return (JSONObject) json.get("data");

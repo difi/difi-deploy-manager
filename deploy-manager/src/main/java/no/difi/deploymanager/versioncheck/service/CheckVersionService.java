@@ -7,7 +7,6 @@ import no.difi.deploymanager.domain.StatusCode;
 import no.difi.deploymanager.download.dto.DownloadDto;
 import no.difi.deploymanager.remotelist.exception.RemoteApplicationListException;
 import no.difi.deploymanager.remotelist.service.RemoteListService;
-import no.difi.deploymanager.util.Common;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
 import no.difi.deploymanager.versioncheck.repository.CheckVersionRepository;
 import org.json.JSONException;
@@ -40,31 +39,22 @@ public class CheckVersionService {
     }
 
     public List<Status> execute() {
-        String location;
         List<Status> statuses = new ArrayList<>();
         List<ApplicationData> applicationsToDownload = new ArrayList<>();
 
         try {
-            location = environment.getRequiredProperty("location.version");
-        } catch (IllegalStateException e) {
-            statuses.add(new Status(StatusCode.CRITICAL, "Enviroment property 'location.version' not found."));
-            return statuses;
-        }
-
-        try {
             for (ApplicationData remoteApp : remoteListService.execute().getApplications()) {
-                String url = Common.replacePropertyParams(location, remoteApp.getGroupId(), remoteApp.getArtifactId());
-
                 try {
-                    JSONObject json = checkVersionDto.retrieveExternalArtifactStatus(url);
+                    JSONObject json = checkVersionDto.retrieveExternalArtifactStatus(remoteApp.getGroupId(), remoteApp.getArtifactId());
                     ApplicationList downloadedApps = checkVersionDto.retrieveRunningAppsList();
 
                     if (isInDownloadList(json, downloadDto.retrieveDownloadList())) {
-                        statuses.add(new Status(StatusCode.SUCCESS, format("%s is already in download list", url)));
+                        statuses.add(new Status(StatusCode.SUCCESS,
+                                String.format("%s already in download list", remoteApp.getName())));
                     }
                     if (isDownloaded(json, downloadedApps)) {
                         statuses.add(new Status(StatusCode.SUCCESS,
-                                format("Latest version of %s is already downloaded.", url)));
+                                format("Latest version of %s is already downloaded.", remoteApp.getName())));
                     } else {
                         ApplicationData data = new ApplicationData();
                         data.setName(remoteApp.getName());
@@ -76,19 +66,25 @@ public class CheckVersionService {
                         statuses.add(new Status(StatusCode.SUCCESS,
                                 format("Application %s is set for download.", data.getName())));
                     }
-                } catch (MalformedURLException e) {
+                }
+                catch (MalformedURLException e) {
                     statuses.add(new Status(StatusCode.ERROR,
-                            format("Failed to compose url: %s Reason: %s", url, e.getMessage())));
-                } catch (SocketTimeoutException e) {
+                            String.format("Failed to compose url to retrieve latest version for %s", remoteApp.getName())));
+                }
+                catch (SocketTimeoutException e) {
                     statuses.add(new Status(StatusCode.ERROR,
-                            format("Timeout occured. Took too long to read from %s Reason: %s", url, e.getMessage())));
+                            String.format("Socket timeout occured. Cannot get latest version for %s", remoteApp.getName())));
                 }
                 catch (IOException | ConnectionFailedException e) {
                     statuses.add(new Status(StatusCode.ERROR,
-                            format("Failed to retrieve data from %s Reason: %s", url, e.getMessage())));
-                } catch (JSONException e) {
+                            String.format("Failed to retrieve latest version for %s", remoteApp.getName())));
+                }
+                catch (JSONException e) {
                     statuses.add(new Status(StatusCode.CRITICAL,
-                            format("Result returned from %s is not JSON. Reason: %s", url, e.getMessage())));
+                            String.format("Result from external when retrieving latest version for %s is not JSON.", remoteApp.getName())));
+                }
+                catch (IllegalStateException e) {
+                    statuses.add(new Status(StatusCode.CRITICAL, "Enviroment property 'location.version' not found."));
                 }
             }
         } catch (RemoteApplicationListException e) {
