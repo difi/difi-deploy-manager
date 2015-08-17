@@ -22,11 +22,11 @@ public class Beans {
 
     @Bean(name = "checkVersionService")
     public CheckVersionService checkVersionServiceBean() {
-        return new CheckVersionService(enviroment, remoteListServiceBean(), checkVersionDtoBean(), downloadDtoBean());
+        return new CheckVersionService(remoteListServiceBean(), checkVersionRepositoryBean(), downloadDtoBean());
     }
 
-    @Bean(name = "checkVersionDto")
-    public CheckVersionRepository checkVersionDtoBean() {
+    @Bean(name = "checkVersionRepository")
+    public CheckVersionRepository checkVersionRepositoryBean() {
         return new CheckVersionRepository(enviroment, ioUtilBean(), jsonUtilBean());
     }
 
@@ -42,7 +42,7 @@ public class Beans {
 
     @Bean(name = "restartService")
     public RestartService restartServiceBean() {
-        return new RestartService(restartDtoBean(), checkVersionDtoBean());
+        return new RestartService(restartDtoBean(), checkVersionRepositoryBean());
     }
 
     @Bean(name = "restartDto")

@@ -12,7 +12,6 @@ import no.difi.deploymanager.versioncheck.repository.CheckVersionRepository;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -25,16 +24,14 @@ import static java.lang.String.format;
 
 @Service
 public class CheckVersionService {
-    private final Environment environment;
     private final RemoteListService remoteListService;
-    private final CheckVersionRepository checkVersionDto;
+    private final CheckVersionRepository checkVersionRepository;
     private final DownloadDto downloadDto;
 
     @Autowired
-    public CheckVersionService(Environment environment, RemoteListService remoteListService, CheckVersionRepository checkVersionDto, DownloadDto downloadDto) {
-        this.environment = environment;
+    public CheckVersionService(RemoteListService remoteListService, CheckVersionRepository checkVersionRepository, DownloadDto downloadDto) {
         this.remoteListService = remoteListService;
-        this.checkVersionDto = checkVersionDto;
+        this.checkVersionRepository = checkVersionRepository;
         this.downloadDto = downloadDto;
     }
 
@@ -45,8 +42,8 @@ public class CheckVersionService {
         try {
             for (ApplicationData remoteApp : remoteListService.execute().getApplications()) {
                 try {
-                    JSONObject json = checkVersionDto.retrieveExternalArtifactStatus(remoteApp.getGroupId(), remoteApp.getArtifactId());
-                    ApplicationList downloadedApps = checkVersionDto.retrieveRunningAppsList();
+                    JSONObject json = checkVersionRepository.retrieveExternalArtifactStatus(remoteApp.getGroupId(), remoteApp.getArtifactId());
+                    ApplicationList downloadedApps = checkVersionRepository.retrieveRunningAppsList();
 
                     if (isInDownloadList(json, downloadDto.retrieveDownloadList())) {
                         statuses.add(new Status(StatusCode.SUCCESS,

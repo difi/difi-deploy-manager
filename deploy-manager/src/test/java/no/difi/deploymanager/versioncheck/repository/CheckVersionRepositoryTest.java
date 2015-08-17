@@ -18,9 +18,11 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CheckVersionRepositoryTest {
+    private CheckVersionRepository repository;
+
     public static final String GROUPID = "groupid";
     public static final String ARTIFACTID = "artifactid";
-    private CheckVersionRepository repository;
+    public static final String TEST_URL = "http://testurl/?r=central-proxy&g=$GROUP_ID&a=$ARTIFACT_ID&v=RELEASE";
 
     @Mock private Environment environmentMock;
     @Mock private IOUtil ioUtilMock;
@@ -42,7 +44,7 @@ public class CheckVersionRepositoryTest {
 
     @Test(expected = JSONException.class)
     public void should_throw_json_exception_when_result_is_not_a_json_with_object_data() throws Exception {
-        when(environmentMock.getRequiredProperty(anyString())).thenReturn("url");
+        when(environmentMock.getRequiredProperty(anyString())).thenReturn(TEST_URL);
         when(jsonUtilMock.retrieveJsonObject(anyString())).thenReturn(new JSONObject("{}"));
 
         repository.retrieveExternalArtifactStatus(GROUPID, ARTIFACTID);

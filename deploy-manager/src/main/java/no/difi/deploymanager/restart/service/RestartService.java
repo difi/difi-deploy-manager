@@ -18,20 +18,20 @@ import static java.lang.String.format;
 @Service
 public class RestartService {
     private final RestartDto restartDto;
-    private final CheckVersionRepository checkVersionDto;
+    private final CheckVersionRepository checkVersionRepository;
 
     private List<Status> statuses = new ArrayList<>();
 
     @Autowired
-    public RestartService(RestartDto restartDto, CheckVersionRepository checkVersionDto) {
+    public RestartService(RestartDto restartDto, CheckVersionRepository checkVersionRepository) {
         this.restartDto = restartDto;
-        this.checkVersionDto = checkVersionDto;
+        this.checkVersionRepository = checkVersionRepository;
     }
 
     public List<Status> execute() {
         try {
             ApplicationList restartList = restartDto.retrieveRestartList();
-            ApplicationList runningAppList = checkVersionDto.retrieveRunningAppsList();
+            ApplicationList runningAppList = checkVersionRepository.retrieveRunningAppsList();
             ApplicationData applicationWithNewVersion;
 
             if (restartList != null && restartList.getApplications() != null) {
