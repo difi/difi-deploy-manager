@@ -1,9 +1,9 @@
 package no.difi.deploymanager.download.service;
 
+import no.difi.deploymanager.domain.*;
 import no.difi.deploymanager.download.dto.DownloadDto;
 import no.difi.deploymanager.restart.dto.RestartDto;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
-import no.difi.deploymanager.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -38,7 +38,7 @@ public class DownloadService {
         try {
             url = environment.getRequiredProperty("location.download");
         } catch (IllegalStateException e) {
-            statuses.add(new Status(StatusCode.CRITICAL, "Enviroment property 'location.version' not found."));
+            statuses.add(new Status(StatusCode.CRITICAL, "Enviroment property 'location.download' not found."));
             return statuses;
         }
 
