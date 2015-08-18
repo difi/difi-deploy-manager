@@ -74,7 +74,7 @@ public class DownloadService {
         for (ApplicationData checklist : restartList) {
             boolean found = false;
             for (ApplicationData worklist : forDownload.getApplications()) {
-                if (checklist.getName() == worklist.getName()) {
+                if (checklist.getName().equals(worklist.getName())) {
                     found = true;
                 }
             }
