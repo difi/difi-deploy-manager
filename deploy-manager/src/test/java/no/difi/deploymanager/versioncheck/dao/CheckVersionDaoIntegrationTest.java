@@ -1,4 +1,4 @@
-package no.difi.deploymanager.versioncheck.repository;
+package no.difi.deploymanager.versioncheck.dao;
 
 import no.difi.deploymanager.artifact.Application;
 import no.difi.deploymanager.domain.ApplicationList;
@@ -23,8 +23,8 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
-public class CheckVersionRepositoryIntegrationTest {
-    private CheckVersionRepository checkVersionRepository;
+public class CheckVersionDaoIntegrationTest {
+    private CheckVersionDao checkVersionDao;
 
     @Autowired Environment environment;
     @Autowired IOUtil ioUtil;
@@ -40,27 +40,27 @@ public class CheckVersionRepositoryIntegrationTest {
                 + environment.getRequiredProperty("monitoring.base.path")
                 + environment.getRequiredProperty("monitoring.running.file");
 
-        checkVersionRepository = new CheckVersionRepository(environment, ioUtil, jsonUtil);
+        checkVersionDao = new CheckVersionDao(environment, ioUtil, jsonUtil);
     }
 
     @Test
     public void should_save_and_retrieve_monitoring_application_list() throws Exception {
         ApplicationList expected = ObjectMotherApplicationList.createApplicationListWithData();
 
-        checkVersionRepository.saveRunningAppsList(expected);
-        ApplicationList actual = checkVersionRepository.retrieveRunningAppsList();
+        checkVersionDao.saveRunningAppsList(expected);
+        ApplicationList actual = checkVersionDao.retrieveRunningAppsList();
 
         CustomAssert.assertApplicationList(expected, actual);
     }
 
     @Test(expected = ConnectionFailedException.class)
     public void should_get_connection_exception_when_connection_fails() throws Exception {
-        checkVersionRepository.retrieveExternalArtifactStatus("", "");
+        checkVersionDao.retrieveExternalArtifactStatus("", "");
     }
 
     @Test
     public void should_retrieve_external_version_when_new_list_is_available() throws Exception {
-        JSONObject json = checkVersionRepository.retrieveExternalArtifactStatus(TEST_GROUP_ID, TEST_ARTIFACT_ID);
+        JSONObject json = checkVersionDao.retrieveExternalArtifactStatus(TEST_GROUP_ID, TEST_ARTIFACT_ID);
 
         assertTrue(json.keySet().contains("version"));
         assertEquals(json.get("groupId"), TEST_GROUP_ID);

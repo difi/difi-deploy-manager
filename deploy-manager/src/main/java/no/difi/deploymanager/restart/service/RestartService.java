@@ -5,7 +5,7 @@ import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.domain.Status;
 import no.difi.deploymanager.domain.StatusCode;
 import no.difi.deploymanager.restart.dto.RestartDto;
-import no.difi.deploymanager.versioncheck.repository.CheckVersionRepository;
+import no.difi.deploymanager.versioncheck.dao.CheckVersionDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,20 +18,20 @@ import static java.lang.String.format;
 @Service
 public class RestartService {
     private final RestartDto restartDto;
-    private final CheckVersionRepository checkVersionRepository;
+    private final CheckVersionDao checkVersionDao;
 
     private List<Status> statuses = new ArrayList<>();
 
     @Autowired
-    public RestartService(RestartDto restartDto, CheckVersionRepository checkVersionRepository) {
+    public RestartService(RestartDto restartDto, CheckVersionDao checkVersionDao) {
         this.restartDto = restartDto;
-        this.checkVersionRepository = checkVersionRepository;
+        this.checkVersionDao = checkVersionDao;
     }
 
     public List<Status> execute() {
         try {
             ApplicationList restartList = restartDto.retrieveRestartList();
-            ApplicationList runningAppList = checkVersionRepository.retrieveRunningAppsList();
+            ApplicationList runningAppList = checkVersionDao.retrieveRunningAppsList();
             ApplicationData applicationWithNewVersion;
 
             if (restartList != null && restartList.getApplications() != null) {

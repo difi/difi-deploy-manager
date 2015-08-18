@@ -9,7 +9,7 @@ import no.difi.deploymanager.restart.service.RestartService;
 import no.difi.deploymanager.schedule.Scheduler;
 import no.difi.deploymanager.util.IOUtil;
 import no.difi.deploymanager.util.JsonUtil;
-import no.difi.deploymanager.versioncheck.repository.CheckVersionRepository;
+import no.difi.deploymanager.versioncheck.dao.CheckVersionDao;
 import no.difi.deploymanager.versioncheck.service.CheckVersionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -22,12 +22,12 @@ public class Beans {
 
     @Bean(name = "checkVersionService")
     public CheckVersionService checkVersionServiceBean() {
-        return new CheckVersionService(remoteListServiceBean(), checkVersionRepositoryBean(), downloadDtoBean());
+        return new CheckVersionService(remoteListServiceBean(), checkVersionDaoBean(), downloadDtoBean());
     }
 
-    @Bean(name = "checkVersionRepository")
-    public CheckVersionRepository checkVersionRepositoryBean() {
-        return new CheckVersionRepository(enviroment, ioUtilBean(), jsonUtilBean());
+    @Bean(name = "checkVersionDao")
+    public CheckVersionDao checkVersionDaoBean() {
+        return new CheckVersionDao(enviroment, ioUtilBean(), jsonUtilBean());
     }
 
     @Bean(name = "downloadService")
@@ -42,7 +42,7 @@ public class Beans {
 
     @Bean(name = "restartService")
     public RestartService restartServiceBean() {
-        return new RestartService(restartDtoBean(), checkVersionRepositoryBean());
+        return new RestartService(restartDtoBean(), checkVersionDaoBean());
     }
 
     @Bean(name = "restartDto")

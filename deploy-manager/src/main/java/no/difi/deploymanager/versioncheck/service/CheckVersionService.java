@@ -7,8 +7,8 @@ import no.difi.deploymanager.domain.StatusCode;
 import no.difi.deploymanager.download.dto.DownloadDto;
 import no.difi.deploymanager.remotelist.exception.RemoteApplicationListException;
 import no.difi.deploymanager.remotelist.service.RemoteListService;
+import no.difi.deploymanager.versioncheck.dao.CheckVersionDao;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
-import no.difi.deploymanager.versioncheck.repository.CheckVersionRepository;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +25,13 @@ import static java.lang.String.format;
 @Service
 public class CheckVersionService {
     private final RemoteListService remoteListService;
-    private final CheckVersionRepository checkVersionRepository;
+    private final CheckVersionDao checkVersionDao;
     private final DownloadDto downloadDto;
 
     @Autowired
-    public CheckVersionService(RemoteListService remoteListService, CheckVersionRepository checkVersionRepository, DownloadDto downloadDto) {
+    public CheckVersionService(RemoteListService remoteListService, CheckVersionDao checkVersionDao, DownloadDto downloadDto) {
         this.remoteListService = remoteListService;
-        this.checkVersionRepository = checkVersionRepository;
+        this.checkVersionDao = checkVersionDao;
         this.downloadDto = downloadDto;
     }
 
@@ -42,8 +42,8 @@ public class CheckVersionService {
         try {
             for (ApplicationData remoteApp : remoteListService.execute().getApplications()) {
                 try {
-                    JSONObject json = checkVersionRepository.retrieveExternalArtifactStatus(remoteApp.getGroupId(), remoteApp.getArtifactId());
-                    ApplicationList downloadedApps = checkVersionRepository.retrieveRunningAppsList();
+                    JSONObject json = checkVersionDao.retrieveExternalArtifactStatus(remoteApp.getGroupId(), remoteApp.getArtifactId());
+                    ApplicationList downloadedApps = checkVersionDao.retrieveRunningAppsList();
 
                     if (isInDownloadList(json, downloadDto.retrieveDownloadList())) {
                         statuses.add(new Status(StatusCode.SUCCESS,

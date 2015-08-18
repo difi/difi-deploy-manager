@@ -5,7 +5,7 @@ import no.difi.deploymanager.domain.Status;
 import no.difi.deploymanager.domain.StatusCode;
 import no.difi.deploymanager.restart.dto.RestartDto;
 import no.difi.deploymanager.testutils.ObjectMotherApplicationList;
-import no.difi.deploymanager.versioncheck.repository.CheckVersionRepository;
+import no.difi.deploymanager.versioncheck.dao.CheckVersionDao;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -21,13 +21,14 @@ public class RestartServiceTest {
     private RestartService service;
 
     @Mock RestartDto restartDtoMock;
-    @Mock CheckVersionRepository checkVersionRepository;
+    @Mock
+    CheckVersionDao checkVersionDao;
 
     @Before
     public void setUp() {
         initMocks(this);
 
-        service = new RestartService(restartDtoMock, checkVersionRepository);
+        service = new RestartService(restartDtoMock, checkVersionDao);
     }
 
     @Test
@@ -58,7 +59,7 @@ public class RestartServiceTest {
     @Test
     public void should_call_restart_when_application_is_set_for_restarting() throws Exception {
         when(restartDtoMock.retrieveRestartList()).thenReturn(ObjectMotherApplicationList.createApplicationListWithData());
-        when(checkVersionRepository.retrieveRunningAppsList()).thenReturn(ObjectMotherApplicationList.createApplicationListWithData());
+        when(checkVersionDao.retrieveRunningAppsList()).thenReturn(ObjectMotherApplicationList.createApplicationListWithData());
 
         service.execute();
 
@@ -68,7 +69,7 @@ public class RestartServiceTest {
     @Test
     public void should_not_call_restart_when_nothing_to_do() throws Exception {
         when(restartDtoMock.retrieveRestartList()).thenReturn(ObjectMotherApplicationList.createApplicationListEmpty());
-        when(checkVersionRepository.retrieveRunningAppsList()).thenReturn(ObjectMotherApplicationList.createApplicationListWithData());
+        when(checkVersionDao.retrieveRunningAppsList()).thenReturn(ObjectMotherApplicationList.createApplicationListWithData());
 
         service.execute();
 
@@ -78,7 +79,7 @@ public class RestartServiceTest {
     @Test
     public void should_get_status_success_when_restart_of_application_has_occured() throws Exception {
         when(restartDtoMock.retrieveRestartList()).thenReturn(ObjectMotherApplicationList.createApplicationListWithData());
-        when(checkVersionRepository.retrieveRunningAppsList()).thenReturn(ObjectMotherApplicationList.createApplicationListWithData());
+        when(checkVersionDao.retrieveRunningAppsList()).thenReturn(ObjectMotherApplicationList.createApplicationListWithData());
         when(restartDtoMock.executeRestart(any(ApplicationData.class), any(ApplicationData.class))).thenReturn(true);
 
         Status result = service.execute().get(0);

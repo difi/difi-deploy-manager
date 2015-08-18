@@ -1,4 +1,4 @@
-package no.difi.deploymanager.versioncheck.repository;
+package no.difi.deploymanager.versioncheck.dao;
 
 import no.difi.deploymanager.util.IOUtil;
 import no.difi.deploymanager.util.JsonUtil;
@@ -17,8 +17,8 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CheckVersionRepositoryTest {
-    private CheckVersionRepository repository;
+public class CheckVersionDaoTest {
+    private CheckVersionDao repository;
 
     public static final String GROUPID = "groupid";
     public static final String ARTIFACTID = "artifactid";
@@ -32,7 +32,7 @@ public class CheckVersionRepositoryTest {
     public void setUp() {
         initMocks(this);
 
-        repository = new CheckVersionRepository(environmentMock, ioUtilMock, jsonUtilMock);
+        repository = new CheckVersionDao(environmentMock, ioUtilMock, jsonUtilMock);
     }
 
     @Test(expected = IllegalStateException.class)
