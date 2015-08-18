@@ -2,7 +2,7 @@ package no.difi.deploymanager.artifact;
 
 import no.difi.deploymanager.download.dto.DownloadDto;
 import no.difi.deploymanager.download.service.DownloadService;
-import no.difi.deploymanager.remotelist.dao.RemoteListDto;
+import no.difi.deploymanager.remotelist.dao.RemoteListRepository;
 import no.difi.deploymanager.remotelist.service.RemoteListService;
 import no.difi.deploymanager.restart.dto.RestartDto;
 import no.difi.deploymanager.restart.service.RestartService;
@@ -52,12 +52,12 @@ public class Beans {
 
     @Bean(name = "remoteListService")
     public RemoteListService remoteListServiceBean() {
-        return new RemoteListService(enviroment, remoteListDtoBean());
+        return new RemoteListService(remoteListRepositoryBean());
     }
 
-    @Bean(name = "remoteListDto")
-    public RemoteListDto remoteListDtoBean() {
-        return new RemoteListDto(jsonUtilBean());
+    @Bean(name = "remoteListRepository")
+    public RemoteListRepository remoteListRepositoryBean() {
+        return new RemoteListRepository(jsonUtilBean());
     }
 
     @Bean(name = "scheduler")

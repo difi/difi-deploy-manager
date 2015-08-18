@@ -73,7 +73,7 @@ public class ApplicationData implements Serializable {
         return startParameters;
     }
 
-    public void artifactType(String artifactType) {
+    public void setArtifactType(String artifactType) {
         this.artifactType = artifactType;
     }
 

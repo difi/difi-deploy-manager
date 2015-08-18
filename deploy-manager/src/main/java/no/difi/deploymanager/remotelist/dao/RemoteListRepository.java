@@ -1,10 +1,10 @@
 package no.difi.deploymanager.remotelist.dao;
 
+import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.remotelist.exception.RemoteApplicationListException;
 import no.difi.deploymanager.util.JsonUtil;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
-import no.difi.deploymanager.domain.ApplicationData;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,10 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class RemoteListDto {
+public class RemoteListRepository {
     private final JsonUtil jsonUtil;
 
-    public RemoteListDto(JsonUtil jsonUtil) {
+    public RemoteListRepository(JsonUtil jsonUtil) {
         this.jsonUtil = jsonUtil;
     }
 
@@ -42,7 +42,7 @@ public class RemoteListDto {
                 app.setGroupId(convert(dataObject, "groupId"));
                 app.setArtifactId(convert(dataObject, "artifactId"));
                 app.setActiveVersion(convert(dataObject, "version"));
-                app.artifactType(convert(dataObject, "applicationType"));
+                app.setArtifactType(convert(dataObject, "applicationType"));
                 app.setFilename(convert(dataObject, "filename"));
                 app.setStartParameters(convert(dataObject, "startParameters"));
 
@@ -54,6 +54,38 @@ public class RemoteListDto {
         applicationList.setApplications(applications);
 
         return applicationList;
+    }
+
+    public ApplicationList getHardcodedList() {
+        ApplicationList applicationList = new ApplicationList();
+        List<ApplicationData> applications = applicationList.getApplications();
+
+        applications.add(createApplicationDataObject(
+                "Difi Deploy Manager",
+                "difi-deploy-manager",
+                "no.difi.deploymanager",
+                "0.9.1-SNAPSHOT",
+                "JAR",
+                "no.difi.deploymanager-0.9.1-SNAPSHOT.jar",
+                ""));
+
+        applicationList.setApplications(applications);
+
+        return applicationList;
+    }
+
+    private ApplicationData createApplicationDataObject(String name, String groupId, String artifactId, String version,
+                                                        String applicationType, String filename, String startParameters) {
+        ApplicationData data = new ApplicationData();
+        data.setName(name);
+        data.setGroupId(groupId);
+        data.setArtifactId(artifactId);
+        data.setActiveVersion(version);
+        data.setArtifactType(applicationType);
+        data.setFilename(filename);
+        data.setStartParameters(startParameters);
+
+        return data;
     }
 
     private static String convert(JSONObject obj, String fetch) {
