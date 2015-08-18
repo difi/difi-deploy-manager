@@ -4,7 +4,7 @@ import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.domain.Status;
 import no.difi.deploymanager.domain.StatusCode;
-import no.difi.deploymanager.download.dto.DownloadDto;
+import no.difi.deploymanager.download.dao.DownloadDao;
 import no.difi.deploymanager.remotelist.exception.RemoteApplicationListException;
 import no.difi.deploymanager.remotelist.service.RemoteListService;
 import no.difi.deploymanager.versioncheck.dao.CheckVersionDao;
@@ -26,13 +26,13 @@ import static java.lang.String.format;
 public class CheckVersionService {
     private final RemoteListService remoteListService;
     private final CheckVersionDao checkVersionDao;
-    private final DownloadDto downloadDto;
+    private final DownloadDao downloadDao;
 
     @Autowired
-    public CheckVersionService(RemoteListService remoteListService, CheckVersionDao checkVersionDao, DownloadDto downloadDto) {
+    public CheckVersionService(RemoteListService remoteListService, CheckVersionDao checkVersionDao, DownloadDao downloadDao) {
         this.remoteListService = remoteListService;
         this.checkVersionDao = checkVersionDao;
-        this.downloadDto = downloadDto;
+        this.downloadDao = downloadDao;
     }
 
     public List<Status> execute() {
@@ -45,7 +45,7 @@ public class CheckVersionService {
                     JSONObject json = checkVersionDao.retrieveExternalArtifactStatus(remoteApp.getGroupId(), remoteApp.getArtifactId());
                     ApplicationList downloadedApps = checkVersionDao.retrieveRunningAppsList();
 
-                    if (isInDownloadList(json, downloadDto.retrieveDownloadList())) {
+                    if (isInDownloadList(json, downloadDao.retrieveDownloadList())) {
                         statuses.add(new Status(StatusCode.SUCCESS,
                                 String.format("%s already prepared for download.", remoteApp.getName())));
                     }
@@ -92,7 +92,7 @@ public class CheckVersionService {
         forDownload.setApplications(applicationsToDownload);
 
         try {
-            downloadDto.saveDownloadList(forDownload);
+            downloadDao.saveDownloadList(forDownload);
         } catch (IOException e) {
             statuses.add(new Status(StatusCode.CRITICAL, format("Failed to save download list. Reason: %s", e.getMessage())));
         }

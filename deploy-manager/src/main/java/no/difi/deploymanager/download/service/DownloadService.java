@@ -1,7 +1,8 @@
 package no.difi.deploymanager.download.service;
 
 import no.difi.deploymanager.domain.*;
-import no.difi.deploymanager.download.dto.DownloadDto;
+import no.difi.deploymanager.download.dao.DownloadDao;
+import no.difi.deploymanager.download.filetransfer.FileTransfer;
 import no.difi.deploymanager.restart.dto.RestartDto;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,15 +20,17 @@ import static java.lang.String.format;
 @Service
 public class DownloadService {
     private final Environment environment;
-    private final DownloadDto downloadDto;
+    private final DownloadDao downloadDao;
+    private final FileTransfer fileTransfer;
     private final RestartDto restartDto;
 
     private List<Status> statuses = new ArrayList<>();
 
     @Autowired
-    public DownloadService(Environment environment, DownloadDto downloadDto, RestartDto restartDto) {
+    public DownloadService(Environment environment, DownloadDao downloadDao, FileTransfer fileTransfer, RestartDto restartDto) {
         this.environment = environment;
-        this.downloadDto = downloadDto;
+        this.downloadDao = downloadDao;
+        this.fileTransfer = fileTransfer;
         this.restartDto = restartDto;
     }
 
@@ -43,14 +46,14 @@ public class DownloadService {
         }
 
         try {
-            ApplicationList forDownload = downloadDto.retrieveDownloadList();
+            ApplicationList forDownload = downloadDao.retrieveDownloadList();
 
             if (forDownload != null && forDownload.getApplications() != null) {
                 restartList = downloadApplications(url, forDownload);
 
                 ApplicationList notDownloaded = new ApplicationList();
                 notDownloaded.setApplications(updateNotDownloadedList(restartList, forDownload));
-                downloadDto.saveDownloadList(notDownloaded);
+                downloadDao.saveDownloadList(notDownloaded);
 
                 saveRestartList(restartList);
             } else {
@@ -101,7 +104,7 @@ public class DownloadService {
 
         for (ApplicationData data : forDownload.getApplications()) {
             try {
-                String versionDownloaded = downloadDto.downloadApplication(url);
+                String versionDownloaded = fileTransfer.downloadApplication(url);
 
                 DownloadedVersion downloadedVersion = new DownloadedVersion();
                 downloadedVersion.setVersion(versionDownloaded);

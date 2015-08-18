@@ -1,6 +1,7 @@
 package no.difi.deploymanager.artifact;
 
-import no.difi.deploymanager.download.dto.DownloadDto;
+import no.difi.deploymanager.download.dao.DownloadDao;
+import no.difi.deploymanager.download.filetransfer.FileTransfer;
 import no.difi.deploymanager.download.service.DownloadService;
 import no.difi.deploymanager.remotelist.dao.RemoteListRepository;
 import no.difi.deploymanager.remotelist.service.RemoteListService;
@@ -22,7 +23,7 @@ public class Beans {
 
     @Bean(name = "checkVersionService")
     public CheckVersionService checkVersionServiceBean() {
-        return new CheckVersionService(remoteListServiceBean(), checkVersionDaoBean(), downloadDtoBean());
+        return new CheckVersionService(remoteListServiceBean(), checkVersionDaoBean(), downloadDaoBean());
     }
 
     @Bean(name = "checkVersionDao")
@@ -32,12 +33,12 @@ public class Beans {
 
     @Bean(name = "downloadService")
     public DownloadService downloadServiceBean() {
-        return new DownloadService(enviroment, downloadDtoBean(), restartDtoBean());
+        return new DownloadService(enviroment, downloadDaoBean(), fileTransferBean(), restartDtoBean());
     }
 
-    @Bean(name = "downloadDto")
-    public DownloadDto downloadDtoBean() {
-        return new DownloadDto(enviroment, ioUtilBean());
+    @Bean(name = "downloadDao")
+    public DownloadDao downloadDaoBean() {
+        return new DownloadDao(enviroment, ioUtilBean());
     }
 
     @Bean(name = "restartService")
@@ -63,6 +64,11 @@ public class Beans {
     @Bean(name = "scheduler")
     public Scheduler schedulerBean() {
         return new Scheduler(checkVersionServiceBean(), downloadServiceBean(), restartServiceBean());
+    }
+
+    @Bean(name = "fileTransfer")
+    public FileTransfer fileTransferBean() {
+        return new FileTransfer(enviroment);
     }
 
     @Bean(name = "ioUtil")

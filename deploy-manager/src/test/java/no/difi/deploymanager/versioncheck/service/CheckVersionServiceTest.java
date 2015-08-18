@@ -4,7 +4,7 @@ import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.domain.Status;
 import no.difi.deploymanager.domain.StatusCode;
-import no.difi.deploymanager.download.dto.DownloadDto;
+import no.difi.deploymanager.download.dao.DownloadDao;
 import no.difi.deploymanager.remotelist.exception.RemoteApplicationListException;
 import no.difi.deploymanager.remotelist.service.RemoteListService;
 import no.difi.deploymanager.versioncheck.dao.CheckVersionDao;
@@ -31,7 +31,8 @@ public class CheckVersionServiceTest {
     @Mock RemoteListService remoteListServiceMock;
     @Mock
     CheckVersionDao checkVersionDaoMock;
-    @Mock DownloadDto downloadDtoMock;
+    @Mock
+    DownloadDao downloadDaoMock;
 
     @Before
     public void setUp() throws RemoteApplicationListException {
@@ -39,7 +40,7 @@ public class CheckVersionServiceTest {
 
         when(remoteListServiceMock.execute()).thenReturn(createApplicationListWithData());
 
-        service = new CheckVersionService(remoteListServiceMock, checkVersionDaoMock, downloadDtoMock);
+        service = new CheckVersionService(remoteListServiceMock, checkVersionDaoMock, downloadDaoMock);
     }
 
     @Test
@@ -107,7 +108,7 @@ public class CheckVersionServiceTest {
         );
 
         when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenReturn(jsonObject);
-        when(downloadDtoMock.retrieveDownloadList()).thenReturn(sameList);
+        when(downloadDaoMock.retrieveDownloadList()).thenReturn(sameList);
 
         Status actual = service.execute().get(0);
 
@@ -125,7 +126,7 @@ public class CheckVersionServiceTest {
         );
 
         when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenReturn(jsonObject);
-        when(downloadDtoMock.retrieveDownloadList()).thenReturn(otherVersionList);
+        when(downloadDaoMock.retrieveDownloadList()).thenReturn(otherVersionList);
 
         Status actual = service.execute().get(0);
 
