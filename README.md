@@ -1,17 +1,12 @@
 # Difi Deployment Manager
 ## First time setup
-Pull project and run
-<pre>./buildAll.sh</pre>
-
-This will build the manager admin, health-check and deploy manager.
-
 For later builds, it is sufficient to run
 <pre>mvn clean install</pre>
 
 ##Run project
 First the server must be started. When project is built, 
 JAR is generated in target folder. To run from project root:
-<pre>java -jar ./target/no.difi.deploymanager-0.9.1-SNAPSHOT.jar</pre>
+<pre>java -jar ./target/no.difi.deploymanager-<version>.jar</pre>
 
 ##Limitations
 Alpha version (PoC)
