@@ -47,7 +47,7 @@ public class CheckVersionService {
 
                     if (isInDownloadList(json, downloadDto.retrieveDownloadList())) {
                         statuses.add(new Status(StatusCode.SUCCESS,
-                                String.format("%s already in download list", remoteApp.getName())));
+                                String.format("%s already prepared for download.", remoteApp.getName())));
                     }
                     if (isDownloaded(json, downloadedApps)) {
                         statuses.add(new Status(StatusCode.SUCCESS,
@@ -61,7 +61,7 @@ public class CheckVersionService {
                         applicationsToDownload.add(data);
 
                         statuses.add(new Status(StatusCode.SUCCESS,
-                                format("Application %s is set for download.", data.getName())));
+                                format("Application %s is prepared for download.", data.getName())));
                     }
                 }
                 catch (MalformedURLException e) {
