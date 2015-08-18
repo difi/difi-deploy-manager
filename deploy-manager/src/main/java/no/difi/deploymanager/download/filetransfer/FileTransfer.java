@@ -1,5 +1,6 @@
 package no.difi.deploymanager.download.filetransfer;
 
+import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -12,9 +13,12 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import static no.difi.deploymanager.util.Common.replacePropertyParams;
+
 @Repository
 public class FileTransfer {
     private static final int BUFFER_SIZE = 4096;
+
     private final Environment environment;
 
     @Autowired
@@ -22,8 +26,11 @@ public class FileTransfer {
         this.environment = environment;
     }
 
-    public String downloadApplication(String url) throws IOException, ConnectionFailedException {
-        URL source = new URL(url);
+    public String downloadApplication(ApplicationData data) throws IOException, ConnectionFailedException {
+        URL source = new URL(
+                replacePropertyParams(environment.getRequiredProperty("location.download"),
+                        data.getGroupId(), data.getArtifactId())
+        );
 
         String filePath = System.getProperty("user.dir") + environment.getRequiredProperty("download.base.path");
 

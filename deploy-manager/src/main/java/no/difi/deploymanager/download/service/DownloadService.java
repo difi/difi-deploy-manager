@@ -6,7 +6,6 @@ import no.difi.deploymanager.download.filetransfer.FileTransfer;
 import no.difi.deploymanager.restart.dto.RestartDto;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -19,7 +18,6 @@ import static java.lang.String.format;
 
 @Service
 public class DownloadService {
-    private final Environment environment;
     private final DownloadDao downloadDao;
     private final FileTransfer fileTransfer;
     private final RestartDto restartDto;
@@ -27,29 +25,20 @@ public class DownloadService {
     private List<Status> statuses = new ArrayList<>();
 
     @Autowired
-    public DownloadService(Environment environment, DownloadDao downloadDao, FileTransfer fileTransfer, RestartDto restartDto) {
-        this.environment = environment;
+    public DownloadService(DownloadDao downloadDao, FileTransfer fileTransfer, RestartDto restartDto) {
         this.downloadDao = downloadDao;
         this.fileTransfer = fileTransfer;
         this.restartDto = restartDto;
     }
 
     public List<Status> execute() {
-        String url;
         List<ApplicationData> restartList;
-
-        try {
-            url = environment.getRequiredProperty("location.download");
-        } catch (IllegalStateException e) {
-            statuses.add(new Status(StatusCode.CRITICAL, "Enviroment property 'location.download' not found."));
-            return statuses;
-        }
 
         try {
             ApplicationList forDownload = downloadDao.retrieveDownloadList();
 
             if (forDownload != null && forDownload.getApplications() != null) {
-                restartList = downloadApplications(url, forDownload);
+                restartList = downloadApplications(forDownload);
 
                 ApplicationList notDownloaded = new ApplicationList();
                 notDownloaded.setApplications(updateNotDownloadedList(restartList, forDownload));
@@ -99,12 +88,12 @@ public class DownloadService {
         }
     }
 
-    private List<ApplicationData> downloadApplications(String url, ApplicationList forDownload) throws IOException {
+    private List<ApplicationData> downloadApplications(ApplicationList forDownload) throws IOException {
         List<ApplicationData> restartList = new ArrayList<>();
 
         for (ApplicationData data : forDownload.getApplications()) {
             try {
-                String versionDownloaded = fileTransfer.downloadApplication(url);
+                String versionDownloaded = fileTransfer.downloadApplication(data);
 
                 DownloadedVersion downloadedVersion = new DownloadedVersion();
                 downloadedVersion.setVersion(versionDownloaded);
@@ -116,15 +105,14 @@ public class DownloadService {
                 restartList.add(data);
             }
             catch (MalformedURLException e) {
-                statuses.add(new Status(StatusCode.ERROR,
-                        format("Failed to compose url: %s Reason: %s", url, e.getMessage())));
+                statuses.add(new Status(StatusCode.ERROR, format("Failed to compose URL for %s.", data.getName())));
             }
             catch (SocketTimeoutException e) {
                 statuses.add(new Status(StatusCode.ERROR,
-                        format("Timeout occured. Took too long to download from %s Reason: %s", url, e.getMessage())));
+                        format("Timeout occured. It too too long to download %s %s", data.getName(), data.getFilename())));
             }
             catch (ConnectionFailedException e) {
-                statuses.add(new Status(StatusCode.ERROR, format("Failed to retrieve data from %s Reason: %s", url, e.getMessage())));
+                statuses.add(new Status(StatusCode.ERROR, "Connection for downloading updates failed."));
             }
         }
 

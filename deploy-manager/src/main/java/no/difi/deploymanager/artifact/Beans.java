@@ -33,7 +33,7 @@ public class Beans {
 
     @Bean(name = "downloadService")
     public DownloadService downloadServiceBean() {
-        return new DownloadService(enviroment, downloadDaoBean(), fileTransferBean(), restartDtoBean());
+        return new DownloadService(downloadDaoBean(), fileTransferBean(), restartDtoBean());
     }
 
     @Bean(name = "downloadDao")
