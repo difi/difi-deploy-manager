@@ -64,7 +64,7 @@ public class RemoteListRepository {
                 "Difi Deploy Manager",
                 "difi-deploy-manager",
                 "no.difi.deploymanager",
-                "0.9.1-SNAPSHOT",
+                "",
                 "JAR",
                 "no.difi.deploymanager-0.9.1-SNAPSHOT.jar",
                 ""));
