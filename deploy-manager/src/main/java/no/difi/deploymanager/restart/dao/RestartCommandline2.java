@@ -1,8 +1,8 @@
 package no.difi.deploymanager.restart.dao;
 
+import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.Self;
 import no.difi.deploymanager.util.IOUtil;
-import no.difi.deploymanager.domain.ApplicationData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Repository;
@@ -18,7 +18,7 @@ import static java.util.Arrays.asList;
 import static org.springframework.util.StringUtils.isEmpty;
 
 @Repository
-public class RestartCommandline {
+public class RestartCommandline2 {
     public static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
     private static String ROOT_PATH_FOR_SH = "/bin/sh";
 
@@ -26,7 +26,7 @@ public class RestartCommandline {
     private final IOUtil ioUtil;
 
     @Autowired
-    public RestartCommandline(Environment environment, IOUtil ioUtil) {
+    public RestartCommandline2(Environment environment, IOUtil ioUtil) {
         this.environment = environment;
         this.ioUtil = ioUtil;
     }
