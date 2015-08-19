@@ -36,8 +36,7 @@ public class DownloadService {
             ApplicationList forDownload = downloadDao.retrieveDownloadList();
 
             if (forDownload != null && forDownload.getApplications() != null) {
-                ApplicationList restartList = new ApplicationList();
-                restartList.setApplications(downloadApplications(forDownload));
+                ApplicationList restartList = downloadApplications(forDownload);
 
                 ApplicationList notDownloaded = updateNotDownloadedList(restartList, forDownload);
                 downloadDao.saveDownloadList(notDownloaded);
@@ -81,7 +80,7 @@ public class DownloadService {
         }
     }
 
-    private List<ApplicationData> downloadApplications(ApplicationList forDownload) throws IOException {
+    private ApplicationList downloadApplications(ApplicationList forDownload) throws IOException {
         List<ApplicationData> restartList = new ArrayList<>();
 
         for (ApplicationData data : forDownload.getApplications()) {
@@ -109,6 +108,8 @@ public class DownloadService {
             }
         }
 
-        return restartList;
+        ApplicationList applicationList = new ApplicationList();
+        applicationList.setApplications(restartList);
+        return applicationList;
     }
 }
