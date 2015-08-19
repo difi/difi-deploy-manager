@@ -18,7 +18,7 @@ import static java.util.Arrays.asList;
 import static org.springframework.util.StringUtils.isEmpty;
 
 @Repository
-public class RestartCommandline2 {
+public class RestartCommandLine {
     public static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
     private static String ROOT_PATH_FOR_SH = "/bin/sh";
 
@@ -26,7 +26,7 @@ public class RestartCommandline2 {
     private final IOUtil ioUtil;
 
     @Autowired
-    public RestartCommandline2(Environment environment, IOUtil ioUtil) {
+    public RestartCommandLine(Environment environment, IOUtil ioUtil) {
         this.environment = environment;
         this.ioUtil = ioUtil;
     }
