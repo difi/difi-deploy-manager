@@ -41,50 +41,7 @@ public class CheckVersionService {
 
         try {
             for (ApplicationData remoteApp : remoteListService.execute().getApplications()) {
-                try {
-                    JSONObject json = checkVersionDao.retrieveExternalArtifactStatus(remoteApp.getGroupId(), remoteApp.getArtifactId());
-                    ApplicationList downloadedApps = checkVersionDao.retrieveRunningAppsList();
-
-                    if (isInDownloadList(json, downloadDao.retrieveDownloadList())) {
-                        statuses.add(new Status(StatusCode.SUCCESS,
-                                String.format("%s already prepared for download.", remoteApp.getName())));
-                    }
-                    if (isDownloaded(json, downloadedApps)) {
-                        statuses.add(new Status(StatusCode.SUCCESS,
-                                format("Latest version of %s is already downloaded.", remoteApp.getName())));
-                    } else {
-                        ApplicationData data = new ApplicationData.Builder()
-                                .name(remoteApp.getName())
-                                .groupId(remoteApp.getGroupId())
-                                .artifactId(remoteApp.getArtifactId())
-                                .activeVersion(json.getString("version"))
-                                .build();
-
-                        appList.addApplicationData(data);
-
-                        statuses.add(new Status(StatusCode.SUCCESS,
-                                format("Application %s is prepared for download.", data.getName())));
-                    }
-                }
-                catch (MalformedURLException e) {
-                    statuses.add(new Status(StatusCode.ERROR,
-                            String.format("Failed to compose url to retrieve latest version for %s", remoteApp.getName())));
-                }
-                catch (SocketTimeoutException e) {
-                    statuses.add(new Status(StatusCode.ERROR,
-                            String.format("Socket timeout occured. Cannot get latest version for %s", remoteApp.getName())));
-                }
-                catch (IOException | ConnectionFailedException e) {
-                    statuses.add(new Status(StatusCode.ERROR,
-                            String.format("Failed to retrieve latest version for %s", remoteApp.getName())));
-                }
-                catch (JSONException e) {
-                    statuses.add(new Status(StatusCode.CRITICAL,
-                            String.format("Result from external when retrieving latest version for %s is not JSON.", remoteApp.getName())));
-                }
-                catch (IllegalStateException e) {
-                    statuses.add(new Status(StatusCode.CRITICAL, "Enviroment property 'location.version' not found."));
-                }
+                verifyAndAddApplicationForDownloadList(statuses, appList, remoteApp);
             }
         } catch (RemoteApplicationListException e) {
             statuses.add(new Status(StatusCode.CRITICAL, format("Can not fetch remote application list with versions.%s", e.getCause())));
@@ -97,6 +54,55 @@ public class CheckVersionService {
         }
 
         return statuses;
+    }
+
+    private void verifyAndAddApplicationForDownloadList(List<Status> statuses, ApplicationList.Builder appList, ApplicationData remoteApp) {
+        try {
+            JSONObject json = checkVersionDao.retrieveExternalArtifactStatus(remoteApp.getGroupId(), remoteApp.getArtifactId());
+            ApplicationList downloadedApps = checkVersionDao.retrieveRunningAppsList();
+
+            if (isInDownloadList(json, downloadDao.retrieveDownloadList())) {
+                statuses.add(new Status(StatusCode.SUCCESS, String.format("%s already prepared for download.", remoteApp.getName())));
+            }
+            if (isDownloaded(json, downloadedApps)) {
+                statuses.add(new Status(StatusCode.SUCCESS, format("Latest version of %s is already downloaded.", remoteApp.getName())));
+            }
+            else {
+                statuses.add(addApplicationDataToDownloadList(appList, remoteApp, json));
+            }
+        }
+        catch (MalformedURLException e) {
+            statuses.add(new Status(StatusCode.ERROR,
+                    String.format("Failed to compose url to retrieve latest version for %s", remoteApp.getName())));
+        }
+        catch (SocketTimeoutException e) {
+            statuses.add(new Status(StatusCode.ERROR,
+                    String.format("Socket timeout occured. Cannot get latest version for %s", remoteApp.getName())));
+        }
+        catch (IOException | ConnectionFailedException e) {
+            statuses.add(new Status(StatusCode.ERROR,
+                    String.format("Failed to retrieve latest version for %s", remoteApp.getName())));
+        }
+        catch (JSONException e) {
+            statuses.add(new Status(StatusCode.CRITICAL,
+                    String.format("Result from external when retrieving latest version for %s is not JSON.", remoteApp.getName())));
+        }
+        catch (IllegalStateException e) {
+            statuses.add(new Status(StatusCode.CRITICAL, "Enviroment property 'location.version' not found."));
+        }
+    }
+
+    private Status addApplicationDataToDownloadList(ApplicationList.Builder appList, ApplicationData remoteApp, JSONObject json) {
+        ApplicationData data = new ApplicationData.Builder()
+                .name(remoteApp.getName())
+                .groupId(remoteApp.getGroupId())
+                .artifactId(remoteApp.getArtifactId())
+                .activeVersion(json.getString("version"))
+                .build();
+
+        appList.addApplicationData(data);
+
+        return new Status(StatusCode.SUCCESS, format("Application %s is prepared for download.", data.getName()));
     }
 
     private boolean isInDownloadList(JSONObject json, ApplicationList applicationList) {
