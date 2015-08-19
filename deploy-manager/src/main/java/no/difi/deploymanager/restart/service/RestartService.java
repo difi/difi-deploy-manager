@@ -5,7 +5,7 @@ import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.domain.Status;
 import no.difi.deploymanager.restart.dao.RestartCommandLine;
 import no.difi.deploymanager.restart.dao.RestartDao;
-import no.difi.deploymanager.versioncheck.dao.CheckVersionDao;
+import no.difi.deploymanager.versioncheck.service.CheckVersionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,21 +21,21 @@ import static no.difi.deploymanager.util.StatusFactory.statusSuccess;
 public class RestartService {
     private final RestartCommandLine restartCommandline;
     private final RestartDao restartDao;
-    private final CheckVersionDao checkVersionDao;
+    private final CheckVersionService checkVersionService;
 
     private List<Status> statuses = new ArrayList<>();
 
     @Autowired
-    public RestartService(RestartDao restartDao, RestartCommandLine restartCommandline, CheckVersionDao checkVersionDao) {
+    public RestartService(RestartDao restartDao, RestartCommandLine restartCommandline, CheckVersionService checkVersionService) {
         this.restartDao = restartDao;
         this.restartCommandline = restartCommandline;
-        this.checkVersionDao = checkVersionDao;
+        this.checkVersionService = checkVersionService;
     }
 
     public List<Status> execute() {
         try {
             ApplicationList restartList = restartDao.retrieveRestartList();
-            ApplicationList runningAppList = checkVersionDao.retrieveRunningAppsList();
+            ApplicationList runningAppList = checkVersionService.retrieveRunningAppsList();
 
             if (restartList != null && restartList.getApplications() != null) {
                 for (ApplicationData newApp : restartList.getApplications()) {

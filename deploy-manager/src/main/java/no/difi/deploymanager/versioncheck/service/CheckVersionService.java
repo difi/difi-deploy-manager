@@ -56,6 +56,10 @@ public class CheckVersionService {
         return statuses;
     }
 
+    public ApplicationList retrieveRunningAppsList() throws IOException {
+        return checkVersionDao.retrieveRunningAppsList();
+    }
+
     private void verifyAndAddApplicationForDownloadList(List<Status> statuses, ApplicationList.Builder appList, ApplicationData remoteApp) {
         try {
             JSONObject json = checkVersionDao.retrieveExternalArtifactStatus(remoteApp.getGroupId(), remoteApp.getArtifactId());

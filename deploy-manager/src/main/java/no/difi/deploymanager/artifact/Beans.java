@@ -45,7 +45,7 @@ public class Beans {
 
     @Bean(name = "restartService")
     public RestartService restartServiceBean() {
-        return new RestartService(restartDaoBean(), restartCommandLineBean(), checkVersionDaoBean());
+        return new RestartService(restartDaoBean(), restartCommandLineBean(), checkVersionServiceBean());
     }
 
     @Bean(name = "restartDao")
