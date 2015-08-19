@@ -11,8 +11,6 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Repository
 public class RemoteListRepository {
@@ -30,62 +28,49 @@ public class RemoteListRepository {
             throw new RemoteApplicationListException();
         }
 
-        List<ApplicationData> applications = new ArrayList<>();
+        ApplicationList.Builder applications = new ApplicationList.Builder();
         if (json != null) {
             JSONArray dataArray =  (JSONArray) json.get("artifacts");
 
             for (int i = 0; i < dataArray.length(); i++) {
                 JSONObject dataObject = dataArray.getJSONObject(i);
 
-                ApplicationData app = new ApplicationData();
-                app.setName(convert(dataObject, "name"));
-                app.setGroupId(convert(dataObject, "groupId"));
-                app.setArtifactId(convert(dataObject, "artifactId"));
-                app.setActiveVersion(convert(dataObject, "version"));
-                app.setArtifactType(convert(dataObject, "applicationType"));
-                app.setFilename(convert(dataObject, "filename"));
-                app.setStartParameters(convert(dataObject, "startParameters"));
+                ApplicationData app = new ApplicationData.Builder()
+                        .name(convert(dataObject, "name"))
+                        .groupId(convert(dataObject, "groupId"))
+                        .artifactId(convert(dataObject, "artifactId"))
+                        .activeVersion(convert(dataObject, "version"))
+                        .artifactType(convert(dataObject, "applicationType"))
+                        .filename(convert(dataObject, "filename"))
+                        .startParameters(convert(dataObject, "startParameters"))
+                        .build();
 
-                applications.add(app);
+                applications.addApplicationData(app);
             }
         }
 
-        ApplicationList applicationList = new ApplicationList();
-        applicationList.setApplications(applications);
-
-        return applicationList;
+        return applications.build();
     }
 
     public ApplicationList getHardcodedList() {
-        ApplicationList applicationList = new ApplicationList();
-        List<ApplicationData> applications = applicationList.getApplications();
+        ApplicationList.Builder appList = new ApplicationList.Builder();
 
-        applications.add(createApplicationDataObject(
-                "Difi Deploy Manager",
-                "difi-deploy-manager",
-                "no.difi.deploymanager",
-                "",
-                "JAR",
-                "no.difi.deploymanager-0.9.1-SNAPSHOT.jar",
-                ""));
+        appList.addApplicationData(createApplicationDataObject("Difi Deploy Manager", "difi-deploy-manager", "no.difi.deploymanager", "", "JAR", "no.difi.deploymanager-0.9.1-SNAPSHOT.jar", ""));
 
-        applicationList.setApplications(applications);
-
-        return applicationList;
+        return appList.build();
     }
 
     private ApplicationData createApplicationDataObject(String name, String groupId, String artifactId, String version,
                                                         String applicationType, String filename, String startParameters) {
-        ApplicationData data = new ApplicationData();
-        data.setName(name);
-        data.setGroupId(groupId);
-        data.setArtifactId(artifactId);
-        data.setActiveVersion(version);
-        data.setArtifactType(applicationType);
-        data.setFilename(filename);
-        data.setStartParameters(startParameters);
-
-        return data;
+        return new ApplicationData.Builder()
+                .name(name)
+                .groupId(groupId)
+                .artifactId(artifactId)
+                .activeVersion(version)
+                .artifactType(applicationType)
+                .filename(filename)
+                .startParameters(startParameters)
+                .build();
     }
 
     private static String convert(JSONObject obj, String fetch) {

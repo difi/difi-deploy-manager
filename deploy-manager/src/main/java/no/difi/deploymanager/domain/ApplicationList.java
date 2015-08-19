@@ -1,17 +1,21 @@
 package no.difi.deploymanager.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ApplicationList implements Serializable {
     private List<ApplicationData> applications;
 
-    public List<ApplicationData> getApplications() {
-        return applications;
+    public ApplicationList(Builder builder) {
+        this.applications = builder.dataList;
     }
 
-    public void setApplications(List<ApplicationData> application) {
-        this.applications = application;
+    public List<ApplicationData> getApplications() {
+        if (applications == null) {
+            applications = new ArrayList<>();
+        }
+        return applications;
     }
 
     public boolean hasApplicationData(ApplicationData data) {
@@ -23,5 +27,21 @@ public class ApplicationList implements Serializable {
             }
         }
         return false;
+    }
+
+    public static class Builder {
+        private List<ApplicationData> dataList;
+
+        public Builder addApplicationData(ApplicationData applicationData) {
+            if (dataList == null) {
+                dataList = new ArrayList<>();
+            }
+            dataList.add(applicationData);
+            return this;
+        }
+
+        public ApplicationList build() {
+            return new ApplicationList(this);
+        }
     }
 }

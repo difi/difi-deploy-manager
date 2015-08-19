@@ -4,19 +4,35 @@ public class Self {
     private String name;
     private String version;
 
-    public String getName() {
-        return name;
+    public Self(Builder self) {
+        this.name = self.name;
+        this.version = self.version;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getName() {
+        return name;
     }
 
     public String getVersion() {
         return version;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
+    public static class Builder {
+        private String name;
+        private String version;
+
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder version(String version) {
+            this.version = version;
+            return this;
+        }
+
+        public Self build() {
+            return new Self(this);
+        }
     }
 }

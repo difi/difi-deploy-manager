@@ -37,7 +37,7 @@ public class CheckVersionService {
 
     public List<Status> execute() {
         List<Status> statuses = new ArrayList<>();
-        List<ApplicationData> applicationsToDownload = new ArrayList<>();
+        ApplicationList.Builder appList = new ApplicationList.Builder();
 
         try {
             for (ApplicationData remoteApp : remoteListService.execute().getApplications()) {
@@ -53,12 +53,14 @@ public class CheckVersionService {
                         statuses.add(new Status(StatusCode.SUCCESS,
                                 format("Latest version of %s is already downloaded.", remoteApp.getName())));
                     } else {
-                        ApplicationData data = new ApplicationData();
-                        data.setName(remoteApp.getName());
-                        data.setGroupId(remoteApp.getGroupId());
-                        data.setArtifactId(remoteApp.getArtifactId());
-                        data.setActiveVersion(json.getString("version"));
-                        applicationsToDownload.add(data);
+                        ApplicationData data = new ApplicationData.Builder()
+                                .name(remoteApp.getName())
+                                .groupId(remoteApp.getGroupId())
+                                .artifactId(remoteApp.getArtifactId())
+                                .activeVersion(json.getString("version"))
+                                .build();
+
+                        appList.addApplicationData(data);
 
                         statuses.add(new Status(StatusCode.SUCCESS,
                                 format("Application %s is prepared for download.", data.getName())));
@@ -88,11 +90,8 @@ public class CheckVersionService {
             statuses.add(new Status(StatusCode.CRITICAL, format("Can not fetch remote application list with versions.%s", e.getCause())));
         }
 
-        ApplicationList forDownload = new ApplicationList();
-        forDownload.setApplications(applicationsToDownload);
-
         try {
-            downloadDao.saveDownloadList(forDownload);
+            downloadDao.saveDownloadList(appList.build());
         } catch (IOException e) {
             statuses.add(new Status(StatusCode.CRITICAL, format("Failed to save download list. Reason: %s", e.getMessage())));
         }

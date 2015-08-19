@@ -55,22 +55,25 @@ public class RestartCommandLineIntegrationTest {
             Runtime.getRuntime().exec("cmd /c copy " + PERM_TEST_JAR_FILE_WIN + " "  + TEMP_TEST_JAR_FILE_WIN);
         }
 
-        ApplicationData oldApp = new ApplicationData();
-        oldApp.setName("no.difi.deploymanager");
-        oldApp.setFilename(TEST_APPLICATION_FILENAME);
-        oldApp.setActiveVersion("0.9.1");
+        ApplicationData oldApp = new ApplicationData.Builder()
+                .name("no.difi.deploymanager")
+                .filename(TEST_APPLICATION_FILENAME)
+                .activeVersion("0.9.1")
+                .build();
 
-        ApplicationData newApp = new ApplicationData();
-        newApp.setName("no.difi.deploymanager");
-        newApp.setFilename(TEST_APPLICATION_FILENAME);
-        newApp.setActiveVersion("0.9.2");
+        ApplicationData newApp = new ApplicationData.Builder()
+                .name("no.difi.deploymanager")
+                .filename(TEST_APPLICATION_FILENAME)
+                .activeVersion("0.9.2")
+                .build();
 
-        Self self = new Self();
-        self.setName("no.no.no");
-        self.setVersion("0.9.3");
+        Self self = new Self.Builder()
+                .name("no.no.no")
+                .version("0.9.3")
+                .build();
 
         assertTrue(restartCommandLine.startProcess(newApp));
-        assertTrue(restartCommandLine.executeRestart(newApp, newApp, self));
+        assertTrue(restartCommandLine.executeRestart(oldApp, newApp, self));
         assertTrue(restartCommandLine.stopProcess(newApp));
     }
 

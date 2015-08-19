@@ -1,7 +1,6 @@
 package no.difi.deploymanager.download.filetransfer;
 
 import no.difi.deploymanager.artifact.Application;
-import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -14,6 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.File;
 
+import static no.difi.deploymanager.testutils.ObjectMotherApplicationData.createApplicationData;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -51,14 +51,6 @@ public class FileTransferIntegrationTest {
 
         assertTrue(folder);
         assertTrue(cleanFilename.length() > 0);
-    }
-
-    private static ApplicationData createApplicationData(String groupId, String artifactId) {
-        ApplicationData data = new ApplicationData();
-        data.setName("Test app");
-        data.setGroupId(groupId);
-        data.setArtifactId(artifactId);
-        return data;
     }
 
     @AfterClass

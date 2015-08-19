@@ -54,19 +54,16 @@ public class DownloadService {
     }
 
     private ApplicationList updateNotDownloadedList(ApplicationList restartList, ApplicationList forDownload) {
-        List<ApplicationData> notDownloaded = new ArrayList<>();
+        ApplicationList.Builder appList = new ApplicationList.Builder();
 
         //Update list for applications that failed download.
         for (ApplicationData checklist : restartList.getApplications()) {
             if (!forDownload.hasApplicationData(checklist)) {
-                notDownloaded.add(checklist);
+                appList.addApplicationData(checklist);
             }
         }
 
-        ApplicationList applicationList = new ApplicationList();
-        applicationList.setApplications(notDownloaded);
-
-        return applicationList;
+        return appList.build();
     }
 
     private void saveRestartList(ApplicationList restartList) throws IOException {
@@ -81,20 +78,17 @@ public class DownloadService {
     }
 
     private ApplicationList downloadApplications(ApplicationList forDownload) throws IOException {
-        List<ApplicationData> restartList = new ArrayList<>();
+        ApplicationList.Builder restartList = new ApplicationList.Builder();
 
         for (ApplicationData data : forDownload.getApplications()) {
             try {
                 String versionDownloaded = fileTransfer.downloadApplication(data);
 
-                DownloadedVersion downloadedVersion = new DownloadedVersion();
-                downloadedVersion.setVersion(versionDownloaded);
+                ApplicationData.Builder appData = data.openCopy();
+                appData.setAllDownloadedVersion(data.getDownloadedVersions())
+                        .addDownloadedVersions(new DownloadedVersion.Builder().version(versionDownloaded).build());
 
-                List<DownloadedVersion> allVersions = data.getDownloadedVersions();
-                allVersions.add(downloadedVersion);
-                data.setDownloadedVersions(allVersions);
-
-                restartList.add(data);
+                restartList.addApplicationData(appData.build());
             }
             catch (MalformedURLException e) {
                 statuses.add(new Status(StatusCode.ERROR, format("Failed to compose URL for %s.", data.getName())));
@@ -108,8 +102,6 @@ public class DownloadService {
             }
         }
 
-        ApplicationList applicationList = new ApplicationList();
-        applicationList.setApplications(restartList);
-        return applicationList;
+        return restartList.build();
     }
 }

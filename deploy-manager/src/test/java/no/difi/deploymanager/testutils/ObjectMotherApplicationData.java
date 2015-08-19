@@ -12,13 +12,16 @@ public class ObjectMotherApplicationData {
     }
 
     public static ApplicationData createApplicationData(String name, String groupId, String artifactId, String version) {
-        ApplicationData data = new ApplicationData();
-        data.setName(name);
-        data.setGroupId(groupId);
-        data.setArtifactId(artifactId);
-        data.setActiveVersion(version);
+        return new ApplicationData.Builder()
+                .name(name)
+                .groupId(groupId)
+                .artifactId(artifactId)
+                .activeVersion(version)
+                .build();
+    }
 
-        return data;
+    public static ApplicationData createApplicationData(String groupId, String artifactId) {
+        return createApplicationData("test-app", groupId, artifactId, "");
     }
 
     public static List<ApplicationData> createApplicationDataList() {

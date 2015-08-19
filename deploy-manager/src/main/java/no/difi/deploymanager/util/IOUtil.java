@@ -64,24 +64,30 @@ public class IOUtil {
     }
 
     public synchronized Self getVersion() {
-        Self self = new Self();
+        Self.Builder self = new Self.Builder();
 
         Package pack = getClass().getPackage();
         if (pack != null) {
-            self.setName(pack.getName());
-            if (self.getName() == null) {
-                self.setName(pack.getImplementationTitle());
-                if (self.getName() == null) {
-                    self.setName(pack.getSpecificationTitle());
+            if (pack.getName() == null) {
+                if (pack.getImplementationTitle() == null) {
+                    self.name(pack.getSpecificationTitle());
+                }
+                else {
+                    self.name(pack.getImplementationTitle());
                 }
             }
+            else {
+                self.name(pack.getName());
+            }
 
-            self.setVersion(pack.getImplementationVersion());
-            if (self.getVersion() == null) {
-                self.setVersion(pack.getSpecificationVersion());
+            if (pack.getImplementationVersion() == null) {
+                self.version(pack.getSpecificationVersion());
+            }
+            else {
+                self.version(pack.getImplementationVersion());
             }
         }
 
-        return self;
+        return self.build();
     }
 }
