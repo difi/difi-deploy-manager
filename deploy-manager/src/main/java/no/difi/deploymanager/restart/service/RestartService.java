@@ -77,6 +77,10 @@ public class RestartService {
         return statuses;
     }
 
+    public void saveRestartList(ApplicationList restartList) throws IOException {
+        restartDto.saveRestartList(restartList);
+    }
+
     private ApplicationData findAppForRestart(ApplicationList runningAppList, ApplicationData newApp) {
         ApplicationData appWithNewVersion = null;
         for (ApplicationData oldApp : runningAppList.getApplications()) {

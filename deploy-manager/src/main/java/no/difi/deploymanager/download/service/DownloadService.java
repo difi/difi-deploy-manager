@@ -3,7 +3,7 @@ package no.difi.deploymanager.download.service;
 import no.difi.deploymanager.domain.*;
 import no.difi.deploymanager.download.dao.DownloadDao;
 import no.difi.deploymanager.download.filetransfer.FileTransfer;
-import no.difi.deploymanager.restart.dto.RestartDto;
+import no.difi.deploymanager.restart.service.RestartService;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,28 +20,26 @@ import static java.lang.String.format;
 public class DownloadService {
     private final DownloadDao downloadDao;
     private final FileTransfer fileTransfer;
-    private final RestartDto restartDto;
+    private final RestartService restartService;
 
     private List<Status> statuses = new ArrayList<>();
 
     @Autowired
-    public DownloadService(DownloadDao downloadDao, FileTransfer fileTransfer, RestartDto restartDto) {
+    public DownloadService(DownloadDao downloadDao, FileTransfer fileTransfer, RestartService restartService) {
         this.downloadDao = downloadDao;
         this.fileTransfer = fileTransfer;
-        this.restartDto = restartDto;
+        this.restartService = restartService;
     }
 
     public List<Status> execute() {
-        List<ApplicationData> restartList;
-
         try {
             ApplicationList forDownload = downloadDao.retrieveDownloadList();
 
             if (forDownload != null && forDownload.getApplications() != null) {
-                restartList = downloadApplications(forDownload);
+                ApplicationList restartList = new ApplicationList();
+                restartList.setApplications(downloadApplications(forDownload));
 
-                ApplicationList notDownloaded = new ApplicationList();
-                notDownloaded.setApplications(updateNotDownloadedList(restartList, forDownload));
+                ApplicationList notDownloaded = updateNotDownloadedList(restartList, forDownload);
                 downloadDao.saveDownloadList(notDownloaded);
 
                 saveRestartList(restartList);
@@ -56,30 +54,25 @@ public class DownloadService {
         return statuses;
     }
 
-    private List<ApplicationData> updateNotDownloadedList(List<ApplicationData> restartList, ApplicationList forDownload) {
+    private ApplicationList updateNotDownloadedList(ApplicationList restartList, ApplicationList forDownload) {
         List<ApplicationData> notDownloaded = new ArrayList<>();
 
         //Update list for applications that failed download.
-        for (ApplicationData checklist : restartList) {
-            boolean found = false;
-            for (ApplicationData worklist : forDownload.getApplications()) {
-                if (checklist.getName().equals(worklist.getName())) {
-                    found = true;
-                }
-            }
-            if (!found) {
+        for (ApplicationData checklist : restartList.getApplications()) {
+            if (!forDownload.hasApplicationData(checklist)) {
                 notDownloaded.add(checklist);
             }
         }
-        return notDownloaded;
+
+        ApplicationList applicationList = new ApplicationList();
+        applicationList.setApplications(notDownloaded);
+
+        return applicationList;
     }
 
-    private void saveRestartList(List<ApplicationData> restartList) throws IOException {
-        if (restartList != null && restartList.size() != 0) {
-            ApplicationList applicationsForRestart = new ApplicationList();
-            applicationsForRestart.setApplications(restartList);
-
-            restartDto.saveRestartList(applicationsForRestart);
+    private void saveRestartList(ApplicationList restartList) throws IOException {
+        if (restartList != null && restartList.getApplications().size() != 0) {
+            restartService.saveRestartList(restartList);
 
             statuses.add(new Status(StatusCode.SUCCESS, format("Downloaded apps, prepared for restart.")));
         }

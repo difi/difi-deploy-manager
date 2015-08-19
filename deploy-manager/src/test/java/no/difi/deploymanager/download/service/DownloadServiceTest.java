@@ -6,7 +6,7 @@ import no.difi.deploymanager.domain.Status;
 import no.difi.deploymanager.domain.StatusCode;
 import no.difi.deploymanager.download.dao.DownloadDao;
 import no.difi.deploymanager.download.filetransfer.FileTransfer;
-import no.difi.deploymanager.restart.dto.RestartDto;
+import no.difi.deploymanager.restart.service.RestartService;
 import no.difi.deploymanager.testutils.ObjectMotherApplicationList;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,14 +24,14 @@ public class DownloadServiceTest {
     private DownloadService service;
 
     @Mock private DownloadDao downloadDaoMock;
-    @Mock private RestartDto restartDtoMock;
+    @Mock private RestartService restartServiceMock;
     @Mock private FileTransfer fileTransferMock;
 
     @Before
     public void setUp() {
         initMocks(this);
 
-        service = new DownloadService(downloadDaoMock, fileTransferMock, restartDtoMock);
+        service = new DownloadService(downloadDaoMock, fileTransferMock, restartServiceMock);
     }
 
     @Test
@@ -77,7 +77,7 @@ public class DownloadServiceTest {
 
         service.execute().get(0);
 
-        verify(restartDtoMock, times(1)).saveRestartList(any(ApplicationList.class));
+        verify(restartServiceMock, times(1)).saveRestartList(any(ApplicationList.class));
     }
 
     @Test
@@ -86,7 +86,7 @@ public class DownloadServiceTest {
 
         service.execute().get(0);
 
-        verify(restartDtoMock, never()).saveRestartList(any(ApplicationList.class));
+        verify(restartServiceMock, never()).saveRestartList(any(ApplicationList.class));
     }
 
     @Test
