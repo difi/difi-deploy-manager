@@ -3,7 +3,6 @@ package no.difi.deploymanager.restart.dao;
 import no.difi.deploymanager.artifact.Application;
 import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.Self;
-import no.difi.deploymanager.util.IOUtil;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +24,6 @@ public class RestartCommandLineIntegrationTest {
     private RestartCommandLine restartCommandLine;
 
     @Autowired Environment environment;
-    @Autowired IOUtil ioUtil;
 
     private static final String TEST_APPLICATION_FILENAME = "deploy-manager-health-check-0.9.0.jar";
     private static final String TEMP_TEST_JAR_FILE = "./bin/" + TEST_APPLICATION_FILENAME;

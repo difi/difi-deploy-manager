@@ -2,7 +2,6 @@ package no.difi.deploymanager.restart.dao;
 
 import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.Self;
-import no.difi.deploymanager.util.IOUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Repository;
@@ -23,19 +22,16 @@ public class RestartCommandLine {
     private static String ROOT_PATH_FOR_SH = "/bin/sh";
 
     private final Environment environment;
-    private final IOUtil ioUtil;
 
     @Autowired
-    public RestartCommandLine(Environment environment, IOUtil ioUtil) {
+    public RestartCommandLine(Environment environment) {
         this.environment = environment;
-        this.ioUtil = ioUtil;
     }
 
 
-    public boolean executeRestart(ApplicationData oldVersion, ApplicationData newVersion) throws IOException, InterruptedException {
-        Self thisApp = findAppVersion();
-        if (oldVersion.getName().equals(thisApp.getName())
-                && !oldVersion.getActiveVersion().contains(thisApp.getVersion())) {
+    public boolean executeRestart(ApplicationData oldVersion, ApplicationData newVersion, Self self) throws IOException, InterruptedException {
+        if (oldVersion.getName().equals(self.getName())
+                && !oldVersion.getActiveVersion().contains(self.getVersion())) {
             //Have to be opposite from normal restart when self.
             startProcess(newVersion);
             return stopProcess(oldVersion);
@@ -180,9 +176,5 @@ public class RestartCommandLine {
         process.destroy();
 
         return output;
-    }
-
-    public Self findAppVersion() {
-        return ioUtil.getVersion();
     }
 }
