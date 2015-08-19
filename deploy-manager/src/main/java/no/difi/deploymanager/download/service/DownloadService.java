@@ -1,6 +1,9 @@
 package no.difi.deploymanager.download.service;
 
-import no.difi.deploymanager.domain.*;
+import no.difi.deploymanager.domain.ApplicationData;
+import no.difi.deploymanager.domain.ApplicationList;
+import no.difi.deploymanager.domain.DownloadedVersion;
+import no.difi.deploymanager.domain.Status;
 import no.difi.deploymanager.download.dao.DownloadDao;
 import no.difi.deploymanager.download.filetransfer.FileTransfer;
 import no.difi.deploymanager.restart.service.RestartService;
@@ -15,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.String.format;
+import static no.difi.deploymanager.util.StatusFactory.statusError;
+import static no.difi.deploymanager.util.StatusFactory.statusSuccess;
 
 @Service
 public class DownloadService {
@@ -43,11 +48,11 @@ public class DownloadService {
 
                 saveRestartList(restartList);
             } else {
-                statuses.add(new Status(StatusCode.SUCCESS, "Nothing to download."));
+                statuses.add(statusSuccess("Nothing to download."));
             }
         }
         catch (IOException e) {
-            statuses.add(new Status(StatusCode.ERROR, format("Failed to retrieve download list. Reason: %s", e.getMessage())));
+            statuses.add(statusError(format("Failed to retrieve download list. Reason: %s", e.getMessage())));
         }
 
         return statuses;
@@ -69,11 +74,10 @@ public class DownloadService {
     private void saveRestartList(ApplicationList restartList) throws IOException {
         if (restartList != null && restartList.getApplications().size() != 0) {
             restartService.saveRestartList(restartList);
-
-            statuses.add(new Status(StatusCode.SUCCESS, format("Downloaded apps, prepared for restart.")));
+            statuses.add(statusSuccess(format("Downloaded apps, prepared for restart.")));
         }
         else {
-            statuses.add(new Status(StatusCode.SUCCESS, format("No applications set for download.")));
+            statuses.add(statusSuccess(format("No applications set for download.")));
         }
     }
 
@@ -91,14 +95,13 @@ public class DownloadService {
                 restartList.addApplicationData(appData.build());
             }
             catch (MalformedURLException e) {
-                statuses.add(new Status(StatusCode.ERROR, format("Failed to compose URL for %s.", data.getName())));
+                statuses.add(statusError(format("Failed to compose URL for %s.", data.getName())));
             }
             catch (SocketTimeoutException e) {
-                statuses.add(new Status(StatusCode.ERROR,
-                        format("Timeout occured. It too too long to download %s %s", data.getName(), data.getFilename())));
+                statuses.add(statusError(format("Timeout occured. It too too long to download %s %s", data.getName(), data.getFilename())));
             }
             catch (ConnectionFailedException e) {
-                statuses.add(new Status(StatusCode.ERROR, "Connection for downloading updates failed."));
+                statuses.add(statusError("Connection for downloading updates failed."));
             }
         }
 
