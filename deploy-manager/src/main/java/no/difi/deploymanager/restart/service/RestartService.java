@@ -4,7 +4,8 @@ import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.domain.Status;
 import no.difi.deploymanager.domain.StatusCode;
-import no.difi.deploymanager.restart.dto.RestartDto;
+import no.difi.deploymanager.restart.dao.RestartCommandLine;
+import no.difi.deploymanager.restart.dao.RestartDao;
 import no.difi.deploymanager.versioncheck.dao.CheckVersionDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,32 +18,34 @@ import static java.lang.String.format;
 
 @Service
 public class RestartService {
-    private final RestartDto restartDto;
+    private final RestartCommandLine restartCommandline;
+    private final RestartDao restartDao;
     private final CheckVersionDao checkVersionDao;
 
     private List<Status> statuses = new ArrayList<>();
 
     @Autowired
-    public RestartService(RestartDto restartDto, CheckVersionDao checkVersionDao) {
-        this.restartDto = restartDto;
+    public RestartService(RestartDao restartDao, RestartCommandLine restartCommandline, CheckVersionDao checkVersionDao) {
+        this.restartDao = restartDao;
+        this.restartCommandline = restartCommandline;
         this.checkVersionDao = checkVersionDao;
     }
 
     public List<Status> execute() {
         try {
-            ApplicationList restartList = restartDto.retrieveRestartList();
+            ApplicationList restartList = restartDao.retrieveRestartList();
             ApplicationList runningAppList = checkVersionDao.retrieveRunningAppsList();
-            ApplicationData applicationWithNewVersion;
+            ApplicationData oldApp;
 
             if (restartList != null && restartList.getApplications() != null) {
                 for (ApplicationData newApp : restartList.getApplications()) {
-                    applicationWithNewVersion = null;
+                    oldApp = null;
                     if (runningAppList != null) {
-                        applicationWithNewVersion = findAppForRestart(runningAppList, newApp);
+                        oldApp = findAppForRestart(runningAppList, newApp);
                     }
                     try {
-                        if (applicationWithNewVersion != null) {
-                            boolean result = restartDto.executeRestart(applicationWithNewVersion, newApp);
+                        if (oldApp != null) {
+                            boolean result = restartCommandline.executeRestart(oldApp, newApp, restartDao.fetchSelfVersion());
                             if (result) {
                                 statuses.add(new Status(
                                         StatusCode.SUCCESS,
@@ -51,7 +54,7 @@ public class RestartService {
                             }
                         }
                         else {
-                            boolean result = restartDto.startProcess(newApp);
+                            boolean result = restartCommandline.startProcess(newApp);
                             if (result) {
                                 statuses.add(new Status(
                                         StatusCode.SUCCESS,
@@ -60,13 +63,13 @@ public class RestartService {
                             }
                         }
                     } catch (InterruptedException e) {
-                        statuses.add(new Status(StatusCode.ERROR, format("Could not execute restart on %s with version %s. Attempting to start up old version (%s).", newApp.getName(), newApp.getActiveVersion(), applicationWithNewVersion.getActiveVersion())));
-                        boolean result = restartDto.startProcess(applicationWithNewVersion);
+                        statuses.add(new Status(StatusCode.ERROR, format("Could not execute restart on %s with version %s. Attempting to start up old version (%s).", newApp.getName(), newApp.getActiveVersion(), oldApp.getActiveVersion())));
+                        boolean result = restartCommandline.startProcess(oldApp);
 
                         if (result) {
-                            statuses.add(new Status(StatusCode.SUCCESS, format("Restarted old version %s with success.", applicationWithNewVersion.getActiveVersion())));
+                            statuses.add(new Status(StatusCode.SUCCESS, format("Restarted old version %s with success.", oldApp.getActiveVersion())));
                         } else {
-                            statuses.add(new Status(StatusCode.ERROR, format("Could not start up %s, %s. Application is not running!", applicationWithNewVersion.getName(), applicationWithNewVersion.getActiveVersion())));
+                            statuses.add(new Status(StatusCode.ERROR, format("Could not start up %s, %s. Application is not running!", oldApp.getName(), oldApp.getActiveVersion())));
                         }
                     }
                 }
@@ -78,7 +81,7 @@ public class RestartService {
     }
 
     public void saveRestartList(ApplicationList restartList) throws IOException {
-        restartDto.saveRestartList(restartList);
+        restartDao.saveRestartList(restartList);
     }
 
     private ApplicationData findAppForRestart(ApplicationList runningAppList, ApplicationData newApp) {

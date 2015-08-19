@@ -5,7 +5,8 @@ import no.difi.deploymanager.download.filetransfer.FileTransfer;
 import no.difi.deploymanager.download.service.DownloadService;
 import no.difi.deploymanager.remotelist.dao.RemoteListRepository;
 import no.difi.deploymanager.remotelist.service.RemoteListService;
-import no.difi.deploymanager.restart.dto.RestartDto;
+import no.difi.deploymanager.restart.dao.RestartCommandLine;
+import no.difi.deploymanager.restart.dao.RestartDao;
 import no.difi.deploymanager.restart.service.RestartService;
 import no.difi.deploymanager.schedule.Scheduler;
 import no.difi.deploymanager.util.IOUtil;
@@ -43,12 +44,17 @@ public class Beans {
 
     @Bean(name = "restartService")
     public RestartService restartServiceBean() {
-        return new RestartService(restartDtoBean(), checkVersionDaoBean());
+        return new RestartService(restartDaoBean(), restartCommandLineBean(), checkVersionDaoBean());
     }
 
-    @Bean(name = "restartDto")
-    public RestartDto restartDtoBean() {
-        return new RestartDto(enviroment, ioUtilBean());
+    @Bean(name = "restartDao")
+    public RestartDao restartDaoBean() {
+        return new RestartDao(enviroment, ioUtilBean());
+    }
+
+    @Bean(name = "restartCommandLine")
+    public RestartCommandLine restartCommandLineBean() {
+        return new RestartCommandLine(enviroment);
     }
 
     @Bean(name = "remoteListService")
