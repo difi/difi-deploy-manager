@@ -1,7 +1,7 @@
 package no.difi.deploymanager.util;
 
-import no.difi.deploymanager.testutils.ObjectMotherApplicationList;
 import no.difi.deploymanager.domain.ApplicationData;
+import no.difi.deploymanager.testutils.ObjectMotherApplicationList;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,9 +12,9 @@ import static org.junit.Assert.*;
 
 //Requirements for this test class is access to write on disk. Doing a real test for file IO operations.
 public class IOUtilIntegrationTest {
-    public static final String TESTFOLDER = "/testfolder";
-    public static final String TESTFILENAME = "/testfilename.file";
-    public static final String SELF_PATH = System.getProperty("user.dir");
+    private static final String TESTFOLDER = "/testfolder";
+    private static final String TESTFILENAME = "/testfilename.file";
+    private static final String SELF_PATH = System.getProperty("user.dir");
 
     private IOUtil ioUtil;
 
@@ -31,11 +31,11 @@ public class IOUtilIntegrationTest {
         should_retrieve_object_with_same_data_that_was_saved();
     }
 
-    public void should_not_have_path_when_first_run() {
+    private void should_not_have_path_when_first_run() {
         assertFalse(new File(SELF_PATH + TESTFOLDER).exists());
     }
 
-    public void should_create_path_and_file_when_not_existing() throws Exception {
+    private void should_create_path_and_file_when_not_existing() throws Exception {
         ioUtil.saveApplicationList(ObjectMotherApplicationList.createApplicationListWithData(), TESTFOLDER, TESTFILENAME);
 
         assertTrue(new File(SELF_PATH + TESTFOLDER).exists());
@@ -43,7 +43,7 @@ public class IOUtilIntegrationTest {
         assertTrue(new File(SELF_PATH + TESTFOLDER + TESTFILENAME).isFile());
     }
 
-    public void should_retrieve_object_with_same_data_that_was_saved() throws Exception {
+    private void should_retrieve_object_with_same_data_that_was_saved() throws Exception {
         ApplicationData expected = ObjectMotherApplicationList.createApplicationListWithData().getApplications().get(0);
 
         ApplicationData actual = ioUtil.retrieveApplicationList(TESTFOLDER, TESTFILENAME).getApplications().get(0);

@@ -20,9 +20,10 @@ import static org.junit.Assert.fail;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
 public class RestartCommandLineIntegrationTest {
-    public static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
+    private static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
     private RestartCommandLine restartCommandLine;
 
+    @SuppressWarnings("SpringJavaAutowiredMembersInspection")
     @Autowired Environment environment;
 
     private static final String TEST_APPLICATION_FILENAME = "deploy-manager-health-check-0.9.0.jar";
@@ -77,6 +78,7 @@ public class RestartCommandLineIntegrationTest {
         assertTrue(restartCommandLine.stopProcess(newApp));
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @AfterClass
     public static void tearDownAfterRun() {
         File runningFile = new File(runningPathAndFile);

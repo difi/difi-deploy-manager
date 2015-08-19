@@ -18,8 +18,8 @@ import static org.springframework.util.StringUtils.isEmpty;
 
 @Repository
 public class RestartCommandLine {
-    public static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
-    private static String ROOT_PATH_FOR_SH = "/bin/sh";
+    private static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
+    private static final String ROOT_PATH_FOR_SH = "/bin/sh";
 
     private final Environment environment;
 
@@ -138,7 +138,7 @@ public class RestartCommandLine {
     }
 
     private List<String> findProcess(ApplicationData oldVersion) throws IOException, InterruptedException {
-        Process process = null;
+        Process process;
         List<String> output = new ArrayList<>();
 
         if (IS_WINDOWS) {

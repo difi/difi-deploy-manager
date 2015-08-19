@@ -1,8 +1,8 @@
 package no.difi.deploymanager.domain;
 
 public class Self {
-    private String name;
-    private String version;
+    private final String name;
+    private final String version;
 
     public Self(Builder self) {
         this.name = self.name;

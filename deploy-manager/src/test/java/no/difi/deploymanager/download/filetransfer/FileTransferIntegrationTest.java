@@ -21,8 +21,8 @@ import static org.junit.Assert.assertTrue;
 public class FileTransferIntegrationTest {
     private FileTransfer fileTransfer;
 
-    @Autowired
-    private Environment environment;
+    @SuppressWarnings("SpringJavaAutowiredMembersInspection")
+    @Autowired private Environment environment;
 
     private static final String BASE_DIR = System.getProperty("user.dir");
 
@@ -54,6 +54,7 @@ public class FileTransferIntegrationTest {
     }
 
     @AfterClass
+    @SuppressWarnings({"ConstantConditions", "ResultOfMethodCallIgnored"})
     public static void tearDownAfterRun() {
         File binFolder = new File(downloadPath);
 

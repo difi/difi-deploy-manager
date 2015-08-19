@@ -20,6 +20,7 @@ import static org.junit.Assert.fail;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
+@SuppressWarnings("SpringJavaAutowiredMembersInspection")
 public class RestartDaoIntegrationTest {
     private RestartDao restartDao;
 
@@ -47,6 +48,7 @@ public class RestartDaoIntegrationTest {
         assertApplicationList(expected, actual);
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @AfterClass
     public static void tearDownAfterRun() {
         File forRestartFile = new File(forRestartPathAndFile);

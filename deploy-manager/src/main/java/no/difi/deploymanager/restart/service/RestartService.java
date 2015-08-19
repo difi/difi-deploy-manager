@@ -22,7 +22,7 @@ public class RestartService {
     private final RestartDao restartDao;
     private final CheckVersionDao checkVersionDao;
 
-    private List<Status> statuses = new ArrayList<>();
+    private final List<Status> statuses = new ArrayList<>();
 
     @Autowired
     public RestartService(RestartDao restartDao, RestartCommandLine restartCommandline, CheckVersionDao checkVersionDao) {

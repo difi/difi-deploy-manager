@@ -1,14 +1,15 @@
 package no.difi.deploymanager.domain;
 
 public class DownloadedVersion {
-    private String version;
+    private final String version;
 
+    @SuppressWarnings("WeakerAccess")
     public DownloadedVersion(Builder downloaded) {
         this.version = downloaded.version;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
+    public String getVersion() {
+        return version;
     }
 
     public static class Builder {

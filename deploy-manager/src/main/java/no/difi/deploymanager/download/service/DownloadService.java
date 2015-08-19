@@ -22,7 +22,7 @@ public class DownloadService {
     private final FileTransfer fileTransfer;
     private final RestartService restartService;
 
-    private List<Status> statuses = new ArrayList<>();
+    private final List<Status> statuses = new ArrayList<>();
 
     @Autowired
     public DownloadService(DownloadDao downloadDao, FileTransfer fileTransfer, RestartService restartService) {
@@ -85,8 +85,8 @@ public class DownloadService {
                 String versionDownloaded = fileTransfer.downloadApplication(data);
 
                 ApplicationData.Builder appData = data.openCopy();
-                appData.setAllDownloadedVersion(data.getDownloadedVersions())
-                        .addDownloadedVersions(new DownloadedVersion.Builder().version(versionDownloaded).build());
+                appData.setAllDownloadedVersions(data.getDownloadedVersions())
+                        .addDownloadedVersion(new DownloadedVersion.Builder().version(versionDownloaded).build());
 
                 restartList.addApplicationData(appData.build());
             }

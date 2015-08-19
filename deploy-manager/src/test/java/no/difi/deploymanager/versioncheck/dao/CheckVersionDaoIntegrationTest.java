@@ -23,6 +23,7 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
+@SuppressWarnings("SpringJavaAutowiredMembersInspection")
 public class CheckVersionDaoIntegrationTest {
     private CheckVersionDao checkVersionDao;
 
@@ -67,6 +68,7 @@ public class CheckVersionDaoIntegrationTest {
     }
 
     @AfterClass
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void tearDownAfterRun() {
         File file = new File(TEST_PATH);
         file.delete();

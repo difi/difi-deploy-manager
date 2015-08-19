@@ -5,7 +5,6 @@ import no.difi.deploymanager.domain.Self;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
-import java.util.List;
 
 @Component
 public class IOUtil {
@@ -15,10 +14,6 @@ public class IOUtil {
 
     public void saveApplicationList(ApplicationList applicationList, String folder, String filename) throws IOException {
         save(applicationList, folder, filename);
-    }
-
-    public List<Process> retrieveRunningProcesses() {
-        return null;
     }
 
     private Object retrieve(String folder, String filename) throws IOException {
@@ -44,6 +39,7 @@ public class IOUtil {
         }
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private void save(Object objectToSave, String folder, String filename) throws IOException {
         String path = System.getProperty("user.dir");
 

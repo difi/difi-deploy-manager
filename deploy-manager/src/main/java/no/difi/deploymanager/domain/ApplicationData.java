@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ApplicationData implements Serializable {
-    private String name;
-    private String groupId;
-    private String artifactId;
-    private String activeVersion;
-    private String filename;
-    private String startParameters;
-    private String artifactType;
+    private final String name;
+    private final String groupId;
+    private final String artifactId;
+    private final String activeVersion;
+    private final String filename;
+    private final String startParameters;
+    private final String artifactType;
     private List<DownloadedVersion> downloadedVersions;
 
     public ApplicationData(Builder data) {
@@ -54,7 +54,7 @@ public class ApplicationData implements Serializable {
                 .filename(this.filename)
                 .startParameters(this.startParameters)
                 .artifactType(this.artifactType)
-                .setAllDownloadedVersion(this.downloadedVersions);
+                .setAllDownloadedVersions(this.downloadedVersions);
     }
 
     public List<DownloadedVersion> getDownloadedVersions() {
@@ -117,7 +117,7 @@ public class ApplicationData implements Serializable {
             return this;
         }
 
-        public Builder addDownloadedVersions(DownloadedVersion downloadedVerision) {
+        public Builder addDownloadedVersion(DownloadedVersion downloadedVerision) {
             if (this.downloadedVersions == null) {
                 this.downloadedVersions = new ArrayList<>();
             }
@@ -125,7 +125,7 @@ public class ApplicationData implements Serializable {
             return this;
         }
 
-        public Builder setAllDownloadedVersion(List<DownloadedVersion> downloadedVersionList) {
+        public Builder setAllDownloadedVersions(List<DownloadedVersion> downloadedVersionList) {
             this.downloadedVersions = downloadedVersionList;
             return this;
         }

@@ -26,6 +26,7 @@ public class FileTransfer {
         this.environment = environment;
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public String downloadApplication(ApplicationData data) throws IOException, ConnectionFailedException {
         URL source = new URL(
                 replacePropertyParams(environment.getRequiredProperty("location.download"),

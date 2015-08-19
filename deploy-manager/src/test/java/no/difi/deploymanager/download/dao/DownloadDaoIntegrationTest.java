@@ -20,13 +20,13 @@ import static org.junit.Assert.fail;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
+@SuppressWarnings("SpringJavaAutowiredMembersInspection")
 public class DownloadDaoIntegrationTest {
     private DownloadDao downloadDao;
 
     @Autowired Environment environment;
     @Autowired IOUtil ioUtil;
 
-    private static final String BASE_DIR = System.getProperty("user.dir");
     private static String testDataPath;
 
     @Before
@@ -49,6 +49,7 @@ public class DownloadDaoIntegrationTest {
     }
 
     @AfterClass
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void tearDownAfterRun() {
         String forDownloadFile = testDataPath;
 

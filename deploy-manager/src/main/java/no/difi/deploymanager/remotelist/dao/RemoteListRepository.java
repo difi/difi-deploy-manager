@@ -55,22 +55,19 @@ public class RemoteListRepository {
     public ApplicationList getHardcodedList() {
         ApplicationList.Builder appList = new ApplicationList.Builder();
 
-        appList.addApplicationData(createApplicationDataObject("Difi Deploy Manager", "difi-deploy-manager", "no.difi.deploymanager", "", "JAR", "no.difi.deploymanager-0.9.1-SNAPSHOT.jar", ""));
+        appList.addApplicationData(
+                new ApplicationData.Builder()
+                .name("Difi Deploy Manager")
+                .groupId("difi-deploy-manager")
+                .artifactId("no.difi.deploymanager")
+                .activeVersion("")
+                .artifactType("JAR")
+                .filename("no.difi.deploymanager-0.9.1-SNAPSHOT.jar")
+                .startParameters("")
+                .build()
+        );
 
         return appList.build();
-    }
-
-    private ApplicationData createApplicationDataObject(String name, String groupId, String artifactId, String version,
-                                                        String applicationType, String filename, String startParameters) {
-        return new ApplicationData.Builder()
-                .name(name)
-                .groupId(groupId)
-                .artifactId(artifactId)
-                .activeVersion(version)
-                .artifactType(applicationType)
-                .filename(filename)
-                .startParameters(startParameters)
-                .build();
     }
 
     private static String convert(JSONObject obj, String fetch) {

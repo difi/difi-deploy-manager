@@ -20,9 +20,9 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class CheckVersionDaoTest {
     private CheckVersionDao repository;
 
-    public static final String GROUPID = "groupid";
-    public static final String ARTIFACTID = "artifactid";
-    public static final String TEST_URL = "http://testurl/?r=central-proxy&g=$GROUP_ID&a=$ARTIFACT_ID&v=RELEASE";
+    private static final String GROUPID = "groupid";
+    private static final String ARTIFACTID = "artifactid";
+    private static final String TEST_URL = "http://testurl/?r=central-proxy&g=$GROUP_ID&a=$ARTIFACT_ID&v=RELEASE";
 
     @Mock private Environment environmentMock;
     @Mock private IOUtil ioUtilMock;
