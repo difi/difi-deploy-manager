@@ -13,6 +13,7 @@
   <groupId>no.difi.deploymanager.admin</groupId>
   <artifactId>deploy-manager-admin</artifactId>
   <version>0.9.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
 
   <properties>
     <java.version>1.7</java.version>
