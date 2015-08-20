@@ -4,15 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <parent>
-    <artifactId>no.difi.deploymanager</artifactId>
-    <groupId>difi-deploy-manager</groupId>
-    <version>0.9.1-SNAPSHOT</version>
+    <groupId>no.difi.deploymanager</groupId>
+    <artifactId>no-difi-deploymanager</artifactId>
+    <version>0.9.2-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>no.difi.deploymanager.admin</groupId>
   <artifactId>deploy-manager-admin</artifactId>
-  <version>0.9.1-SNAPSHOT</version>
+  <version>0.9.2-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <properties>
