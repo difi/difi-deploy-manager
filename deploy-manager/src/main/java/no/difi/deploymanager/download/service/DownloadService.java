@@ -21,6 +21,10 @@ import static java.lang.String.format;
 import static no.difi.deploymanager.util.StatusFactory.statusError;
 import static no.difi.deploymanager.util.StatusFactory.statusSuccess;
 
+/***
+ * DownloadService contains logic for downloading application, and logs result of steps in the process.
+ *
+ */
 @Service
 public class DownloadService {
     private final DownloadDao downloadDao;

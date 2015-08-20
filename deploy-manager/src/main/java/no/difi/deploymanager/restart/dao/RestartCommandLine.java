@@ -16,6 +16,9 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static org.springframework.util.StringUtils.isEmpty;
 
+/***
+ * Class handle start, stop and restart of applications for both Linux and Windows operating systems.
+ */
 @Repository
 public class RestartCommandLine {
     private static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
@@ -28,7 +31,16 @@ public class RestartCommandLine {
         this.environment = environment;
     }
 
-
+    /***
+     * Execute restart by stopping application defined in oldVersion and starting newVersion.
+     *
+     * @param oldVersion Application data for the application to stop.
+     * @param newVersion Application data for the application to start.
+     * @param self Used to check if application to restart is current app.
+     * @return Returns true if restart is successful, otherwise false.
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public boolean executeRestart(ApplicationData oldVersion, ApplicationData newVersion, Self self) throws IOException, InterruptedException {
         if (oldVersion.getName().equals(self.getName())
                 && !oldVersion.getActiveVersion().contains(self.getVersion())) {
@@ -41,6 +53,12 @@ public class RestartCommandLine {
         return startProcess(newVersion);
     }
 
+    /***
+     * Starting application defined in processToStart.
+     *
+     * @param processToStart Contains data about the application to start.
+     * @return true if starting application were successful, otherwise false.
+     */
     public boolean startProcess(ApplicationData processToStart) {
         try {
             if (IS_WINDOWS) {
@@ -59,7 +77,13 @@ public class RestartCommandLine {
         }
     }
 
-    public boolean stopProcess(ApplicationData oldVersion) {
+    /***
+     * Stopping application defined in processToStop
+     *
+     * @param processToStop Contains data for the process to stop.
+     * @return true if stopping process were successful, otherwise false.
+     */
+    public boolean stopProcess(ApplicationData processToStop) {
         String processId;
         try {
             String killCommand;
@@ -70,7 +94,7 @@ public class RestartCommandLine {
                 killCommand = "kill 9 ";
             }
 
-            processId = findProcessId(oldVersion);
+            processId = findProcessId(processToStop);
             if (!isEmpty(processId)) {
                 Process process = Runtime.getRuntime().exec(killCommand + processId.replace("\"", ""));
                 process.waitFor();

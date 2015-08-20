@@ -12,6 +12,12 @@ import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 
+/***
+ * Retrieve list over applications to monitor.
+ *
+ * Required parameters: name, groupId and artifactId.
+ * Optional parameters: version and startParameters.
+ */
 @Repository
 public class RemoteListRepository {
     private final JsonUtil jsonUtil;
@@ -20,6 +26,12 @@ public class RemoteListRepository {
         this.jsonUtil = jsonUtil;
     }
 
+    /***
+     * Retrieve list of applications/artifacts to monitor from remote location.
+     *
+     * @return List of applications to monitor.
+     * @throws RemoteApplicationListException when list cannot be retrieved.
+     */
     public ApplicationList getRemoteList() throws RemoteApplicationListException {
         JSONObject json;
         try {

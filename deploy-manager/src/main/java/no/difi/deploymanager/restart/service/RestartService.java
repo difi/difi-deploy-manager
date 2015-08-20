@@ -17,6 +17,9 @@ import static java.lang.String.format;
 import static no.difi.deploymanager.util.StatusFactory.statusError;
 import static no.difi.deploymanager.util.StatusFactory.statusSuccess;
 
+/***
+ * Restart service contains business logic and error handling for starting, stopping and restarting applications.
+ */
 @Service
 public class RestartService {
     private final RestartCommandLine restartCommandline;

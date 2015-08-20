@@ -6,6 +6,11 @@ import org.springframework.stereotype.Component;
 
 import java.io.*;
 
+/***
+ * General class for object serialization of application list.
+ *
+ * @see no.difi.deploymanager.domain.ApplicationList
+ */
 @Component
 public class IOUtil {
     public ApplicationList retrieveApplicationList(String folder, String filename) throws IOException {

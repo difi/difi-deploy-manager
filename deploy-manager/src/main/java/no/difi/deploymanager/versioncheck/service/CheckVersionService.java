@@ -22,6 +22,10 @@ import java.util.List;
 import static java.lang.String.format;
 import static no.difi.deploymanager.util.StatusFactory.*;
 
+/***
+ * CheckVersionService is checking if any of the monitored appication (including self) have a new version available in external repository.
+ * If new version is available, it will update the list over applications/artifacts to download.
+ */
 @Service
 public class CheckVersionService {
     private final RemoteListService remoteListService;

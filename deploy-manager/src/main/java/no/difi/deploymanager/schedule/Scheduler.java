@@ -16,6 +16,13 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/***
+ * Scheduler trigger check for version, download and restart by set intervals and logs processing and responses from the services.
+ *
+ * @see no.difi.deploymanager.versioncheck.service.CheckVersionService
+ * @see no.difi.deploymanager.download.service.DownloadService
+ * @see no.difi.deploymanager.restart.service.RestartService
+ */
 @Component
 public class Scheduler {
     private static final String CRON_RUN_CHECK_FOR_VERSION = "0 5 * * * MON-FRI";

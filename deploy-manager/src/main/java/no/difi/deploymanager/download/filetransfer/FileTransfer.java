@@ -15,6 +15,9 @@ import java.net.URL;
 
 import static no.difi.deploymanager.util.Common.replacePropertyParams;
 
+/***
+ * FileTransfer perform the actual download of new applications/processes to be started or updated by Deploy Manager.
+ */
 @Repository
 public class FileTransfer {
     private static final int BUFFER_SIZE = 4096;
@@ -26,6 +29,14 @@ public class FileTransfer {
         this.environment = environment;
     }
 
+    /***
+     * Download application given in data.
+     *
+     * @param data Contains information about the application to download.
+     * @return The full filename that has been downloaded.
+     * @throws IOException
+     * @throws ConnectionFailedException
+     */
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public String downloadApplication(ApplicationData data) throws IOException, ConnectionFailedException {
         URL source = new URL(

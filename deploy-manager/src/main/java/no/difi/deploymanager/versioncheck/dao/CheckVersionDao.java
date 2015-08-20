@@ -12,6 +12,10 @@ import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 
+/***
+ * CheckVersionDao will retrieve and update the list over applications that is monitored by Deploy manager.
+ * The download list Restart in scheduler.
+ */
 @Repository
 public class CheckVersionDao {
     private final Environment environment;
@@ -25,6 +29,15 @@ public class CheckVersionDao {
         this.jsonUtil = jsonUtil;
     }
 
+    /***
+     * Retrieving external artifact that Deploy Manager is set to monitor.
+     *
+     * @param groupId group id of the application to verify latest version
+     * @param artifactId artifact id of the application to verify latest version
+     * @return Inner JSON object with only essential data to continue processing.
+     * @throws IOException
+     * @throws ConnectionFailedException
+     */
     public JSONObject retrieveExternalArtifactStatus(String groupId, String artifactId) throws IOException, ConnectionFailedException {
         String location = environment.getRequiredProperty("location.version");
         String url = Common.replacePropertyParams(location, groupId, artifactId);

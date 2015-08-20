@@ -8,6 +8,13 @@ import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 
+/***
+ * DownloadDao will retrieve the list over applications that is ready to download from remote repository.
+ * The download list is updated by CheckVersion in scheduler.
+ *
+ * @see no.difi.deploymanager.versioncheck.service.CheckVersionService
+ * @see no.difi.deploymanager.schedule.Scheduler
+ */
 @Repository
 public class DownloadDao {
     private final Environment environment;

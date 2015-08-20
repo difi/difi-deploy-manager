@@ -8,6 +8,13 @@ import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 
+/***
+ * RestartDao retrieve the list over applications that is downloaded and ready for restart.
+ * The list over applications to restart is updated by Download.
+ *
+ * @see no.difi.deploymanager.download.service.DownloadService
+ * @see no.difi.deploymanager.schedule.Scheduler
+ */
 @Repository
 public class RestartDao {
     private final Environment environment;
