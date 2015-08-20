@@ -88,7 +88,6 @@ public class RestartCommandLine {
 
     private String findProcessId(ApplicationData version) throws IOException, InterruptedException {
         List<String> runningProcesses = findProcess(version);
-        String processIdPart = "";
 
         for (String running : runningProcesses) {
             if (!isEmpty(running)) {
@@ -104,15 +103,7 @@ public class RestartCommandLine {
                     InputStream input = checkProcess.getInputStream();
                     BufferedReader stdout = new BufferedReader(new InputStreamReader(input));
 
-                    String line;
-                    do {
-                        line = stdout.readLine();
-                        if (line != null && line.contains(version.getFilename())) {
-                            processIdPart = pid;
-                            break;
-                        }
-                    }
-                    while (line != null);
+                    String processIdPart = findPidOnWinOS(version, pid, stdout);
 
                     checkProcess.waitFor();
                     checkProcess.destroy();
@@ -137,24 +128,32 @@ public class RestartCommandLine {
         return "";
     }
 
+    private String findPidOnWinOS(ApplicationData version, String pid, BufferedReader stdout) throws IOException {
+        String line;
+        do {
+            line = stdout.readLine();
+            if (line != null && line.contains(version.getFilename())) {
+                return pid;
+            }
+        }
+        while (line != null);
+        return null;
+    }
+
     private List<String> findProcess(ApplicationData oldVersion) throws IOException, InterruptedException {
         Process process;
         List<String> output = new ArrayList<>();
 
         if (IS_WINDOWS) {
             String[] findWindowsApp = new String[] {
-                    "tasklist",
-                    "/v",
-                    "/fo",
-                    "csv"
+                    "tasklist", "/v", "/fo", "csv"
             };
             process = Runtime.getRuntime().exec(findWindowsApp);
         }
         else {
             String[] findUnixApp = new String[] {
                     ROOT_PATH_FOR_SH,
-                    "-c",
-                    "ps -ax | grep java | grep " + oldVersion.getFilename()
+                    "-c", "ps -ax | grep java | grep " + oldVersion.getFilename()
             };
 
             process = Runtime.getRuntime().exec(findUnixApp);
