@@ -1,11 +1,10 @@
-package no.difi.deploymanager.download.dto;
+package no.difi.deploymanager.download.filetransfer;
 
-import no.difi.deploymanager.domain.ApplicationList;
+import no.difi.deploymanager.domain.ApplicationData;
+import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Repository;
-import no.difi.deploymanager.util.IOUtil;
-import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -14,36 +13,36 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import static no.difi.deploymanager.util.Common.replacePropertyParams;
+
+/***
+ * FileTransfer perform the actual download of new applications/processes to be started or updated by Deploy Manager.
+ */
 @Repository
-public class DownloadDto {
+public class FileTransfer {
     private static final int BUFFER_SIZE = 4096;
 
     private final Environment environment;
-    private final IOUtil ioUtil;
 
     @Autowired
-    public DownloadDto(Environment environment, IOUtil ioUtil) {
+    public FileTransfer(Environment environment) {
         this.environment = environment;
-        this.ioUtil = ioUtil;
     }
 
-    public void saveDownloadList(ApplicationList forDownload) throws IOException {
-        ioUtil.saveApplicationList(
-                forDownload,
-                environment.getRequiredProperty("monitoring.base.path"),
-                environment.getRequiredProperty("monitoring.fordownload.file")
+    /***
+     * Download application given in data.
+     *
+     * @param data Contains information about the application to download.
+     * @return The full filename that has been downloaded.
+     * @throws IOException
+     * @throws ConnectionFailedException
+     */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public String downloadApplication(ApplicationData data) throws IOException, ConnectionFailedException {
+        URL source = new URL(
+                replacePropertyParams(environment.getRequiredProperty("location.download"),
+                        data.getGroupId(), data.getArtifactId())
         );
-    }
-
-    public ApplicationList retrieveDownloadList() throws IOException {
-        return ioUtil.retrieveApplicationList(
-                environment.getRequiredProperty("monitoring.base.path"),
-                environment.getRequiredProperty("monitoring.fordownload.file")
-        );
-    }
-
-    public String downloadApplication(String url) throws IOException, ConnectionFailedException {
-        URL source = new URL(url);
 
         String filePath = System.getProperty("user.dir") + environment.getRequiredProperty("download.base.path");
 

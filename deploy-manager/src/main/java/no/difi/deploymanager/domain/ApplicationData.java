@@ -5,53 +5,56 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ApplicationData implements Serializable {
-    private String name;
-    private String groupId;
-    private String artifactId;
-    private String activeVersion;
+    private final String name;
+    private final String groupId;
+    private final String artifactId;
+    private final String activeVersion;
+    private final String filename;
+    private final String startParameters;
+    private final String artifactType;
     private List<DownloadedVersion> downloadedVersions;
-    private String filename;
-    private String startParameters;
-    private String artifactType;
+
+    public ApplicationData(Builder data) {
+        this.name = data.name;
+        this.groupId = data.groupId;
+        this.artifactId = data.artifactId;
+        this.activeVersion = data.activeVersion;
+        this.filename = data.filename;
+        this.startParameters = data.startParameters;
+        this.artifactType = data.artifactType;
+        this.downloadedVersions = data.downloadedVersions;
+    }
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getGroupId() {
         return groupId;
     }
 
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
-    }
-
     public String getArtifactId() {
         return artifactId;
-    }
-
-    public void setArtifactId(String artifactId) {
-        this.artifactId = artifactId;
     }
 
     public String getActiveVersion() {
         return activeVersion;
     }
 
-    public void setActiveVersion(String activeVersion) {
-        this.activeVersion = activeVersion;
-    }
-
     public String getFilename() {
         return filename;
     }
 
-    public void setFilename(String filename) {
-        this.filename = filename;
+    public Builder openCopy() {
+        return new Builder()
+                .name(this.name)
+                .groupId(this.groupId)
+                .artifactId(this.artifactId)
+                .activeVersion(this.activeVersion)
+                .filename(this.filename)
+                .startParameters(this.startParameters)
+                .artifactType(this.artifactType)
+                .setAllDownloadedVersions(this.downloadedVersions);
     }
 
     public List<DownloadedVersion> getDownloadedVersions() {
@@ -61,23 +64,75 @@ public class ApplicationData implements Serializable {
         return downloadedVersions;
     }
 
-    public void setDownloadedVersions(List<DownloadedVersion> downloadedVersions) {
-        this.downloadedVersions = downloadedVersions;
-    }
-
-    public void setStartParameters(String startParameters) {
-        this.startParameters = startParameters;
-    }
-
     public String getStartParameters() {
         return startParameters;
-    }
-
-    public void artifactType(String artifactType) {
-        this.artifactType = artifactType;
     }
 
     public String getArtifactType() {
         return this.artifactType;
     }
+
+    public static class Builder {
+        private String name;
+        private String groupId;
+        private String artifactId;
+        private String activeVersion;
+        private String filename;
+        private String startParameters;
+        private String artifactType;
+        private List<DownloadedVersion> downloadedVersions;
+
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder groupId(String groupId) {
+            this.groupId = groupId;
+            return this;
+        }
+
+        public Builder artifactId(String artifactId) {
+            this.artifactId = artifactId;
+            return this;
+        }
+
+        public Builder activeVersion(String activeVersion) {
+            this.activeVersion = activeVersion;
+            return this;
+        }
+
+        public Builder filename(String filename) {
+            this.filename = filename;
+            return this;
+        }
+
+        public Builder startParameters(String startParameters) {
+            this.startParameters = startParameters;
+            return this;
+        }
+
+        public Builder artifactType(String artifactType) {
+            this.artifactType = artifactType;
+            return this;
+        }
+
+        public Builder addDownloadedVersion(DownloadedVersion downloadedVerision) {
+            if (this.downloadedVersions == null) {
+                this.downloadedVersions = new ArrayList<>();
+            }
+            this.downloadedVersions.add(downloadedVerision);
+            return this;
+        }
+
+        public Builder setAllDownloadedVersions(List<DownloadedVersion> downloadedVersionList) {
+            this.downloadedVersions = downloadedVersionList;
+            return this;
+        }
+
+        public ApplicationData build() {
+            return new ApplicationData(this);
+        }
+    }
+
 }

@@ -1,9 +1,9 @@
 package no.difi.deploymanager.schedule;
 
-import no.difi.deploymanager.restart.service.RestartService;
 import no.difi.deploymanager.domain.Status;
 import no.difi.deploymanager.domain.StatusCode;
 import no.difi.deploymanager.download.service.DownloadService;
+import no.difi.deploymanager.restart.service.RestartService;
 import no.difi.deploymanager.versioncheck.service.CheckVersionService;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -16,12 +16,19 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/***
+ * Scheduler trigger check for version, download and restart by set intervals and logs processing and responses from the services.
+ *
+ * @see no.difi.deploymanager.versioncheck.service.CheckVersionService
+ * @see no.difi.deploymanager.download.service.DownloadService
+ * @see no.difi.deploymanager.restart.service.RestartService
+ */
 @Component
 public class Scheduler {
-    public static final String CRON_RUN_CHECK_FOR_VERSION = "0 5 * * * MON-FRI";
-    public static final String CRON_RUN_DOWNLOAD_NEW_VERSION = "30 * * * * MON-FRI";
-    public static final String CRON_RESTART_APPLICATIONS = "30 * * * * MON-FRI";
-    public static final String CRON_RUN_EVERY_1MIN = "1 * * * * MON-FRI";
+    private static final String CRON_RUN_CHECK_FOR_VERSION = "0 5 * * * MON-FRI";
+    private static final String CRON_RUN_DOWNLOAD_NEW_VERSION = "30 * * * * MON-FRI";
+    private static final String CRON_RESTART_APPLICATIONS = "30 * * * * MON-FRI";
+    private static final String CRON_RUN_EVERY_1MIN = "1 * * * * MON-FRI";
 
     private final CheckVersionService checkVersionService;
     private final DownloadService downloadService;

@@ -1,9 +1,7 @@
-package no.difi.deploymanager.restart.dto;
+package no.difi.deploymanager.restart.dao;
 
-import no.difi.deploymanager.domain.ApplicationList;
-import no.difi.deploymanager.domain.Self;
-import no.difi.deploymanager.util.IOUtil;
 import no.difi.deploymanager.domain.ApplicationData;
+import no.difi.deploymanager.domain.Self;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Repository;
@@ -18,37 +16,34 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static org.springframework.util.StringUtils.isEmpty;
 
+/***
+ * Class handle start, stop and restart of applications for both Linux and Windows operating systems.
+ */
 @Repository
-public class RestartDto {
-    public static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
-    private static String ROOT_PATH_FOR_SH = "/bin/sh";
+public class RestartCommandLine {
+    private static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
+    private static final String ROOT_PATH_FOR_SH = "/bin/sh";
 
     private final Environment environment;
-    private final IOUtil ioUtil;
 
     @Autowired
-    public RestartDto(Environment environment, IOUtil ioUtil) {
+    public RestartCommandLine(Environment environment) {
         this.environment = environment;
-        this.ioUtil = ioUtil;
     }
 
-    public void saveRestartList(ApplicationList restartList) throws IOException {
-        ioUtil.saveApplicationList(
-                restartList,
-                environment.getRequiredProperty("monitoring.base.path"),
-                environment.getRequiredProperty("monitoring.forrestart.file"));
-    }
-
-    public ApplicationList retrieveRestartList() throws IOException {
-        return ioUtil.retrieveApplicationList(
-                environment.getRequiredProperty("monitoring.base.path"),
-                environment.getRequiredProperty("monitoring.forrestart.file"));
-    }
-
-    public boolean executeRestart(ApplicationData oldVersion, ApplicationData newVersion) throws IOException, InterruptedException {
-        Self thisApp = findAppVersion();
-        if (oldVersion.getName().equals(thisApp.getName())
-                && !oldVersion.getActiveVersion().contains(thisApp.getVersion())) {
+    /***
+     * Execute restart by stopping application defined in oldVersion and starting newVersion.
+     *
+     * @param oldVersion Application data for the application to stop.
+     * @param newVersion Application data for the application to start.
+     * @param self Used to check if application to restart is current app.
+     * @return Returns true if restart is successful, otherwise false.
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public boolean executeRestart(ApplicationData oldVersion, ApplicationData newVersion, Self self) throws IOException, InterruptedException {
+        if (oldVersion.getName().equals(self.getName())
+                && !oldVersion.getActiveVersion().contains(self.getVersion())) {
             //Have to be opposite from normal restart when self.
             startProcess(newVersion);
             return stopProcess(oldVersion);
@@ -58,6 +53,12 @@ public class RestartDto {
         return startProcess(newVersion);
     }
 
+    /***
+     * Starting application defined in processToStart.
+     *
+     * @param processToStart Contains data about the application to start.
+     * @return true if starting application were successful, otherwise false.
+     */
     public boolean startProcess(ApplicationData processToStart) {
         try {
             if (IS_WINDOWS) {
@@ -76,7 +77,13 @@ public class RestartDto {
         }
     }
 
-    public boolean stopProcess(ApplicationData oldVersion) {
+    /***
+     * Stopping application defined in processToStop
+     *
+     * @param processToStop Contains data for the process to stop.
+     * @return true if stopping process were successful, otherwise false.
+     */
+    public boolean stopProcess(ApplicationData processToStop) {
         String processId;
         try {
             String killCommand;
@@ -87,7 +94,7 @@ public class RestartDto {
                 killCommand = "kill 9 ";
             }
 
-            processId = findProcessId(oldVersion);
+            processId = findProcessId(processToStop);
             if (!isEmpty(processId)) {
                 Process process = Runtime.getRuntime().exec(killCommand + processId.replace("\"", ""));
                 process.waitFor();
@@ -105,7 +112,6 @@ public class RestartDto {
 
     private String findProcessId(ApplicationData version) throws IOException, InterruptedException {
         List<String> runningProcesses = findProcess(version);
-        String processIdPart = "";
 
         for (String running : runningProcesses) {
             if (!isEmpty(running)) {
@@ -121,15 +127,7 @@ public class RestartDto {
                     InputStream input = checkProcess.getInputStream();
                     BufferedReader stdout = new BufferedReader(new InputStreamReader(input));
 
-                    String line;
-                    do {
-                        line = stdout.readLine();
-                        if (line != null && line.contains(version.getFilename())) {
-                            processIdPart = pid;
-                            break;
-                        }
-                    }
-                    while (line != null);
+                    String processIdPart = findPidOnWinOS(version, pid, stdout);
 
                     checkProcess.waitFor();
                     checkProcess.destroy();
@@ -154,24 +152,32 @@ public class RestartDto {
         return "";
     }
 
+    private String findPidOnWinOS(ApplicationData version, String pid, BufferedReader stdout) throws IOException {
+        String line;
+        do {
+            line = stdout.readLine();
+            if (line != null && line.contains(version.getFilename())) {
+                return pid;
+            }
+        }
+        while (line != null);
+        return null;
+    }
+
     private List<String> findProcess(ApplicationData oldVersion) throws IOException, InterruptedException {
-        Process process = null;
+        Process process;
         List<String> output = new ArrayList<>();
 
         if (IS_WINDOWS) {
             String[] findWindowsApp = new String[] {
-                    "tasklist",
-                    "/v",
-                    "/fo",
-                    "csv"
+                    "tasklist", "/v", "/fo", "csv"
             };
             process = Runtime.getRuntime().exec(findWindowsApp);
         }
         else {
             String[] findUnixApp = new String[] {
                     ROOT_PATH_FOR_SH,
-                    "-c",
-                    "ps -ax | grep java | grep " + oldVersion.getFilename()
+                    "-c", "ps -ax | grep java | grep " + oldVersion.getFilename()
             };
 
             process = Runtime.getRuntime().exec(findUnixApp);
@@ -193,9 +199,5 @@ public class RestartDto {
         process.destroy();
 
         return output;
-    }
-
-    public Self findAppVersion() {
-        return ioUtil.getVersion();
     }
 }

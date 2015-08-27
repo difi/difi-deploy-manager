@@ -1,6 +1,7 @@
-package no.difi.deploymanager.versioncheck.dto;
+package no.difi.deploymanager.versioncheck.dao;
 
 import no.difi.deploymanager.domain.ApplicationList;
+import no.difi.deploymanager.util.Common;
 import no.difi.deploymanager.util.IOUtil;
 import no.difi.deploymanager.util.JsonUtil;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
@@ -11,20 +12,36 @@ import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 
+/***
+ * CheckVersionDao will retrieve and update the list over applications that is monitored by Deploy manager.
+ * The download list Restart in scheduler.
+ */
 @Repository
-public class CheckVersionDto {
+public class CheckVersionDao {
     private final Environment environment;
     private final IOUtil ioUtil;
     private final JsonUtil jsonUtil;
 
     @Autowired
-    public CheckVersionDto(Environment environment, IOUtil ioUtil, JsonUtil jsonUtil) {
+    public CheckVersionDao(Environment environment, IOUtil ioUtil, JsonUtil jsonUtil) {
         this.environment = environment;
         this.ioUtil = ioUtil;
         this.jsonUtil = jsonUtil;
     }
 
-    public JSONObject retrieveExternalArtifactStatus(String url) throws IOException, ConnectionFailedException {
+    /***
+     * Retrieving external artifact that Deploy Manager is set to monitor.
+     *
+     * @param groupId group id of the application to verify latest version
+     * @param artifactId artifact id of the application to verify latest version
+     * @return Inner JSON object with only essential data to continue processing.
+     * @throws IOException
+     * @throws ConnectionFailedException
+     */
+    public JSONObject retrieveExternalArtifactStatus(String groupId, String artifactId) throws IOException, ConnectionFailedException {
+        String location = environment.getRequiredProperty("location.version");
+        String url = Common.replacePropertyParams(location, groupId, artifactId);
+
         JSONObject json = jsonUtil.retrieveJsonObject(url);
 
         return (JSONObject) json.get("data");

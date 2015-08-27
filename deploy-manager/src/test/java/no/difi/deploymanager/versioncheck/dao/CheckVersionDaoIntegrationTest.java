@@ -1,10 +1,9 @@
-package no.difi.deploymanager.versioncheck.dto;
+package no.difi.deploymanager.versioncheck.dao;
 
-import no.difi.deploymanager.testutils.CustomAssert;
-import no.difi.deploymanager.testutils.ObjectMotherApplicationList;
 import no.difi.deploymanager.artifact.Application;
 import no.difi.deploymanager.domain.ApplicationList;
-import no.difi.deploymanager.util.Common;
+import no.difi.deploymanager.testutils.CustomAssert;
+import no.difi.deploymanager.testutils.ObjectMotherApplicationList;
 import no.difi.deploymanager.util.IOUtil;
 import no.difi.deploymanager.util.JsonUtil;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
@@ -24,8 +23,9 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
-public class CheckVersionDtoIntegrationTest {
-    private CheckVersionDto checkVersionDto;
+@SuppressWarnings("SpringJavaAutowiredMembersInspection")
+public class CheckVersionDaoIntegrationTest {
+    private CheckVersionDao checkVersionDao;
 
     @Autowired Environment environment;
     @Autowired IOUtil ioUtil;
@@ -34,8 +34,6 @@ public class CheckVersionDtoIntegrationTest {
     private static String TEST_PATH;
     private static final String TEST_GROUP_ID = "org.springframework";
     private static final String TEST_ARTIFACT_ID = "spring-jdbc";
-    private static String failVersionUrl;
-    private static String successVersionUrl;
 
     @Before
     public void setUp() {
@@ -43,40 +41,34 @@ public class CheckVersionDtoIntegrationTest {
                 + environment.getRequiredProperty("monitoring.base.path")
                 + environment.getRequiredProperty("monitoring.running.file");
 
-        failVersionUrl = environment.getProperty("location.version");
-        successVersionUrl = Common.replacePropertyParams(
-                environment.getProperty("location.version"),
-                TEST_GROUP_ID,
-                TEST_ARTIFACT_ID
-        );
-
-        checkVersionDto = new CheckVersionDto(environment, ioUtil, jsonUtil);
+        checkVersionDao = new CheckVersionDao(environment, ioUtil, jsonUtil);
     }
 
     @Test
     public void should_save_and_retrieve_monitoring_application_list() throws Exception {
         ApplicationList expected = ObjectMotherApplicationList.createApplicationListWithData();
 
-        checkVersionDto.saveRunningAppsList(expected);
-        ApplicationList actual = checkVersionDto.retrieveRunningAppsList();
+        checkVersionDao.saveRunningAppsList(expected);
+        ApplicationList actual = checkVersionDao.retrieveRunningAppsList();
 
         CustomAssert.assertApplicationList(expected, actual);
     }
 
     @Test(expected = ConnectionFailedException.class)
     public void should_get_connection_exception_when_connection_fails() throws Exception {
-        checkVersionDto.retrieveExternalArtifactStatus(failVersionUrl);
+        checkVersionDao.retrieveExternalArtifactStatus("", "");
     }
 
     @Test
     public void should_retrieve_external_version_when_new_list_is_available() throws Exception {
-        JSONObject json = checkVersionDto.retrieveExternalArtifactStatus(successVersionUrl);
+        JSONObject json = checkVersionDao.retrieveExternalArtifactStatus(TEST_GROUP_ID, TEST_ARTIFACT_ID);
 
         assertTrue(json.keySet().contains("version"));
         assertEquals(json.get("groupId"), TEST_GROUP_ID);
     }
 
     @AfterClass
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void tearDownAfterRun() {
         File file = new File(TEST_PATH);
         file.delete();

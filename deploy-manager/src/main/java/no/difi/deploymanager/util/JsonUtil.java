@@ -11,6 +11,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
 
+/***
+ * General class for retrieving JSON object from a specified URL.
+ */
 @Component
 public class JsonUtil {
     private static final int CONNECTION_TIMEOUT = 5000; // ms for connection to occur

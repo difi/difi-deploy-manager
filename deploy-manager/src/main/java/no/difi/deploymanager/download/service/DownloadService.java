@@ -1,11 +1,14 @@
 package no.difi.deploymanager.download.service;
 
-import no.difi.deploymanager.download.dto.DownloadDto;
-import no.difi.deploymanager.restart.dto.RestartDto;
+import no.difi.deploymanager.domain.ApplicationData;
+import no.difi.deploymanager.domain.ApplicationList;
+import no.difi.deploymanager.domain.DownloadedVersion;
+import no.difi.deploymanager.domain.Status;
+import no.difi.deploymanager.download.dao.DownloadDao;
+import no.difi.deploymanager.download.filetransfer.FileTransfer;
+import no.difi.deploymanager.restart.service.RestartService;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
-import no.difi.deploymanager.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -15,116 +18,97 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.String.format;
+import static no.difi.deploymanager.util.StatusFactory.statusError;
+import static no.difi.deploymanager.util.StatusFactory.statusSuccess;
 
+/***
+ * DownloadService contains logic for downloading application, and logs result of steps in the process.
+ *
+ */
 @Service
 public class DownloadService {
-    private final Environment environment;
-    private final DownloadDto downloadDto;
-    private final RestartDto restartDto;
+    private final DownloadDao downloadDao;
+    private final FileTransfer fileTransfer;
+    private final RestartService restartService;
 
-    private List<Status> statuses = new ArrayList<>();
+    private final List<Status> statuses = new ArrayList<>();
 
     @Autowired
-    public DownloadService(Environment environment, DownloadDto downloadDto, RestartDto restartDto) {
-        this.environment = environment;
-        this.downloadDto = downloadDto;
-        this.restartDto = restartDto;
+    public DownloadService(DownloadDao downloadDao, FileTransfer fileTransfer, RestartService restartService) {
+        this.downloadDao = downloadDao;
+        this.fileTransfer = fileTransfer;
+        this.restartService = restartService;
     }
 
     public List<Status> execute() {
-        String url;
-        List<ApplicationData> restartList;
-
         try {
-            url = environment.getRequiredProperty("location.download");
-        } catch (IllegalStateException e) {
-            statuses.add(new Status(StatusCode.CRITICAL, "Enviroment property 'location.version' not found."));
-            return statuses;
-        }
-
-        try {
-            ApplicationList forDownload = downloadDto.retrieveDownloadList();
+            ApplicationList forDownload = downloadDao.retrieveDownloadList();
 
             if (forDownload != null && forDownload.getApplications() != null) {
-                restartList = downloadApplications(url, forDownload);
+                ApplicationList restartList = downloadApplications(forDownload);
 
-                ApplicationList notDownloaded = new ApplicationList();
-                notDownloaded.setApplications(updateNotDownloadedList(restartList, forDownload));
-                downloadDto.saveDownloadList(notDownloaded);
+                ApplicationList notDownloaded = updateNotDownloadedList(restartList, forDownload);
+                downloadDao.saveDownloadList(notDownloaded);
 
                 saveRestartList(restartList);
             } else {
-                statuses.add(new Status(StatusCode.SUCCESS, "Nothing to download."));
+                statuses.add(statusSuccess("Nothing to download."));
             }
         }
         catch (IOException e) {
-            statuses.add(new Status(StatusCode.ERROR, format("Failed to retrieve download list. Reason: %s", e.getMessage())));
+            statuses.add(statusError(format("Failed to retrieve download list. Reason: %s", e.getMessage())));
         }
 
         return statuses;
     }
 
-    private List<ApplicationData> updateNotDownloadedList(List<ApplicationData> restartList, ApplicationList forDownload) {
-        List<ApplicationData> notDownloaded = new ArrayList<>();
+    private ApplicationList updateNotDownloadedList(ApplicationList restartList, ApplicationList forDownload) {
+        ApplicationList.Builder appList = new ApplicationList.Builder();
 
         //Update list for applications that failed download.
-        for (ApplicationData checklist : restartList) {
-            boolean found = false;
-            for (ApplicationData worklist : forDownload.getApplications()) {
-                if (checklist.getName() == worklist.getName()) {
-                    found = true;
-                }
-            }
-            if (!found) {
-                notDownloaded.add(checklist);
+        for (ApplicationData checklist : restartList.getApplications()) {
+            if (!forDownload.hasApplicationData(checklist)) {
+                appList.addApplicationData(checklist);
             }
         }
-        return notDownloaded;
+
+        return appList.build();
     }
 
-    private void saveRestartList(List<ApplicationData> restartList) throws IOException {
-        if (restartList != null && restartList.size() != 0) {
-            ApplicationList applicationsForRestart = new ApplicationList();
-            applicationsForRestart.setApplications(restartList);
-
-            restartDto.saveRestartList(applicationsForRestart);
-
-            statuses.add(new Status(StatusCode.SUCCESS, format("Downloaded apps, prepared for restart.")));
+    private void saveRestartList(ApplicationList restartList) throws IOException {
+        if (restartList != null && restartList.getApplications().size() != 0) {
+            restartService.saveRestartList(restartList);
+            statuses.add(statusSuccess(format("Downloaded apps, prepared for restart.")));
         }
         else {
-            statuses.add(new Status(StatusCode.SUCCESS, format("No applications set for download.")));
+            statuses.add(statusSuccess(format("No applications set for download.")));
         }
     }
 
-    private List<ApplicationData> downloadApplications(String url, ApplicationList forDownload) throws IOException {
-        List<ApplicationData> restartList = new ArrayList<>();
+    private ApplicationList downloadApplications(ApplicationList forDownload) throws IOException {
+        ApplicationList.Builder restartList = new ApplicationList.Builder();
 
         for (ApplicationData data : forDownload.getApplications()) {
             try {
-                String versionDownloaded = downloadDto.downloadApplication(url);
+                String versionDownloaded = fileTransfer.downloadApplication(data);
 
-                DownloadedVersion downloadedVersion = new DownloadedVersion();
-                downloadedVersion.setVersion(versionDownloaded);
+                ApplicationData.Builder appData = data.openCopy();
+                appData.setAllDownloadedVersions(data.getDownloadedVersions())
+                        .addDownloadedVersion(new DownloadedVersion.Builder().version(versionDownloaded).build());
 
-                List<DownloadedVersion> allVersions = data.getDownloadedVersions();
-                allVersions.add(downloadedVersion);
-                data.setDownloadedVersions(allVersions);
-
-                restartList.add(data);
+                restartList.addApplicationData(appData.build());
             }
             catch (MalformedURLException e) {
-                statuses.add(new Status(StatusCode.ERROR,
-                        format("Failed to compose url: %s Reason: %s", url, e.getMessage())));
+                statuses.add(statusError(format("Failed to compose URL for %s.", data.getName())));
             }
             catch (SocketTimeoutException e) {
-                statuses.add(new Status(StatusCode.ERROR,
-                        format("Timeout occured. Took too long to download from %s Reason: %s", url, e.getMessage())));
+                statuses.add(statusError(format("Timeout occured. It too too long to download %s %s", data.getName(), data.getFilename())));
             }
             catch (ConnectionFailedException e) {
-                statuses.add(new Status(StatusCode.ERROR, format("Failed to retrieve data from %s Reason: %s", url, e.getMessage())));
+                statuses.add(statusError("Connection for downloading updates failed."));
             }
         }
 
-        return restartList;
+        return restartList.build();
     }
 }

@@ -1,62 +1,51 @@
 package no.difi.deploymanager.versioncheck.service;
 
-import no.difi.deploymanager.testutils.ObjectMotherApplicationList;
 import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.domain.Status;
 import no.difi.deploymanager.domain.StatusCode;
-import no.difi.deploymanager.download.dto.DownloadDto;
+import no.difi.deploymanager.download.dao.DownloadDao;
 import no.difi.deploymanager.remotelist.exception.RemoteApplicationListException;
 import no.difi.deploymanager.remotelist.service.RemoteListService;
+import no.difi.deploymanager.versioncheck.dao.CheckVersionDao;
+import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.springframework.core.env.Environment;
-import no.difi.deploymanager.versioncheck.dto.CheckVersionDto;
-import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 
+import static no.difi.deploymanager.testutils.ObjectMotherApplicationList.createApplicationListWithData;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class CheckVersionServiceTest {
-    public static final String TEST_URL = "http://testurl/?r=central-proxy&g=$GROUP_ID&a=$ARTIFACT_ID&v=RELEASE";
     private CheckVersionService service;
 
-    @Mock Environment environmentMock;
     @Mock RemoteListService remoteListServiceMock;
-    @Mock CheckVersionDto checkVersionDtoMock;
-    @Mock DownloadDto downloadDtoMock;
+    @Mock
+    CheckVersionDao checkVersionDaoMock;
+    @Mock
+    DownloadDao downloadDaoMock;
 
     @Before
     public void setUp() throws RemoteApplicationListException {
         initMocks(this);
 
-        when(environmentMock.getRequiredProperty("location.version")).thenReturn(TEST_URL);
-        when(remoteListServiceMock.execute()).thenReturn(ObjectMotherApplicationList.createApplicationListWithData());
+        when(remoteListServiceMock.execute()).thenReturn(createApplicationListWithData());
 
-        service = new CheckVersionService(environmentMock, remoteListServiceMock, checkVersionDtoMock, downloadDtoMock);
-    }
-
-    @Test
-    public void should_get_critical_fail_when_property_for_location_not_found() {
-        when(environmentMock.getRequiredProperty(anyString())).thenThrow(new IllegalStateException());
-
-        Status actual = service.execute().get(0);
-
-        assertEquals(StatusCode.CRITICAL, actual.getStatusCode());
+        service = new CheckVersionService(remoteListServiceMock, checkVersionDaoMock, downloadDaoMock);
     }
 
     @Test
     public void should_get_error_when_url_is_malformed() throws Exception {
-        when(checkVersionDtoMock.retrieveExternalArtifactStatus(anyString())).thenThrow(new MalformedURLException());
+        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenThrow(new MalformedURLException());
 
         Status actual = service.execute().get(0);
 
@@ -65,7 +54,7 @@ public class CheckVersionServiceTest {
 
     @Test
     public void should_get_error_when_socket_timeout_occur() throws Exception {
-        when(checkVersionDtoMock.retrieveExternalArtifactStatus(anyString())).thenThrow(new SocketTimeoutException());
+        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenThrow(new SocketTimeoutException());
 
         Status actual = service.execute().get(0);
 
@@ -74,7 +63,7 @@ public class CheckVersionServiceTest {
 
     @Test
     public void should_get_error_when_IOException_occur() throws Exception {
-        when(checkVersionDtoMock.retrieveExternalArtifactStatus(anyString())).thenThrow(new IOException());
+        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenThrow(new IOException());
 
         Status actual = service.execute().get(0);
 
@@ -83,7 +72,7 @@ public class CheckVersionServiceTest {
 
     @Test
     public void should_get_error_when_connection_failed_exception_occur() throws Exception {
-        when(checkVersionDtoMock.retrieveExternalArtifactStatus(anyString())).thenThrow(new ConnectionFailedException("Message"));
+        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenThrow(new ConnectionFailedException("Message"));
 
         Status actual = service.execute().get(0);
 
@@ -92,7 +81,7 @@ public class CheckVersionServiceTest {
 
     @Test
     public void should_get_critical_error_when_JSON_exception_occur() throws Exception {
-        when(checkVersionDtoMock.retrieveExternalArtifactStatus(anyString())).thenThrow(new JSONException("Message"));
+        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenThrow(new JSONException("Message"));
 
         Status actual = service.execute().get(0);
 
@@ -101,7 +90,7 @@ public class CheckVersionServiceTest {
 
     @Test
     public void should_get_critical_error_when_returned_object_is_not_valid_JSON() throws Exception{
-        when(checkVersionDtoMock.retrieveExternalArtifactStatus(anyString())).thenReturn(new JSONObject());
+        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenReturn(new JSONObject());
 
         Status actual = service.execute().get(0);
 
@@ -110,7 +99,7 @@ public class CheckVersionServiceTest {
 
     @Test
     public void should_get_success_when_operation_completed_without_error_and_no_download_needed() throws Exception {
-        ApplicationList sameList = ObjectMotherApplicationList.createApplicationListWithData();
+        ApplicationList sameList = createApplicationListWithData();
         ApplicationData sameData = sameList.getApplications().get(0);
         JSONObject jsonObject = createJsonObject(
                 sameData.getActiveVersion(),
@@ -118,8 +107,8 @@ public class CheckVersionServiceTest {
                 sameData.getArtifactId()
         );
 
-        when(checkVersionDtoMock.retrieveExternalArtifactStatus(anyString())).thenReturn(jsonObject);
-        when(downloadDtoMock.retrieveDownloadList()).thenReturn(sameList);
+        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenReturn(jsonObject);
+        when(downloadDaoMock.retrieveDownloadList()).thenReturn(sameList);
 
         Status actual = service.execute().get(0);
 
@@ -128,7 +117,7 @@ public class CheckVersionServiceTest {
 
     @Test
     public void should_get_success_when_operation_completed_without_error_and_download_needed() throws Exception {
-        ApplicationList otherVersionList = ObjectMotherApplicationList.createApplicationListWithData();
+        ApplicationList otherVersionList = createApplicationListWithData();
         ApplicationData otherVersionData = otherVersionList.getApplications().get(0);
         JSONObject jsonObject = createJsonObject(
                 "someVersion",
@@ -136,8 +125,8 @@ public class CheckVersionServiceTest {
                 otherVersionData.getArtifactId()
         );
 
-        when(checkVersionDtoMock.retrieveExternalArtifactStatus(anyString())).thenReturn(jsonObject);
-        when(downloadDtoMock.retrieveDownloadList()).thenReturn(otherVersionList);
+        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenReturn(jsonObject);
+        when(downloadDaoMock.retrieveDownloadList()).thenReturn(otherVersionList);
 
         Status actual = service.execute().get(0);
 

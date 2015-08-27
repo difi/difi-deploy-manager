@@ -1,22 +1,26 @@
 # Difi Deployment Manager
-## First time setup
-Pull project and run
-<pre>./buildAll.sh</pre>
-
-This will build the manager admin, health-check and deploy manager.
-
-For later builds, it is sufficient to run
+##First time setup
+Check out and build project with
 <pre>mvn clean install</pre>
+...and you should be set to go.
+
+##Project settings
+Use whatever tool you prefer to view or write code, import project into IntelliJ or Eclipse, or maybe Notepad or Vim is your flavor.
+
+Anyways; some settings that are important:
+- Line breaks: LF (CRLF should work just fine too)
+- File encoding: UTF-8
+- Property file encoding: ISO-8859-1
 
 ##Run project
 First the server must be started. When project is built, 
 JAR is generated in target folder. To run from project root:
-<pre>java -jar ./target/no.difi.deploymanager-0.9.1-SNAPSHOT.jar</pre>
+<pre>java -jar ./deploy-manager/target/no.difi.deploymanager-<version>.jar</pre>
 
 ##Limitations
 Alpha version (PoC)
 
-Restarting of JAR-files. Application using command:
+For restarting of JAR-files. Application using command:
 <pre>java -jar [name-of-app]</pre>
 
 ##Compability
