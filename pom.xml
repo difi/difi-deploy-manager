@@ -15,7 +15,7 @@
   </modules>
 
   <scm>
-    <connection>scm:git:https://github.com/difi/difi-deploy-manager.git</connection>
+    <!--<connection>scm:git:https://github.com/difi/difi-deploy-manager.git</connection>-->
     <developerConnection>scm:git:git@github.com:difi/difi-deploy-manager.git</developerConnection>
     <url>https://github.com/difi/difi-deploy-manager.git</url>
     <tag>v/0.9.25-RC</tag>
