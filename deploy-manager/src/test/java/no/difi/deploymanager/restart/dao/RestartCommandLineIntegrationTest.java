@@ -1,11 +1,8 @@
 package no.difi.deploymanager.restart.dao;
 
 import no.difi.deploymanager.artifact.Application;
-import no.difi.deploymanager.domain.ApplicationData;
-import no.difi.deploymanager.domain.Self;
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -14,7 +11,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.File;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -45,37 +41,6 @@ public class RestartCommandLineIntegrationTest {
         }
 
         restartCommandLine = new RestartCommandLine(environment);
-    }
-
-    @Test
-    public void should_start_and_restart_and_stop_running_process_on_current_OS() throws Exception {
-        if (!IS_WINDOWS) {
-            Runtime.getRuntime().exec(new String[]{"cp", PERM_TEST_JAR_FILE, TEMP_TEST_JAR_FILE});
-        }
-        else {
-            Runtime.getRuntime().exec("cmd /c copy " + PERM_TEST_JAR_FILE_WIN + " "  + TEMP_TEST_JAR_FILE_WIN);
-        }
-
-        ApplicationData oldApp = new ApplicationData.Builder()
-                .name("no.difi.deploymanager")
-                .filename(TEST_APPLICATION_FILENAME)
-                .activeVersion("0.9.1")
-                .build();
-
-        ApplicationData newApp = new ApplicationData.Builder()
-                .name("no.difi.deploymanager")
-                .filename(TEST_APPLICATION_FILENAME)
-                .activeVersion("0.9.2")
-                .build();
-
-        Self self = new Self.Builder()
-                .name("no.no.no")
-                .version("0.9.3")
-                .build();
-
-        assertTrue(restartCommandLine.startProcess(newApp));
-        assertTrue(restartCommandLine.executeRestart(oldApp, newApp, self));
-        assertTrue(restartCommandLine.stopProcess(newApp));
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
