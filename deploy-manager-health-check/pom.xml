@@ -6,14 +6,14 @@
   <parent>
     <groupId>no.difi.deploymanager</groupId>
     <artifactId>no-difi-deploymanager</artifactId>
-    <version>0.9.3-SNAPSHOT</version>
+    <version>0.9.25-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>no.difi.deploymanager.healthchekc</groupId>
   <artifactId>deploy-manager-health-check</artifactId>
-  <version>0.9.3-SNAPSHOT</version>
+  <version>0.9.25-SNAPSHOT</version>
 
   <properties>
     <java.version>1.7</java.version>
