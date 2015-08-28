@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.File;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -72,9 +73,9 @@ public class RestartCommandLineIntegrationTest {
                 .version("0.9.3")
                 .build();
 
-//        assertTrue(restartCommandLine.startProcess(newApp));
-//        assertTrue(restartCommandLine.executeRestart(oldApp, newApp, self));
-//        assertTrue(restartCommandLine.stopProcess(newApp));
+        assertTrue(restartCommandLine.startProcess(newApp));
+        assertTrue(restartCommandLine.executeRestart(oldApp, newApp, self));
+        assertTrue(restartCommandLine.stopProcess(newApp));
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
