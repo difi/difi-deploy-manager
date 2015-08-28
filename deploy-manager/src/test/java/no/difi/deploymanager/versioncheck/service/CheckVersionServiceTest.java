@@ -20,7 +20,9 @@ import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 
 import static no.difi.deploymanager.testutils.ObjectMotherApplicationList.createApplicationListWithData;
+import static no.difi.deploymanager.testutils.ObjectMotherJSONObject.createJsonObject;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -98,16 +100,26 @@ public class CheckVersionServiceTest {
     }
 
     @Test
+    public void should_not_add_item_to_download_list_when_already_in_download_list() throws Exception {
+        ApplicationList appList = createApplicationListWithData();
+        ApplicationData appData = appList.getApplications().get(0);
+        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenReturn(
+                createJsonObject(appData.getActiveVersion(), appData.getArtifactId(), appData.getGroupId())
+        );
+        when(downloadDaoMock.retrieveDownloadList()).thenReturn(appList);
+
+        Status actual = service.execute().get(0);
+
+        assertTrue(actual.getDescription().contains("already prepared for download"));
+    }
+
+    @Test
     public void should_get_success_when_operation_completed_without_error_and_no_download_needed() throws Exception {
         ApplicationList sameList = createApplicationListWithData();
         ApplicationData sameData = sameList.getApplications().get(0);
-        JSONObject jsonObject = createJsonObject(
-                sameData.getActiveVersion(),
-                sameData.getGroupId(),
-                sameData.getArtifactId()
+        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenReturn(
+                createJsonObject(sameData.getActiveVersion(), sameData.getGroupId(), sameData.getArtifactId())
         );
-
-        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenReturn(jsonObject);
         when(downloadDaoMock.retrieveDownloadList()).thenReturn(sameList);
 
         Status actual = service.execute().get(0);
@@ -119,26 +131,14 @@ public class CheckVersionServiceTest {
     public void should_get_success_when_operation_completed_without_error_and_download_needed() throws Exception {
         ApplicationList otherVersionList = createApplicationListWithData();
         ApplicationData otherVersionData = otherVersionList.getApplications().get(0);
-        JSONObject jsonObject = createJsonObject(
-                "someVersion",
-                otherVersionData.getGroupId(),
-                otherVersionData.getArtifactId()
-        );
 
-        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenReturn(jsonObject);
+        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenReturn(
+                createJsonObject("someVersion", otherVersionData.getGroupId(), otherVersionData.getArtifactId())
+        );
         when(downloadDaoMock.retrieveDownloadList()).thenReturn(otherVersionList);
 
         Status actual = service.execute().get(0);
 
         assertEquals(StatusCode.SUCCESS, actual.getStatusCode());
-    }
-
-    private JSONObject createJsonObject(String version, String artifactId, String groupId) {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("groupId", groupId);
-        jsonObject.put("artifactId", artifactId);
-        jsonObject.put("version", version);
-        jsonObject.put("snapshot", false);
-        return jsonObject;
     }
 }
