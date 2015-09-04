@@ -140,7 +140,7 @@ public class RestartCommandLine {
                     List<String> processParts = asList(running.split(" "));
                     // Give process time to destroy itself.
                     Thread.sleep(100);
-                    if (running.contains(version.getFilename()) && !running.contains(ROOT_PATH_FOR_SH)) {
+                    if (running.contains(version.getFilename())) {
 
                         // Only one process will be fuond when nix-based system.
                         return processParts.get(0);
