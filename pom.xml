@@ -1,18 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>no.difi.deploymanager</groupId>
   <artifactId>no-difi-deploymanager</artifactId>
   <packaging>pom</packaging>
-  <version>0.9.2-SNAPSHOT</version>
+  <version>0.9.27-SNAPSHOT</version>
   <modules>
     <module>deploy-manager</module>
     <module>deploy-manager-admin</module>
     <module>deploy-manager-health-check</module>
   </modules>
+
+  <scm>
+    <connection>scm:git:https://github.com/difi/difi-deploy-manager.git</connection>
+    <developerConnection>scm:git:git@github.com:difi/difi-deploy-manager.git</developerConnection>
+    <url>https://github.com/difi/difi-deploy-manager.git</url>
+    <tag>v/0.9.25-RC</tag>
+  </scm>
 
   <parent>
     <groupId>org.springframework.boot</groupId>
@@ -73,6 +78,14 @@
 
   </dependencies>
 
+  <distributionManagement>
+    <repository>
+      <uniqueVersion>true</uniqueVersion>
+      <id>difi-local-repo</id>
+      <url>file:./target/repository</url>
+    </repository>
+  </distributionManagement>
+
   <build>
     <plugins>
       <plugin>
@@ -85,6 +98,15 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.5.2</version>
+        <configuration>
+          <tagNameFormat>v/@{project.version}-RC</tagNameFormat>
+        </configuration>
       </plugin>
     </plugins>
   </build>

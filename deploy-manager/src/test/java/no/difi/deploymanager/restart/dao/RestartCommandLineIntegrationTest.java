@@ -26,7 +26,7 @@ public class RestartCommandLineIntegrationTest {
     @SuppressWarnings("SpringJavaAutowiredMembersInspection")
     @Autowired Environment environment;
 
-    private static final String TEST_APPLICATION_FILENAME = "deploy-manager-health-check-0.9.0.jar";
+    private static final String TEST_APPLICATION_FILENAME = "deploy-manager-health-check-0.9.25.jar";
     private static final String TEMP_TEST_JAR_FILE = "./bin/" + TEST_APPLICATION_FILENAME;
     private static final String PERM_TEST_JAR_FILE = "./bin-test/" + TEST_APPLICATION_FILENAME;
     private static final String TEMP_TEST_JAR_FILE_WIN = System.getProperty("user.dir") + "\\bin\\" + TEST_APPLICATION_FILENAME;
