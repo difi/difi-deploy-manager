@@ -72,7 +72,7 @@ public class CheckVersionService {
             if (isInDownloadList(json, downloadDao.retrieveDownloadList())) {
                 statuses.add(statusSuccess(String.format("%s already prepared for download.", remoteApp.getName())));
             }
-            if (isDownloaded(json, downloadedApps)) {
+            else if (isDownloaded(json, downloadedApps)) {
                 statuses.add(statusSuccess(format("Latest version of %s is already downloaded.", remoteApp.getName())));
             }
             else {
@@ -112,8 +112,8 @@ public class CheckVersionService {
     private boolean isInDownloadList(JSONObject json, ApplicationList applicationList) {
         if (applicationList != null && applicationList.getApplications() != null) {
             for (ApplicationData data : applicationList.getApplications()) {
-                if (data.getArtifactId().equals(json.getString("groupId"))
-                    && data.getGroupId().equals(json.getString("artifactId")))
+                if (data.getGroupId().equals(json.getString("groupId"))
+                    && data.getArtifactId().equals(json.getString("artifactId")))
                     if (data.getActiveVersion() != null && data.getActiveVersion().equals(json.getString("version"))) {
                         return true;
                 }
