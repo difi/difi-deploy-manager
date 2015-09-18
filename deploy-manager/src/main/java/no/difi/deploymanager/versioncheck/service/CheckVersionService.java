@@ -102,6 +102,7 @@ public class CheckVersionService {
                 .groupId(remoteApp.getGroupId())
                 .artifactId(remoteApp.getArtifactId())
                 .activeVersion(json.getString("version"))
+                .startParameters(remoteApp.getStartParameters())
                 .build();
 
         appList.addApplicationData(data);
