@@ -87,4 +87,9 @@ public class Beans {
     public JsonUtil jsonUtilBean() {
         return new JsonUtil();
     }
+
+    @Bean(name = "startup")
+    public Startup startupBean() {
+        return new Startup(checkVersionServiceBean(), downloadServiceBean(), restartServiceBean());
+    }
 }
