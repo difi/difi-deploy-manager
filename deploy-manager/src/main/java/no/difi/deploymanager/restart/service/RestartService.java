@@ -36,27 +36,56 @@ public class RestartService {
     }
 
     public List<Status> execute() {
+        ApplicationList restartList = null;
+        ApplicationList runningAppList = null;
         try {
-            ApplicationList restartList = restartDao.retrieveRestartList();
-            ApplicationList runningAppList = checkVersionService.retrieveRunningAppsList();
+            restartList = restartDao.retrieveRestartList();
+        } catch (IOException e) {
+            statuses.add(statusError("Restart list not found"));
+        }
+        try {
+            runningAppList = checkVersionService.retrieveRunningAppsList();
+        } catch (IOException e) {
+            statuses.add(statusError("Retrieve running app list not found"));
+        }
 
-            if (restartList != null && restartList.getApplications() != null) {
-                for (ApplicationData newApp : restartList.getApplications()) {
-                    ApplicationData oldApp = null;
-                    if (runningAppList != null) {
-                        oldApp = findAppForRestart(runningAppList, newApp);
-                    }
-                    if (oldApp != null) {
+        if (restartList != null && restartList.getApplications() != null) {
+            for (ApplicationData newApp : restartList.getApplications()) {
+                ApplicationData oldApp = null;
+                if (runningAppList != null) {
+                    oldApp = findAppForRestart(runningAppList, newApp);
+                }
+                if (oldApp != null) {
+                    try {
                         statuses.add(performRestart(newApp, oldApp));
-                    } else {
-                        statuses.add(performStart(newApp));
+                        runningAppList.getApplications().remove(oldApp);
+                        runningAppList.getApplications().add(newApp);
+                    } catch (IOException e) {
+                        statuses.add(statusSuccess("Nothing to perform restart on"));
                     }
+                } else {
+                    statuses.add(performStart(newApp));
+                    if (runningAppList == null) {
+                        runningAppList = new ApplicationList.Builder().build();
+                    }
+                    runningAppList.getApplications().add(newApp);
                 }
             }
-        } catch (IOException e) {
-            statuses.add(statusError("Local error when retrieving list of applications to restart"));
         }
+        statuses.add(saveRunningAppList(runningAppList));
+
         return statuses;
+    }
+
+    private Status saveRunningAppList(ApplicationList runningAppList) {
+        if (runningAppList != null) {
+            try {
+                checkVersionService.saveRunningAppsList(runningAppList);
+            } catch (IOException e) {
+                return statusSuccess("Currently I have no running apps");
+            }
+        }
+        return statusSuccess("Saved my list over running applications");
     }
 
     private Status performStart(ApplicationData newApp) {
