@@ -177,7 +177,7 @@ public class RestartCommandLine {
         else {
             String[] findUnixApp = new String[] {
                     ROOT_PATH_FOR_SH,
-                    "-c", "ps -ax | grep java | grep " + oldVersion.getFilename()
+                    "-c", "ps -ax | grep java | grep " + oldVersion.getFilename() + " | grep -v grep"
             };
 
             process = Runtime.getRuntime().exec(findUnixApp);
