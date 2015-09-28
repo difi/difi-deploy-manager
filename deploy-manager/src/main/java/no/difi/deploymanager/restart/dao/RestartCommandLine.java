@@ -62,13 +62,16 @@ public class RestartCommandLine {
     public boolean startProcess(ApplicationData processToStart) {
         try {
             if (IS_WINDOWS) {
-                String[] startCommand = new String[] {"java", "-jar",
-                        (System.getProperty("user.dir") + environment.getProperty("download.base.path") + "/" + processToStart.getFilename()).replace("/", "\\")};
-                Runtime.getRuntime().exec(startCommand);
+                String startCommand = "java -jar" +
+                        (System.getProperty("user.dir") + environment.getProperty("download.base.path")
+                                + "/" + processToStart.getFilename()).replace("/", "\\");
+                doStart(startCommand);
             }
             else {
-                String startCommand = "java -jar " + System.getProperty("user.dir") + environment.getProperty("download.base.path") + "/" + processToStart.getFilename();
+                String startCommand = "java -jar " + System.getProperty("user.dir")
+                        + environment.getProperty("download.base.path") + "/" + processToStart.getFilename();
                 Runtime.getRuntime().exec(new String[]{ROOT_PATH_FOR_SH, "-c", startCommand});
+                doStart(startCommand);
             }
 
             return true;
@@ -150,6 +153,17 @@ public class RestartCommandLine {
         }
 
         return "";
+    }
+
+    private void doStart(String startCommand) throws IOException {
+        System.out.println(startCommand);
+
+        Process exec = Runtime.getRuntime().exec(startCommand);
+        //My holy banana, why this few lines? This is just silly...
+        // exec.getOutputStream().flush();
+        exec.getOutputStream().close();
+        exec.getInputStream().close();
+        exec.getErrorStream().close();
     }
 
     private String findPidOnWinOS(ApplicationData version, String pid, BufferedReader stdout) throws IOException {
