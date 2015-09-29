@@ -6,10 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Repository;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -158,12 +155,32 @@ public class RestartCommandLine {
     private void doStart(String startCommand) throws IOException {
         System.out.println(startCommand);
 
-        Process exec = Runtime.getRuntime().exec(startCommand);
-        //My holy banana, why this few lines? This is just silly...
-        // exec.getOutputStream().flush();
-        exec.getOutputStream().close();
-        exec.getInputStream().close();
-        exec.getErrorStream().close();
+        Process process = Runtime.getRuntime().exec(startCommand);
+        setUpStreamThread(process.getInputStream(), System.out);
+        setUpStreamThread(process.getErrorStream(), System.err);
+    }
+
+    private static void setUpStreamThread(final InputStream inputStream, final PrintStream printStream) {
+        final InputStreamReader streamReader = new InputStreamReader(inputStream);
+        new Thread(new Runnable() {
+            public void run() {
+                BufferedReader br = new BufferedReader(streamReader);
+                String line;
+                try {
+                    while ((line = br.readLine()) != null) {
+                        printStream.println("process stream: " + line);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        br.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
     }
 
     private String findPidOnWinOS(ApplicationData version, String pid, BufferedReader stdout) throws IOException {

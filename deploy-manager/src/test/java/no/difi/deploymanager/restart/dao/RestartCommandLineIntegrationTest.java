@@ -75,7 +75,7 @@ public class RestartCommandLineIntegrationTest {
 
         assertTrue(restartCommandLine.startProcess(newApp));
         assertTrue(restartCommandLine.executeRestart(oldApp, newApp, self));
-        assertTrue(restartCommandLine.stopProcess(newApp));
+//        assertTrue(restartCommandLine.stopProcess(newApp));
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
