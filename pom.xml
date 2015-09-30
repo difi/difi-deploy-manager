@@ -9,7 +9,6 @@
   <modules>
     <module>deploy-manager</module>
     <module>deploy-manager-admin</module>
-    <module>deploy-manager-health-check</module>
   </modules>
 
   <scm>
