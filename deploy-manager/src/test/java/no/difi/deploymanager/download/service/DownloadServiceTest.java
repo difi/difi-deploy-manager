@@ -76,7 +76,7 @@ public class DownloadServiceTest {
 
         service.execute().get(0);
 
-        verify(restartServiceMock, times(1)).saveRestartList(any(ApplicationList.class));
+        verify(restartServiceMock, times(1)).performSaveOfRestartList(any(ApplicationList.class));
     }
 
     @Test
@@ -85,7 +85,7 @@ public class DownloadServiceTest {
 
         service.execute().get(0);
 
-        verify(restartServiceMock, never()).saveRestartList(any(ApplicationList.class));
+        verify(restartServiceMock, never()).performSaveOfRestartList(any(ApplicationList.class));
     }
 
     @Test

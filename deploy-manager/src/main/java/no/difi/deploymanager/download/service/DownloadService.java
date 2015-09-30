@@ -77,7 +77,7 @@ public class DownloadService {
 
     private void saveRestartList(ApplicationList restartList) throws IOException {
         if (restartList != null && restartList.getApplications().size() != 0) {
-            restartService.saveRestartList(restartList);
+            restartService.performSaveOfRestartList(restartList);
             statuses.add(statusSuccess(format("Downloaded apps, prepared for restart.")));
         }
         else {

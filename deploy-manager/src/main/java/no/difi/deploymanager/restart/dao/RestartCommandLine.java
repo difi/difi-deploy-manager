@@ -110,7 +110,7 @@ public class RestartCommandLine {
         }
     }
 
-    private String findProcessId(ApplicationData version) throws IOException, InterruptedException {
+    public String findProcessId(ApplicationData version) throws IOException, InterruptedException {
         List<String> runningProcesses = findProcess(version);
 
         for (String running : runningProcesses) {

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.lang.String.format;
@@ -36,59 +37,92 @@ public class RestartService {
     }
 
     public List<Status> execute() {
-        ApplicationList restartList = null;
-        ApplicationList runningAppList = null;
-        try {
-            restartList = restartDao.retrieveRestartList();
-        } catch (IOException e) {
-            statuses.add(statusError("Restart list not found"));
-        }
-        try {
-            runningAppList = checkVersionService.retrieveRunningAppsList();
-        } catch (IOException e) {
-            statuses.add(statusError("Retrieve running app list not found"));
-        }
+        ApplicationList restartList = retrieveRestartList();
+        ApplicationList runningAppList = retrieveRunningAppList();
 
+        List<Integer> removeFromRestartIndex = new ArrayList<>(2);
         if (restartList != null && restartList.getApplications() != null) {
-            for (ApplicationData newApp : restartList.getApplications()) {
-                ApplicationData oldApp = null;
+            for (ApplicationData app : restartList.getApplications()) {
+                ApplicationData appWithNewVersion = null;
                 if (runningAppList != null) {
-                    oldApp = findAppForRestart(runningAppList, newApp);
+                    appWithNewVersion = findAppWithNewVersion(runningAppList, app);
                 }
-                if (oldApp != null) {
-                    try {
-                        statuses.add(performRestart(newApp, oldApp));
-                        runningAppList.getApplications().remove(oldApp);
-                        runningAppList.getApplications().add(newApp);
-                    } catch (IOException e) {
-                        statuses.add(statusSuccess("Nothing to perform restart on"));
-                    }
+                if (appWithNewVersion != null) {
+                    runningAppList = restartProcess(runningAppList, app, appWithNewVersion);
                 } else {
-                    statuses.add(performStart(newApp));
-                    if (runningAppList == null) {
-                        runningAppList = new ApplicationList.Builder().build();
-                    }
-                    runningAppList.getApplications().add(newApp);
+                    runningAppList = startProcess(restartList, runningAppList, removeFromRestartIndex, app);
                 }
             }
+            restartList = cleanRestartList(restartList, removeFromRestartIndex);
         }
-        statuses.add(saveRunningAppList(runningAppList));
+        saveRestartList(restartList);
+        saveRunningAppsAndVerifyRunningStatus(runningAppList);
 
         return statuses;
     }
 
-    private Status saveRunningAppList(ApplicationList runningAppList) {
-        if (runningAppList != null) {
-            try {
-                checkVersionService.saveRunningAppsList(runningAppList);
-            } catch (IOException e) {
-                return statusSuccess("Currently I have no running apps");
-            }
+    private ApplicationList restartProcess(ApplicationList runningAppList, ApplicationData app, ApplicationData appWithNewVersion) {
+        try {
+            statuses.add(restartApplicationInProcessWithNewVersion(app, appWithNewVersion));
+            int index = runningAppList.getApplications().indexOf(appWithNewVersion);
+            runningAppList.getApplications().remove(appWithNewVersion);
+            runningAppList.getApplications().add(index, app);
+        } catch (IOException e) {
+            statuses.add(statusSuccess("Nothing to perform restart on"));
         }
-        return statusSuccess("Saved my list over running applications");
+        return runningAppList;
     }
 
-    private Status performStart(ApplicationData newApp) {
+    private ApplicationList startProcess(ApplicationList restartList, ApplicationList runningAppList, List<Integer> removeFromRestartIndex, ApplicationData app) {
+        statuses.add(startApplicationInProcess(app));
+        if (runningAppList == null) {
+            runningAppList = new ApplicationList.Builder().build();
+        }
+        runningAppList.getApplications().add(app);
+        removeFromRestartIndex.add(restartList.getApplications().indexOf(app));
+
+        return runningAppList;
+    }
+
+    private ApplicationList cleanRestartList(ApplicationList restartList, List<Integer> removeFromRestartIndex) {
+        Collections.reverse(removeFromRestartIndex);
+        for (int index : removeFromRestartIndex) {
+            System.out.println(index);
+            restartList.getApplications().remove(index);
+        }
+        return restartList;
+    }
+
+    private ApplicationList retrieveRunningAppList() {
+        try {
+            return checkVersionService.retrieveRunningAppsList();
+        } catch (IOException e) {
+            statuses.add(statusError("Retrieve running app list not found"));
+        }
+        return null;
+    }
+
+    private ApplicationList retrieveRestartList() {
+        try {
+            return restartDao.retrieveRestartList();
+        } catch (IOException e) {
+            statuses.add(statusError("Restart list not found"));
+        }
+        return null;
+    }
+
+    private ApplicationData findAppWithNewVersion(ApplicationList runningAppList, ApplicationData newApp) {
+        ApplicationData appWithNewVersion = null;
+        for (ApplicationData oldApp : runningAppList.getApplications()) {
+            if (newApp.getGroupId().equals(oldApp.getGroupId()) && newApp.getArtifactId().equals(oldApp.getArtifactId())) {
+                appWithNewVersion = oldApp;
+                break;
+            }
+        }
+        return appWithNewVersion;
+    }
+
+    private Status startApplicationInProcess(ApplicationData newApp) {
         boolean result = restartCommandline.startProcess(newApp);
         if (result) {
             return statusSuccess(format("%s with version %s is started.", newApp.getArtifactId(), newApp.getActiveVersion()));
@@ -98,7 +132,7 @@ public class RestartService {
         }
     }
 
-    private Status performRestart(ApplicationData newApp, ApplicationData oldApp) throws IOException {
+    private Status restartApplicationInProcessWithNewVersion(ApplicationData newApp, ApplicationData oldApp) throws IOException {
         try {
             boolean result = restartCommandline.executeRestart(oldApp, newApp, restartDao.fetchSelfVersion());
             if (result) {
@@ -120,18 +154,38 @@ public class RestartService {
         }
     }
 
-    public void saveRestartList(ApplicationList restartList) throws IOException {
+    public void performSaveOfRestartList(ApplicationList restartList) throws IOException {
         restartDao.saveRestartList(restartList);
     }
 
-    private ApplicationData findAppForRestart(ApplicationList runningAppList, ApplicationData newApp) {
-        ApplicationData appWithNewVersion = null;
-        for (ApplicationData oldApp : runningAppList.getApplications()) {
-            if (newApp.getGroupId().equals(oldApp.getGroupId()) && newApp.getArtifactId().equals(oldApp.getArtifactId())) {
-                appWithNewVersion = oldApp;
-                break;
+    private void saveRestartList(ApplicationList restartList) {
+        try {
+            performSaveOfRestartList(restartList);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void saveRunningAppsAndVerifyRunningStatus(ApplicationList runningAppList) {
+        if (runningAppList != null) {
+            try {
+                checkVersionService.saveRunningAppsList(runningAppList);
+
+                verifyThatApplicationsAreRunning(runningAppList);
+            } catch (IOException e) {
+                statuses.add(statusSuccess("Currently I have no running apps"));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
-        return appWithNewVersion;
+    }
+
+    private void verifyThatApplicationsAreRunning(ApplicationList runningAppList) throws IOException, InterruptedException {
+        for (ApplicationData data : runningAppList.getApplications()) {
+            if (restartCommandline.findProcessId(data).length() == 0) {
+                System.out.println("Whops, " + data.getName() + " is not running. Restarting it...");
+                restartCommandline.startProcess(data);
+            }
+        }
     }
 }
