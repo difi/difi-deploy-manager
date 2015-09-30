@@ -15,7 +15,7 @@ Anyways; some settings that are important:
 ##Run project
 First the server must be started. When project is built, 
 JAR is generated in target folder. To run from project root:
-<pre>java -jar ./deploy-manager/target/no.difi.deploymanager-<version>.jar</pre>
+<pre>java -jar ./deploy-manager/target/no.difi.deploymanager-[version].jar</pre>
 
 ##Limitations
 Alpha version (PoC)
