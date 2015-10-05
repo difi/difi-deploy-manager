@@ -47,8 +47,11 @@ public class CheckVersionDao {
         else {
             location = environment.getRequiredProperty("location.test.version");
         }
-        System.out.println("***** Location for download: " + location);
+        System.out.println("*** Location for download: " + location);
+        System.out.println("**** GroupdId: " + groupId);
+        System.out.println("**** ArtifactId: " + artifactId);
         url = Common.replacePropertyParams(location, groupId, artifactId);
+        System.out.println("**** URL: " + url);
 
         JSONObject json = jsonUtil.retrieveJsonObject(url);
 
