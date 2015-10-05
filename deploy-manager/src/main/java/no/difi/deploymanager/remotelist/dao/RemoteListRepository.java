@@ -92,8 +92,9 @@ public class RemoteListRepository {
                         "-Dserver.port=9092 " +
                         "-Dorgnummer=910094092 " +
                         "-Daltinn.username=2435 " +
-                        "-Daltinn.password=ROBSTAD1" +
-                        "-Dspring.profiles.active=dev "
+                        "-Daltinn.password=ROBSTAD1 " +
+                        "-Dspring.profiles.active=dev " +
+                        "no.difi.meldingsutveksling.IntegrasjonspunktApplication "
                 )
                 .build()
         );
