@@ -39,8 +39,15 @@ public class CheckVersionDao {
      * @throws ConnectionFailedException
      */
     public JSONObject retrieveExternalArtifactStatus(String groupId, String artifactId) throws IOException, ConnectionFailedException {
-        String location = environment.getRequiredProperty("location.version");
-        String url = Common.replacePropertyParams(location, groupId, artifactId);
+        String location = "";
+        String url = "";
+        if (environment.getProperty("download.source").equals("production")) {
+            location = environment.getRequiredProperty("location.version");
+        }
+        else {
+            location = environment.getRequiredProperty("location.test.version");
+        }
+        url = Common.replacePropertyParams(location, groupId, artifactId);
 
         JSONObject json = jsonUtil.retrieveJsonObject(url);
 

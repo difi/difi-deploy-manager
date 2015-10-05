@@ -12,12 +12,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.env.Environment;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CheckVersionDaoTest {
+    public static final JSONObject JSON_OBJECT = new JSONObject("{data: {something: \"1234\"}}");
     private CheckVersionDao repository;
 
     private static final String GROUPID = "groupid";
@@ -37,6 +39,7 @@ public class CheckVersionDaoTest {
 
     @Test(expected = IllegalStateException.class)
     public void should_throw_illegalstateexception_when_location_version_not_found() throws Exception {
+        when(environmentMock.getProperty("download.source")).thenReturn("production");
         when(environmentMock.getRequiredProperty("location.version")).thenThrow(new IllegalStateException());
 
         repository.retrieveExternalArtifactStatus(GROUPID, ARTIFACTID);
@@ -44,6 +47,7 @@ public class CheckVersionDaoTest {
 
     @Test(expected = JSONException.class)
     public void should_throw_json_exception_when_result_is_not_a_json_with_object_data() throws Exception {
+        when(environmentMock.getProperty("download.source")).thenReturn("production");
         when(environmentMock.getRequiredProperty(anyString())).thenReturn(TEST_URL);
         when(jsonUtilMock.retrieveJsonObject(anyString())).thenReturn(new JSONObject("{}"));
 
@@ -52,11 +56,48 @@ public class CheckVersionDaoTest {
 
     @Test
     public void should_return_json_object_when_data_is_available_in_result() throws Exception {
+        when(environmentMock.getProperty("download.source")).thenReturn("production");
         when(environmentMock.getRequiredProperty(anyString())).thenReturn("url");
-        when(jsonUtilMock.retrieveJsonObject(anyString())).thenReturn(new JSONObject("{data: {something: \"1234\"}}"));
+        when(jsonUtilMock.retrieveJsonObject(anyString())).thenReturn(JSON_OBJECT);
 
         JSONObject result = repository.retrieveExternalArtifactStatus(GROUPID, ARTIFACTID);
 
         assertTrue(result.getString("something").equals("1234"));
+    }
+
+    @Test
+    public void should_use_production_location_for_download_when_production_is_set_in_property_for_download_source() throws Exception {
+        when(environmentMock.getProperty("download.source")).thenReturn("production");
+        when(environmentMock.getRequiredProperty("location.version")).thenReturn(TEST_URL);
+        when(jsonUtilMock.retrieveJsonObject(anyString())).thenReturn(JSON_OBJECT);
+
+        repository.retrieveExternalArtifactStatus(GROUPID, ARTIFACTID);
+
+        verify(environmentMock, times(1)).getRequiredProperty("location.version");
+        verify(environmentMock, never()).getRequiredProperty("location.test.version");
+    }
+
+    @Test
+    public void should_use_test_locaton_for_download_when_test_is_set_in_property_for_dwonload_source() throws Exception {
+        when(environmentMock.getProperty("download.source")).thenReturn("test");
+        when(environmentMock.getRequiredProperty("location.test.version")).thenReturn(TEST_URL);
+        when(jsonUtilMock.retrieveJsonObject(anyString())).thenReturn(JSON_OBJECT);
+
+        repository.retrieveExternalArtifactStatus(GROUPID, ARTIFACTID);
+
+        verify(environmentMock, never()).getRequiredProperty("location.version");
+        verify(environmentMock, times(1)).getRequiredProperty("location.test.version");
+    }
+
+    @Test
+    public void should_use_test_location_for_download_when_nothing_is_set_in_property_for_download_source() throws Exception {
+        when(environmentMock.getProperty("download.source")).thenReturn("");
+        when(environmentMock.getRequiredProperty("location.test.version")).thenReturn(TEST_URL);
+        when(jsonUtilMock.retrieveJsonObject(anyString())).thenReturn(JSON_OBJECT);
+
+        repository.retrieveExternalArtifactStatus(GROUPID, ARTIFACTID);
+
+        verify(environmentMock, never()).getRequiredProperty("location.version");
+        verify(environmentMock, times(1)).getRequiredProperty("location.test.version");
     }
 }
