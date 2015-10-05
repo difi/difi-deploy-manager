@@ -75,7 +75,26 @@ public class RemoteListRepository {
                 .activeVersion("")
                 .artifactType("JAR")
                 .filename("no.difi.deploymanager-0.9.1-SNAPSHOT.jar")
-                .startParameters("")
+                .startParameters("-Ddownload.source=test")
+                .build()
+        );
+
+        appList.addApplicationData(
+                new ApplicationData.Builder()
+                .name("Difi Integrasjonspunkt")
+                .groupId("no.difi.meldingsutveksling")
+                .artifactId("integrasjonspunkt")
+                .activeVersion("")
+                .filename("integrasjonspunkt-1.4.jar")
+                .startParameters("-Dprivatekeyalias=910094092 " +
+                        "-Dprivatekeypassword=changeit " +
+                        "-Dkeystorelocation=/home/miif/test-certificates.jks " +
+                        "-Dserver.port=9092 " +
+                        "-Dorgnummer=910094092 " +
+                        "-Daltinn.username=2435 " +
+                        "-Daltinn.password=ROBSTAD1" +
+                        "-Dspring.profiles.active=dev "
+                )
                 .build()
         );
 
