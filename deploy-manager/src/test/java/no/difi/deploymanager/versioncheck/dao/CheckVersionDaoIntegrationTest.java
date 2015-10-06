@@ -10,6 +10,7 @@ import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
 import org.json.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,7 @@ public class CheckVersionDaoIntegrationTest {
         CustomAssert.assertApplicationList(expected, actual);
     }
 
+    @Ignore
     @Test(expected = ConnectionFailedException.class)
     public void should_get_connection_exception_when_connection_fails() throws Exception {
         checkVersionDao.retrieveExternalArtifactStatus("", "");
