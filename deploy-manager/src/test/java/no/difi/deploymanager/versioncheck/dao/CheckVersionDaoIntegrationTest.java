@@ -55,7 +55,6 @@ public class CheckVersionDaoIntegrationTest {
         CustomAssert.assertApplicationList(expected, actual);
     }
 
-    @Ignore
     @Test(expected = ConnectionFailedException.class)
     public void should_get_connection_exception_when_connection_fails() throws Exception {
         checkVersionDao.retrieveExternalArtifactStatus("", "");

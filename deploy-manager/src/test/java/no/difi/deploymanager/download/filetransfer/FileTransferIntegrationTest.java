@@ -36,7 +36,6 @@ public class FileTransferIntegrationTest {
         fileTransfer = new FileTransfer(environment);
     }
 
-    @Ignore
     @Test(expected = ConnectionFailedException.class)
     public void should_get_connection_exception_when_connection_fails() throws Exception {
         fileTransfer.downloadApplication(createApplicationData("", ""));
