@@ -43,6 +43,8 @@ public class FileTransfer {
                 replacePropertyParams(environment.getRequiredProperty("location.download"),
                         data.getGroupId(), data.getArtifactId())
         );
+        System.out.println("**Downloading update**");
+        System.out.println("**URL: " + source);
 
         String filePath = System.getProperty("user.dir") + environment.getRequiredProperty("download.base.path");
 
