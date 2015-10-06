@@ -53,13 +53,8 @@ public class CheckVersionDao {
         url = Common.replacePropertyParams(location, groupId, artifactId);
         System.out.println("**** URL: " + url);
 
-        JSONObject json = null;
-        try {
-            json = jsonUtil.retrieveJsonObject(url);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+        JSONObject json = jsonUtil.retrieveJsonObject(url);
+
         return (JSONObject) json.get("data");
     }
 
