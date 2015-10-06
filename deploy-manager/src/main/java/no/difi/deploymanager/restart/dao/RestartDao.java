@@ -26,8 +26,6 @@ public class RestartDao {
     }
 
     public void saveRestartList(ApplicationList restartList) throws IOException {
-        System.out.println("**** Base path: " + environment.getRequiredProperty("monitoring.base.path"));
-        System.out.println("**** Restart file: " + environment.getRequiredProperty("monitoring.forrestart.file"));
         ioUtil.saveApplicationList(
                 restartList,
                 environment.getRequiredProperty("monitoring.base.path"),

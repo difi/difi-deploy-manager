@@ -42,7 +42,6 @@ public class FileTransfer {
     public String downloadApplication(ApplicationData data) throws IOException, ConnectionFailedException {
         URL source = makeUrlForDownload(data);
 
-        System.out.println("**Downloading update**");
         System.out.println("**URL: " + source);
 
         String filePath = System.getProperty("user.dir") + environment.getRequiredProperty("download.base.path");
@@ -99,14 +98,12 @@ public class FileTransfer {
      */
     public URL makeUrlForDownload(ApplicationData data) throws MalformedURLException {
         if (environment.getProperty("download.source").equals("production")) {
-            System.out.println("***Getting download link from production");
             return new URL(
                     replacePropertyParams(environment.getRequiredProperty("location.download"),
                             data.getGroupId(), data.getArtifactId())
             );
         }
         else {
-            System.out.println("***Getting download link from test");
             return new URL(
                     replacePropertyParams(environment.getRequiredProperty("location.test.download"),
                             data.getGroupId(), data.getArtifactId())

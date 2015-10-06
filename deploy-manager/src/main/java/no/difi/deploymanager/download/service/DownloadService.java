@@ -51,7 +51,6 @@ public class DownloadService {
             ApplicationList restartList = null;
             try {
                 restartList = downloadApplications(forDownload);
-                System.out.println("***Restart list has " + restartList.getApplications().size() + " applications.");
             } catch (IOException e) {
                 statuses.add(statusError("Failed to download applications."));
             }
@@ -64,6 +63,8 @@ public class DownloadService {
             }
 
             try {
+                System.out.println("***Restart list has " + restartList.getApplications().size() + " applications.");
+
                 saveRestartList(restartList);
             } catch (IOException e) {
                 statuses.add(statusError("Failed to save restart list."));
@@ -89,7 +90,6 @@ public class DownloadService {
     }
 
     private void saveRestartList(ApplicationList restartList) throws IOException {
-        System.out.println("**Restart list have " + restartList.getApplications().size() + " elements");
         if (restartList != null && restartList.getApplications().size() != 0) {
             restartService.performSaveOfRestartList(restartList);
             statuses.add(statusSuccess("Downloaded apps, prepared for restart."));
@@ -102,7 +102,6 @@ public class DownloadService {
         ApplicationList.Builder restartList = new ApplicationList.Builder();
 
         for (ApplicationData data : forDownload.getApplications()) {
-            System.out.println("*****Downloading " + data.getFilename());
             try {
                 String versionDownloaded = fileTransfer.downloadApplication(data);
 
@@ -110,7 +109,6 @@ public class DownloadService {
                 appData.setAllDownloadedVersions(data.getDownloadedVersions())
                         .addDownloadedVersion(new DownloadedVersion.Builder().version(versionDownloaded).build());
 
-                System.out.println("*****Adding " + data.getFilename() + " with group id " + data.getGroupId() + " to restart list.");
                 restartList.addApplicationData(appData.build());
             } catch (MalformedURLException e) {
                 statuses.add(statusError(format("Failed to compose URL for %s.", data.getName())));

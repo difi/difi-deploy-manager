@@ -87,7 +87,6 @@ public class RestartService {
     private ApplicationList cleanRestartList(ApplicationList restartList, List<Integer> removeFromRestartIndex) {
         Collections.reverse(removeFromRestartIndex);
         for (int index : removeFromRestartIndex) {
-            System.out.println(index);
             restartList.getApplications().remove(index);
         }
         return restartList;
@@ -183,7 +182,6 @@ public class RestartService {
     private void verifyThatApplicationsAreRunning(ApplicationList runningAppList) throws IOException, InterruptedException {
         for (ApplicationData data : runningAppList.getApplications()) {
             if (restartCommandline.findProcessId(data).length() == 0) {
-                System.out.println("Whops, " + data.getName() + " is not running. Restarting it...");
                 restartCommandline.startProcess(data);
             }
         }
