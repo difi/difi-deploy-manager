@@ -51,7 +51,6 @@ public class CheckVersionDao {
         System.out.println("**** GroupdId: " + groupId);
         System.out.println("**** ArtifactId: " + artifactId);
         url = Common.replacePropertyParams(location, groupId, artifactId);
-        url = "http://10.243.200.51:8081/service/local/artifact/maven/resolve?r=difi.meldingsutveksler&g=no.difi.meldingsutveksling&a=integrasjonspunkt&v=LATEST";
         System.out.println("**** URL: " + url);
 
         JSONObject json = jsonUtil.retrieveJsonObject(url);
