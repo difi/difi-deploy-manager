@@ -4,6 +4,7 @@ import no.difi.deploymanager.artifact.Application;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ public class FileTransferIntegrationTest {
         fileTransfer = new FileTransfer(environment);
     }
 
+    @Ignore
     @Test(expected = ConnectionFailedException.class)
     public void should_get_connection_exception_when_connection_fails() throws Exception {
         fileTransfer.downloadApplication(createApplicationData("", ""));
