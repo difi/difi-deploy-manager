@@ -27,6 +27,8 @@ public class JsonUtil {
         connection = createConnection(request);
 
         if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+            System.out.println("****" + connection.getResponseCode());
+            System.out.println("****" + connection.getResponseMessage());
             throw new ConnectionFailedException("Connection to repository failed.");
         }
         InputStream stream = new BufferedInputStream(connection.getInputStream());
