@@ -42,8 +42,6 @@ public class FileTransfer {
     public String downloadApplication(ApplicationData data) throws IOException, ConnectionFailedException {
         URL source = makeUrlForDownload(data);
 
-        System.out.println("**URL: " + source);
-
         String filePath = System.getProperty("user.dir") + environment.getRequiredProperty("download.base.path");
 
         File destinationPath = new File(filePath);

@@ -57,7 +57,6 @@ public class DownloadService {
 
             ApplicationList notDownloaded = updateNotDownloadedList(restartList, forDownload);
             try {
-                System.out.println("***Not downloaded has " + notDownloaded.getApplications().size() + " applications.");
                 downloadDao.saveDownloadList(notDownloaded);
             } catch (IOException e) {
                 statuses.add(statusError("Failed to save download list."));
