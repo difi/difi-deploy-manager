@@ -1,5 +1,6 @@
 package no.difi.deploymanager.restart.dao;
 
+import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.domain.Self;
 import no.difi.deploymanager.util.IOUtil;
@@ -31,6 +32,13 @@ public class RestartDao {
         System.out.println("***File: " + environment.getRequiredProperty("monitoring.fordownload.file"));
         if (restartList != null) {
             System.out.println("***Elements: " + restartList.getApplications().size());
+            for (ApplicationData data : restartList.getApplications()) {
+                System.out.println("*****Filename: " + data.getFilename());
+                System.out.println("*****Group id: " + data.getGroupId());
+                System.out.println("*****Artifact id: " + data.getArtifactId());
+                System.out.println("*****Start params: " + data.getStartParameters());
+                System.out.println("*****Active version: " + data.getActiveVersion());
+            }
         }
         ioUtil.saveApplicationList(
                 restartList,
