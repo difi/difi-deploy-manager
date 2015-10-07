@@ -27,19 +27,6 @@ public class RestartDao {
     }
 
     public void saveRestartList(ApplicationList restartList) throws IOException {
-        System.out.println("***Saving restart list");
-        System.out.println("***Path: " + environment.getRequiredProperty("monitoring.base.path"));
-        System.out.println("***File: " + environment.getRequiredProperty("monitoring.fordownload.file"));
-        if (restartList != null) {
-            System.out.println("***Elements: " + restartList.getApplications().size());
-            for (ApplicationData data : restartList.getApplications()) {
-                System.out.println("*****Filename: " + data.getFilename());
-                System.out.println("*****Group id: " + data.getGroupId());
-                System.out.println("*****Artifact id: " + data.getArtifactId());
-                System.out.println("*****Start params: " + data.getStartParameters());
-                System.out.println("*****Active version: " + data.getActiveVersion());
-            }
-        }
         ioUtil.saveApplicationList(
                 restartList,
                 environment.getRequiredProperty("monitoring.base.path"),

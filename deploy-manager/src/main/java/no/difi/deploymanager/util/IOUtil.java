@@ -1,5 +1,6 @@
 package no.difi.deploymanager.util;
 
+import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.domain.Self;
 import org.springframework.stereotype.Component;
@@ -53,8 +54,7 @@ public class IOUtil {
         if (!pathStructure.exists()) {
             pathStructure.mkdir();
         }
-        String fileWithPath = path + folder + filename;
-        File file = new File(fileWithPath);
+        File file = new File(path + folder + filename);
 
         ObjectOutputStream oos = new ObjectOutputStream(
                 new FileOutputStream(file, false)

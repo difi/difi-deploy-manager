@@ -1,6 +1,8 @@
 package no.difi.deploymanager.domain;
 
-public class DownloadedVersion {
+import java.io.Serializable;
+
+public class DownloadedVersion implements Serializable {
     private final String version;
 
     @SuppressWarnings("WeakerAccess")
