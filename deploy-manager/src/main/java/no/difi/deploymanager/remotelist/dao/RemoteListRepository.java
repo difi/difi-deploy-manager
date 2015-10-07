@@ -54,7 +54,9 @@ public class RemoteListRepository {
                         .activeVersion(convert(dataObject, "version"))
                         .artifactType(convert(dataObject, "applicationType"))
                         .filename(convert(dataObject, "filename"))
-                        .startParameters(convert(dataObject, "startParameters"))
+                        .vmOptions("vmOptions")
+                        .environmentVariables("environmentVariables")
+                        .mainClass("mainClass")
                         .build();
 
                 applications.addApplicationData(app);
@@ -75,7 +77,9 @@ public class RemoteListRepository {
                 .activeVersion("")
                 .artifactType("JAR")
                 .filename("no.difi.deploymanager-0.9.1-SNAPSHOT.jar")
-                .startParameters("-Ddownload.source=test")
+                .vmOptions("")
+                .environmentVariables("-Ddownload.source=test")
+                .mainClass("")
                 .build()
         );
 
@@ -86,16 +90,16 @@ public class RemoteListRepository {
                 .artifactId("integrasjonspunkt")
                 .activeVersion("")
                 .filename("integrasjonspunkt-1.4.jar")
-                .startParameters("-Dprivatekeyalias=910094092 " +
+                .vmOptions("")
+                .environmentVariables("-Dprivatekeyalias=910094092 " +
                         "-Dprivatekeypassword=changeit " +
                         "-Dkeystorelocation=/home/miif/test-certificates.jks " +
                         "-Dserver.port=9092 " +
                         "-Dorgnummer=910094092 " +
                         "-Daltinn.username=2435 " +
                         "-Daltinn.password=ROBSTAD1 " +
-                        "-Dspring.profiles.active=dev " +
-                        "no.difi.meldingsutveksling.IntegrasjonspunktApplication "
-                )
+                        "-Dspring.profiles.active=dev ")
+                .mainClass("\"no.difi.meldingsutveksling.IntegrasjonspunktApplication \"")
                 .build()
         );
 
