@@ -57,6 +57,7 @@ public class DownloadService {
 
             ApplicationList notDownloaded = updateNotDownloadedList(restartList, forDownload);
             try {
+                System.out.println("***Not downloaded has " + notDownloaded.getApplications().size() + " applications.");
                 downloadDao.saveDownloadList(notDownloaded);
             } catch (IOException e) {
                 statuses.add(statusError("Failed to save download list."));
@@ -106,11 +107,12 @@ public class DownloadService {
 
         for (ApplicationData data : forDownload.getApplications()) {
             try {
-                String versionDownloaded = fileTransfer.downloadApplication(data);
+                String filenameDownloaded = fileTransfer.downloadApplication(data);
 
                 ApplicationData.Builder appData = data.openCopy();
                 appData.setAllDownloadedVersions(data.getDownloadedVersions())
-                        .addDownloadedVersion(new DownloadedVersion.Builder().version(versionDownloaded).build());
+                        .filename(filenameDownloaded)
+                        .addDownloadedVersion(new DownloadedVersion.Builder().version(data.getActiveVersion()).build());
 
                 restartList.addApplicationData(appData.build());
             } catch (MalformedURLException e) {
