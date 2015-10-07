@@ -53,7 +53,9 @@ public class IOUtil {
         if (!pathStructure.exists()) {
             pathStructure.mkdir();
         }
-        File file = new File(path + folder + filename);
+        String fileWithPath = path + folder + filename;
+        System.out.println("***Filename with full path " + fileWithPath);
+        File file = new File(fileWithPath);
 
         ObjectOutputStream oos = new ObjectOutputStream(
                 new FileOutputStream(file, false)
