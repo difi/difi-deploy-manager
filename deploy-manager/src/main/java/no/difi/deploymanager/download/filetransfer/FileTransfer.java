@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import static no.difi.deploymanager.util.Common.replacePropertyParams;
@@ -39,10 +40,7 @@ public class FileTransfer {
      */
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public String downloadApplication(ApplicationData data) throws IOException, ConnectionFailedException {
-        URL source = new URL(
-                replacePropertyParams(environment.getRequiredProperty("location.download"),
-                        data.getGroupId(), data.getArtifactId())
-        );
+        URL source = makeUrlForDownload(data);
 
         String filePath = System.getProperty("user.dir") + environment.getRequiredProperty("download.base.path");
 
@@ -87,5 +85,27 @@ public class FileTransfer {
         connection.disconnect();
 
         return fileName;
+    }
+
+    /***
+     * Put together download url based on information in application data.
+     *
+     * @param data Contains information about the application to download.
+     * @return The full filename that has been downloaded.
+     * @throws MalformedURLException
+     */
+    public URL makeUrlForDownload(ApplicationData data) throws MalformedURLException {
+        if (environment.getProperty("download.source").equals("production")) {
+            return new URL(
+                    replacePropertyParams(environment.getRequiredProperty("location.download"),
+                            data.getGroupId(), data.getArtifactId())
+            );
+        }
+        else {
+            return new URL(
+                    replacePropertyParams(environment.getRequiredProperty("location.test.download"),
+                            data.getGroupId(), data.getArtifactId())
+            );
+        }
     }
 }

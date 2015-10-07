@@ -10,6 +10,7 @@ import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
 import org.json.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -23,7 +23,6 @@ import static no.difi.deploymanager.util.StatusFactory.statusSuccess;
 
 /***
  * DownloadService contains logic for downloading application, and logs result of steps in the process.
- *
  */
 @Service
 public class DownloadService {
@@ -41,22 +40,35 @@ public class DownloadService {
     }
 
     public List<Status> execute() {
+        ApplicationList forDownload = new ApplicationList.Builder().build();
         try {
-            ApplicationList forDownload = downloadDao.retrieveDownloadList();
-
-            if (forDownload != null && forDownload.getApplications() != null) {
-                ApplicationList restartList = downloadApplications(forDownload);
-
-                ApplicationList notDownloaded = updateNotDownloadedList(restartList, forDownload);
-                downloadDao.saveDownloadList(notDownloaded);
-
-                saveRestartList(restartList);
-            } else {
-                statuses.add(statusSuccess("Nothing to download."));
-            }
+            forDownload = downloadDao.retrieveDownloadList();
+        } catch (IOException e) {
+            statuses.add(statusError("Failed to retrieve download list."));
         }
-        catch (IOException e) {
-            statuses.add(statusError(format("Failed to retrieve download list. Reason: %s", e.getMessage())));
+
+        if (forDownload != null && forDownload.getApplications() != null) {
+            ApplicationList restartList = null;
+            try {
+                restartList = downloadApplications(forDownload);
+            } catch (IOException e) {
+                statuses.add(statusError("Failed to download applications."));
+            }
+
+            ApplicationList notDownloaded = updateNotDownloadedList(restartList, forDownload);
+            try {
+                downloadDao.saveDownloadList(notDownloaded);
+            } catch (IOException e) {
+                statuses.add(statusError("Failed to save download list."));
+            }
+
+            try {
+                saveRestartList(restartList);
+            } catch (IOException e) {
+                statuses.add(statusError("Failed to save restart list."));
+            }
+        } else {
+            statuses.add(statusSuccess("Nothing to download."));
         }
 
         return statuses;
@@ -78,10 +90,9 @@ public class DownloadService {
     private void saveRestartList(ApplicationList restartList) throws IOException {
         if (restartList != null && restartList.getApplications().size() != 0) {
             restartService.performSaveOfRestartList(restartList);
-            statuses.add(statusSuccess(format("Downloaded apps, prepared for restart.")));
-        }
-        else {
-            statuses.add(statusSuccess(format("No applications set for download.")));
+            statuses.add(statusSuccess("Downloaded apps, prepared for restart."));
+        } else {
+            statuses.add(statusSuccess("No applications set for download."));
         }
     }
 
@@ -90,21 +101,19 @@ public class DownloadService {
 
         for (ApplicationData data : forDownload.getApplications()) {
             try {
-                String versionDownloaded = fileTransfer.downloadApplication(data);
+                String filenameDownloaded = fileTransfer.downloadApplication(data);
 
                 ApplicationData.Builder appData = data.openCopy();
                 appData.setAllDownloadedVersions(data.getDownloadedVersions())
-                        .addDownloadedVersion(new DownloadedVersion.Builder().version(versionDownloaded).build());
+                        .filename(filenameDownloaded)
+                        .addDownloadedVersion(new DownloadedVersion.Builder().version(data.getActiveVersion()).build());
 
                 restartList.addApplicationData(appData.build());
-            }
-            catch (MalformedURLException e) {
+            } catch (MalformedURLException e) {
                 statuses.add(statusError(format("Failed to compose URL for %s.", data.getName())));
-            }
-            catch (SocketTimeoutException e) {
+            } catch (SocketTimeoutException e) {
                 statuses.add(statusError(format("Timeout occured. It too too long to download %s %s", data.getName(), data.getFilename())));
-            }
-            catch (ConnectionFailedException e) {
+            } catch (ConnectionFailedException e) {
                 statuses.add(statusError("Connection for downloading updates failed."));
             }
         }

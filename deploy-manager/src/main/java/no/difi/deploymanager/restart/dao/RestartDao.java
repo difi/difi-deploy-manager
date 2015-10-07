@@ -1,5 +1,6 @@
 package no.difi.deploymanager.restart.dao;
 
+import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.domain.Self;
 import no.difi.deploymanager.util.IOUtil;

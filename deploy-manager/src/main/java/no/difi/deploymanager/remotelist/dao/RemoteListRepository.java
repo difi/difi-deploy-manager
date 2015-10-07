@@ -70,8 +70,8 @@ public class RemoteListRepository {
         appList.addApplicationData(
                 new ApplicationData.Builder()
                 .name("Difi Deploy Manager")
-                .groupId("difi-deploy-manager")
-                .artifactId("no.difi.deploymanager")
+                .groupId("no.difi.deploymanager")
+                .artifactId("deploy-manager")
                 .activeVersion("")
                 .artifactType("JAR")
                 .filename("no.difi.deploymanager-0.9.1-SNAPSHOT.jar")

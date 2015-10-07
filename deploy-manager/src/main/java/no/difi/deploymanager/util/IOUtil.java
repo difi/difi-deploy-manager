@@ -1,5 +1,6 @@
 package no.difi.deploymanager.util;
 
+import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.domain.Self;
 import org.springframework.stereotype.Component;
