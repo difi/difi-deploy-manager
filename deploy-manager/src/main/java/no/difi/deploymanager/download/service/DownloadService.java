@@ -63,11 +63,6 @@ public class DownloadService {
             }
 
             try {
-                System.out.println("***Restart list has " + restartList.getApplications().size() + " applications.");
-                if (restartList.getApplications().size() > 0) {
-                    System.out.println("*****" + restartList.getApplications().get(0).getFilename());
-                    System.out.println("*****" + restartList.getApplications().get(1).getFilename());
-                }
                 saveRestartList(restartList);
             } catch (IOException e) {
                 statuses.add(statusError("Failed to save restart list."));
