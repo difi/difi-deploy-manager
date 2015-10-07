@@ -31,10 +31,8 @@ public class CheckVersionServiceTest {
     private CheckVersionService service;
 
     @Mock RemoteListService remoteListServiceMock;
-    @Mock
-    CheckVersionDao checkVersionDaoMock;
-    @Mock
-    DownloadDao downloadDaoMock;
+    @Mock CheckVersionDao checkVersionDaoMock;
+    @Mock DownloadDao downloadDaoMock;
 
     @Before
     public void setUp() throws RemoteApplicationListException {

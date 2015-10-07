@@ -59,16 +59,28 @@ public class RestartCommandLine {
     public boolean startProcess(ApplicationData processToStart) {
         try {
             if (IS_WINDOWS) {
-                String startCommand = "java -jar " +
-                        (System.getProperty("user.dir") + environment.getProperty("download.base.path")
+                String startCommand = "java -jar ";
+                String fileWithPath = (System.getProperty("user.dir") + environment.getProperty("download.base.path")
                                 + "/" + processToStart.getFilename()).replace("/", "\\");
-                doStart(startCommand);
+
+                doStart(startCommand
+                                + processToStart.getEnvironmentVariables() + " "
+                                + fileWithPath + " "
+                                + processToStart.getMainClass() + " "
+                                + processToStart.getVmOptions()
+                );
             }
             else {
-                String startCommand = "java -jar " + System.getProperty("user.dir")
+                String startCommand = "java -jar ";
+                String fileWithPath = System.getProperty("user.dir")
                         + environment.getProperty("download.base.path") + "/" + processToStart.getFilename();
-                Runtime.getRuntime().exec(new String[]{ROOT_PATH_FOR_SH, "-c", startCommand});
-                doStart(startCommand);
+
+                doStart(startCommand
+                                + processToStart.getEnvironmentVariables() + " "
+                                + fileWithPath + " "
+                                + processToStart.getMainClass() + " "
+                                + processToStart.getVmOptions()
+                );
             }
 
             return true;
@@ -153,8 +165,6 @@ public class RestartCommandLine {
     }
 
     private void doStart(String startCommand) throws IOException {
-        System.out.println(startCommand);
-
         Process process = Runtime.getRuntime().exec(startCommand);
         setUpStreamThread(process.getInputStream(), System.out);
         setUpStreamThread(process.getErrorStream(), System.err);

@@ -10,7 +10,9 @@ public class ApplicationData implements Serializable {
     private final String artifactId;
     private final String activeVersion;
     private final String filename;
-    private final String startParameters;
+    private final String vmOptions;
+    private final String environmentVariables;
+    private final String mainClass;
     private final String artifactType;
     private List<DownloadedVersion> downloadedVersions;
 
@@ -20,7 +22,9 @@ public class ApplicationData implements Serializable {
         this.artifactId = data.artifactId;
         this.activeVersion = data.activeVersion;
         this.filename = data.filename;
-        this.startParameters = data.startParameters;
+        this.vmOptions = data.vmOptions;
+        this.environmentVariables = data.environmentVariables;
+        this.mainClass = data.mainClass;
         this.artifactType = data.artifactType;
         this.downloadedVersions = data.downloadedVersions;
     }
@@ -45,16 +49,20 @@ public class ApplicationData implements Serializable {
         return filename;
     }
 
-    public Builder openCopy() {
-        return new Builder()
-                .name(this.name)
-                .groupId(this.groupId)
-                .artifactId(this.artifactId)
-                .activeVersion(this.activeVersion)
-                .filename(this.filename)
-                .startParameters(this.startParameters)
-                .artifactType(this.artifactType)
-                .setAllDownloadedVersions(this.downloadedVersions);
+    public String getVmOptions() {
+        return vmOptions;
+    }
+
+    public String getEnvironmentVariables() {
+        return environmentVariables;
+    }
+
+    public String getMainClass() {
+        return mainClass;
+    }
+
+    public String getArtifactType() {
+        return this.artifactType;
     }
 
     public List<DownloadedVersion> getDownloadedVersions() {
@@ -64,12 +72,18 @@ public class ApplicationData implements Serializable {
         return downloadedVersions;
     }
 
-    public String getStartParameters() {
-        return startParameters;
-    }
-
-    public String getArtifactType() {
-        return this.artifactType;
+    public Builder openCopy() {
+        return new Builder()
+                .name(this.name)
+                .groupId(this.groupId)
+                .artifactId(this.artifactId)
+                .activeVersion(this.activeVersion)
+                .filename(this.filename)
+                .vmOptions(this.vmOptions)
+                .environmentVariables(this.environmentVariables)
+                .mainClass(this.mainClass)
+                .artifactType(this.artifactType)
+                .setAllDownloadedVersions(this.downloadedVersions);
     }
 
     public static class Builder {
@@ -78,7 +92,9 @@ public class ApplicationData implements Serializable {
         private String artifactId;
         private String activeVersion;
         private String filename;
-        private String startParameters;
+        private String vmOptions;
+        private String environmentVariables;
+        private String mainClass;
         private String artifactType;
         private List<DownloadedVersion> downloadedVersions;
 
@@ -107,8 +123,18 @@ public class ApplicationData implements Serializable {
             return this;
         }
 
-        public Builder startParameters(String startParameters) {
-            this.startParameters = startParameters;
+        public Builder vmOptions(String vmOptions) {
+            this.vmOptions = vmOptions;
+            return this;
+        }
+
+        public Builder environmentVariables(String environmentVariables) {
+            this.environmentVariables = environmentVariables;
+            return this;
+        }
+
+        public Builder mainClass(String mainClass) {
+            this.mainClass = mainClass;
             return this;
         }
 

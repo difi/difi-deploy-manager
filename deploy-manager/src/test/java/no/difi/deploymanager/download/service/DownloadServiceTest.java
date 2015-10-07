@@ -9,7 +9,6 @@ import no.difi.deploymanager.download.filetransfer.FileTransfer;
 import no.difi.deploymanager.restart.service.RestartService;
 import no.difi.deploymanager.testutils.ObjectMotherApplicationList;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 
@@ -20,7 +19,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-@Ignore
 public class DownloadServiceTest {
     private DownloadService service;
 
