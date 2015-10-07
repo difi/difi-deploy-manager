@@ -29,7 +29,9 @@ public class RestartDao {
         System.out.println("***Saving restart list");
         System.out.println("***Path: " + environment.getRequiredProperty("monitoring.base.path"));
         System.out.println("***File: " + environment.getRequiredProperty("monitoring.fordownload.file"));
-        System.out.println("***Elements: " + restartList.getApplications().size());
+        if (restartList != null) {
+            System.out.println("***Elements: " + restartList.getApplications().size());
+        }
         ioUtil.saveApplicationList(
                 restartList,
                 environment.getRequiredProperty("monitoring.base.path"),
