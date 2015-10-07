@@ -27,6 +27,9 @@ public class DownloadDao {
     }
 
     public void saveDownloadList(ApplicationList forDownload) throws IOException {
+        System.out.println("*****Path: " + environment.getRequiredProperty("monitoring.base.path"));
+        System.out.println("*****File: " + environment.getRequiredProperty("monitoring.fordownload.file"));
+        System.out.println("*****Elements: " + forDownload.getApplications().size());
         ioUtil.saveApplicationList(
                 forDownload,
                 environment.getRequiredProperty("monitoring.base.path"),
