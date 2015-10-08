@@ -15,9 +15,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
-/***
+/**
  * Retrieve list over applications to monitor.
- *
+ * <p/>
  * Required parameters: name, groupId and artifactId.
  * Optional parameters: version and startParameters.
  */
@@ -29,7 +29,7 @@ public class RemoteListRepository {
         this.jsonUtil = jsonUtil;
     }
 
-    /***
+    /**
      * Retrieve list of applications/artifacts to monitor from remote location.
      *
      * @return List of applications to monitor.
@@ -50,22 +50,12 @@ public class RemoteListRepository {
         ApplicationList.Builder applications = new ApplicationList.Builder();
 
         if (json != null) {
-            JSONArray dataArray =  (JSONArray) json.get("artifacts");
+            JSONArray dataArray = (JSONArray) json.get("artifacts");
 
             for (int i = 0; i < dataArray.length(); i++) {
                 JSONObject dataObject = dataArray.getJSONObject(i);
 
-                ApplicationData app = new ApplicationData.Builder()
-                        .name(fetchElement(dataObject, "name"))
-                        .groupId(fetchElement(dataObject, "groupId"))
-                        .artifactId(fetchElement(dataObject, "artifactId"))
-                        .activeVersion(fetchElement(dataObject, "version"))
-                        .artifactType(fetchElement(dataObject, "applicationType"))
-                        .filename(fetchElement(dataObject, "filename"))
-                        .vmOptions(fetchElement(dataObject, "vmOptions"))
-                        .environmentVariables(fetchElement(dataObject, "environmentVariables"))
-                        .mainClass(fetchElement(dataObject, "mainClass"))
-                        .build();
+                ApplicationData app = new ApplicationData.Builder().name(fetchElement(dataObject, "name")).groupId(fetchElement(dataObject, "groupId")).artifactId(fetchElement(dataObject, "artifactId")).activeVersion(fetchElement(dataObject, "version")).artifactType(fetchElement(dataObject, "applicationType")).filename(fetchElement(dataObject, "filename")).vmOptions(fetchElement(dataObject, "vmOptions")).environmentVariables(fetchElement(dataObject, "environmentVariables")).mainClass(fetchElement(dataObject, "mainClass")).build();
 
                 applications.addApplicationData(app);
             }
@@ -75,24 +65,29 @@ public class RemoteListRepository {
     }
 
     public ApplicationList getLocalList() {
+        FileReader reader;
+
         try {
-            FileReader reader = new FileReader(System.getProperty("user.dir") + "/deploy-manager/bin-test/monitorApps.json");
-
-            JSONTokener tokener = new JSONTokener(reader);
-            JSONObject json = new JSONObject(tokener);
-
-            return parseJson(json);
+            String userDir = System.getProperty("user.dir");
+            if (userDir.contains("/deploy-manager")) {
+                reader = new FileReader(userDir + "/data/monitorApps.json");
+            } else {
+                reader = new FileReader(userDir + "/deploy-manager/data/monitorApps.json");
+            }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            return new ApplicationList.Builder().build();
         }
-        return new ApplicationList.Builder().build();
+
+        JSONTokener tokener = new JSONTokener(reader);
+        JSONObject json = new JSONObject(tokener);
+
+        return parseJson(json);
     }
 
     private static String fetchElement(JSONObject obj, String fetch) {
         try {
             return obj.getString(fetch);
-        }
-        catch (JSONException e) {
+        } catch (JSONException e) {
             return "";
         }
     }

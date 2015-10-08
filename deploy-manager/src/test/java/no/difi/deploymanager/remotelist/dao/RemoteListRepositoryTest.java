@@ -32,7 +32,6 @@ public class RemoteListRepositoryTest {
         assertTrue(localList.getApplications().size() > 0);
     }
 
-
     @Test
     public void should_have_elements_in_list_when_local_list_is_retrieved() {
         ApplicationData data = remoteListRepository.getLocalList().getApplications().get(0);
