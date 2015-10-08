@@ -17,7 +17,7 @@
         "activeVersion": "",
         "filename": "",
         "vmOptions": "",
-        "environmentVariables": "-Dprivatekeyalias=910094092 -Dprivatekeypassword=changeit -Dkeystorelocation=/home/miif/test-certificates.jks -Dserver.port=9092 -Dorgnummer=910094092 -Daltinn.username=2435 -Daltinn.password=ROBSTAD1 -Dspring.profiles.active=dev"
+        "environmentVariables": "-Dprivatekeyalias=910094092 -Dprivatekeypassword=changeit -Dkeystorelocation=/home/miif/test-certificates.jks -Dserver.port=9092 -Dorgnummer=910094092 -Daltinn.username=2435 -Daltinn.password=ROBSTAD1 -Dspring.profiles.active=dev",
         "mainClass": "no.difi.meldingsutveksling.IntegrasjonspunktApplication"
     }]
 }

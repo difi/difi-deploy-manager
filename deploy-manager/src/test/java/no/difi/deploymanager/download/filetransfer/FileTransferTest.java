@@ -1,6 +1,5 @@
 package no.difi.deploymanager.download.filetransfer;
 
-import no.difi.deploymanager.testutils.ObjectMotherApplicationData;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
