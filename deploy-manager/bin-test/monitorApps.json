@@ -1,0 +1,23 @@
+{"artifacts": [
+    {
+        "name": "Difi Deploy Manager",
+        "groupId": "no.difi.deploymanager",
+        "artifactId": "deploy-manager",
+        "activeVersion": "",
+        "artifactType": "JAR",
+        "filename": "",
+        "vmOptions": "",
+        "environmentVariables": "-Ddownload.source=test",
+        "mainClass": ""
+    },
+    {
+        "name": "Difi Integrasjonspunkt",
+        "groupId": "no.difi.meldingsutveksling",
+        "artifactId": "integrasjonspunkt",
+        "activeVersion": "",
+        "filename": "",
+        "vmOptions": "",
+        "environmentVariables": "-Dprivatekeyalias=910094092 -Dprivatekeypassword=changeit -Dkeystorelocation=/home/miif/test-certificates.jks -Dserver.port=9092 -Dorgnummer=910094092 -Daltinn.username=2435 -Daltinn.password=ROBSTAD1 -Dspring.profiles.active=dev",
+        "mainClass": "no.difi.meldingsutveksling.IntegrasjonspunktApplication"
+    }]
+}

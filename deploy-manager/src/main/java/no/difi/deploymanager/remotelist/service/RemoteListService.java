@@ -18,6 +18,6 @@ public class RemoteListService {
     public ApplicationList execute() throws RemoteApplicationListException {
         //RemoteApplicationListException is thrown from remote list. Gets warning when hardcoded list is active.
 //        return remoteListRepository.getRemoteList();
-        return remoteListRepository.getHardcodedList();
+        return remoteListRepository.getLocalList();
     }
 }

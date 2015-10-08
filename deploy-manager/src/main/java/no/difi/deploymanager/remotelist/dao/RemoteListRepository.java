@@ -8,13 +8,16 @@ import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.springframework.stereotype.Repository;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 
-/***
+/**
  * Retrieve list over applications to monitor.
- *
+ * <p/>
  * Required parameters: name, groupId and artifactId.
  * Optional parameters: version and startParameters.
  */
@@ -26,7 +29,7 @@ public class RemoteListRepository {
         this.jsonUtil = jsonUtil;
     }
 
-    /***
+    /**
      * Retrieve list of applications/artifacts to monitor from remote location.
      *
      * @return List of applications to monitor.
@@ -40,24 +43,19 @@ public class RemoteListRepository {
             throw new RemoteApplicationListException();
         }
 
+        return parseJson(json);
+    }
+
+    private ApplicationList parseJson(JSONObject json) {
         ApplicationList.Builder applications = new ApplicationList.Builder();
+
         if (json != null) {
-            JSONArray dataArray =  (JSONArray) json.get("artifacts");
+            JSONArray dataArray = (JSONArray) json.get("artifacts");
 
             for (int i = 0; i < dataArray.length(); i++) {
                 JSONObject dataObject = dataArray.getJSONObject(i);
 
-                ApplicationData app = new ApplicationData.Builder()
-                        .name(convert(dataObject, "name"))
-                        .groupId(convert(dataObject, "groupId"))
-                        .artifactId(convert(dataObject, "artifactId"))
-                        .activeVersion(convert(dataObject, "version"))
-                        .artifactType(convert(dataObject, "applicationType"))
-                        .filename(convert(dataObject, "filename"))
-                        .vmOptions("vmOptions")
-                        .environmentVariables("environmentVariables")
-                        .mainClass("mainClass")
-                        .build();
+                ApplicationData app = new ApplicationData.Builder().name(fetchElement(dataObject, "name")).groupId(fetchElement(dataObject, "groupId")).artifactId(fetchElement(dataObject, "artifactId")).activeVersion(fetchElement(dataObject, "version")).artifactType(fetchElement(dataObject, "applicationType")).filename(fetchElement(dataObject, "filename")).vmOptions(fetchElement(dataObject, "vmOptions")).environmentVariables(fetchElement(dataObject, "environmentVariables")).mainClass(fetchElement(dataObject, "mainClass")).build();
 
                 applications.addApplicationData(app);
             }
@@ -66,51 +64,30 @@ public class RemoteListRepository {
         return applications.build();
     }
 
-    public ApplicationList getHardcodedList() {
-        ApplicationList.Builder appList = new ApplicationList.Builder();
+    public ApplicationList getLocalList() {
+        FileReader reader;
 
-        appList.addApplicationData(
-                new ApplicationData.Builder()
-                .name("Difi Deploy Manager")
-                .groupId("no.difi.deploymanager")
-                .artifactId("deploy-manager")
-                .activeVersion("")
-                .artifactType("JAR")
-                .filename("no.difi.deploymanager-0.9.1-SNAPSHOT.jar")
-                .vmOptions("")
-                .environmentVariables("-Ddownload.source=test")
-                .mainClass("")
-                .build()
-        );
+        try {
+            String userDir = System.getProperty("user.dir");
+            if (userDir.contains("/deploy-manager")) {
+                reader = new FileReader(userDir + "/data/monitorApps.json");
+            } else {
+                reader = new FileReader(userDir + "/deploy-manager/data/monitorApps.json");
+            }
+        } catch (FileNotFoundException e) {
+            return new ApplicationList.Builder().build();
+        }
 
-        appList.addApplicationData(
-                new ApplicationData.Builder()
-                .name("Difi Integrasjonspunkt")
-                .groupId("no.difi.meldingsutveksling")
-                .artifactId("integrasjonspunkt")
-                .activeVersion("")
-                .filename("integrasjonspunkt-1.4.jar")
-                .vmOptions("")
-                .environmentVariables("-Dprivatekeyalias=910094092 " +
-                        "-Dprivatekeypassword=changeit " +
-                        "-Dkeystorelocation=/home/miif/test-certificates.jks " +
-                        "-Dserver.port=9092 " +
-                        "-Dorgnummer=910094092 " +
-                        "-Daltinn.username=2435 " +
-                        "-Daltinn.password=ROBSTAD1 " +
-                        "-Dspring.profiles.active=dev ")
-                .mainClass("\"no.difi.meldingsutveksling.IntegrasjonspunktApplication \"")
-                .build()
-        );
+        JSONTokener tokener = new JSONTokener(reader);
+        JSONObject json = new JSONObject(tokener);
 
-        return appList.build();
+        return parseJson(json);
     }
 
-    private static String convert(JSONObject obj, String fetch) {
+    private static String fetchElement(JSONObject obj, String fetch) {
         try {
             return obj.getString(fetch);
-        }
-        catch (JSONException e) {
+        } catch (JSONException e) {
             return "";
         }
     }
