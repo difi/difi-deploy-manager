@@ -64,7 +64,7 @@ public class RemoteListRepository {
         return applications.build();
     }
 
-    public ApplicationList getLocalList() {
+    public ApplicationList getLocalList() throws IOException {
         FileReader reader;
 
         try {
@@ -81,6 +81,7 @@ public class RemoteListRepository {
         JSONTokener tokener = new JSONTokener(reader);
         JSONObject json = new JSONObject(tokener);
 
+        reader.close();
         return parseJson(json);
     }
 

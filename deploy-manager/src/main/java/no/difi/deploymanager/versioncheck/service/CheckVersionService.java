@@ -47,7 +47,7 @@ public class CheckVersionService {
             for (ApplicationData remoteApp : remoteListService.execute().getApplications()) {
                 verifyAndAddApplicationForDownloadList(statuses, appList, remoteApp);
             }
-        } catch (RemoteApplicationListException e) {
+        } catch (RemoteApplicationListException | IOException e) {
             statuses.add(statusCritical(format("Can not fetch remote application list with versions.%s", e.getCause())));
         }
 

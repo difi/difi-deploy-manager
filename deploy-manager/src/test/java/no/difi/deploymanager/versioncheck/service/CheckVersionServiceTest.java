@@ -35,7 +35,7 @@ public class CheckVersionServiceTest {
     @Mock DownloadDao downloadDaoMock;
 
     @Before
-    public void setUp() throws RemoteApplicationListException {
+    public void setUp() throws RemoteApplicationListException, Exception {
         initMocks(this);
 
         when(remoteListServiceMock.execute()).thenReturn(createApplicationListWithData());

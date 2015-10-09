@@ -6,6 +6,8 @@ import no.difi.deploymanager.remotelist.exception.RemoteApplicationListException
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+
 @Service
 public class RemoteListService {
     private final RemoteListRepository remoteListRepository;
@@ -15,7 +17,7 @@ public class RemoteListService {
         this.remoteListRepository = remoteListRepository;
     }
 
-    public ApplicationList execute() throws RemoteApplicationListException {
+    public ApplicationList execute() throws RemoteApplicationListException, IOException {
         //RemoteApplicationListException is thrown from remote list. Gets warning when hardcoded list is active.
 //        return remoteListRepository.getRemoteList();
         return remoteListRepository.getLocalList();
