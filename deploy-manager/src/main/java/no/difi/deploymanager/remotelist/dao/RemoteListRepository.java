@@ -3,6 +3,7 @@ package no.difi.deploymanager.remotelist.dao;
 import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.remotelist.exception.RemoteApplicationListException;
+import no.difi.deploymanager.util.Common;
 import no.difi.deploymanager.util.JsonUtil;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
 import org.json.JSONArray;
@@ -69,17 +70,29 @@ public class RemoteListRepository {
 
         try {
             String userDir = System.getProperty("user.dir");
-            if (userDir.contains("/deploy-manager")) {
-                reader = new FileReader(userDir + "/data/monitorApps.json");
-            } else {
-                reader = new FileReader(userDir + "/deploy-manager/data/monitorApps.json");
+            String probePath = "/deploy-manager";
+            String path = "";
+
+            if (Common.IS_WINDOWS) {
+                probePath = probePath.replace("/", "\\");
             }
+
+            if (userDir.contains(probePath)) {
+                path = "/data/monitorApps.json";
+            } else {
+                path = "/deploy-manager/data/monitorApps.json";
+            }
+
+            if (Common.IS_WINDOWS) {
+                path = path.replace("/", "\\");
+            }
+
+            reader = new FileReader(userDir + path);
         } catch (FileNotFoundException e) {
             return new ApplicationList.Builder().build();
         }
 
-        JSONTokener tokener = new JSONTokener(reader);
-        JSONObject json = new JSONObject(tokener);
+        JSONObject json = new JSONObject(new JSONTokener(reader));
 
         reader.close();
         return parseJson(json);

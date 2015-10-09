@@ -2,6 +2,7 @@ package no.difi.deploymanager.restart.dao;
 
 import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.Self;
+import no.difi.deploymanager.util.Common;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Repository;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static no.difi.deploymanager.util.Common.IS_WINDOWS;
 import static org.springframework.util.StringUtils.isEmpty;
 
 /***
@@ -18,7 +20,6 @@ import static org.springframework.util.StringUtils.isEmpty;
  */
 @Repository
 public class RestartCommandLine {
-    private static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
     private static final String ROOT_PATH_FOR_SH = "/bin/sh";
 
     private final Environment environment;

@@ -19,8 +19,9 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class RemoteListRepositoryTest {
     private RemoteListRepository remoteListRepository;
 
-    @Mock
-    JsonUtil jsonUtilMock;
+    private static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
+
+    @Mock JsonUtil jsonUtilMock;
 
     @BeforeClass
     public static void validateAndSetup() {
@@ -28,8 +29,11 @@ public class RemoteListRepositoryTest {
         String pathWithFile = "";
         try {
             pathWithFile = "/data/monitorApps.json";
-            if (!userDir.contains("/deploy-manager")) {
+            if (!IS_WINDOWS && !userDir.contains("/deploy-manager")) {
                 pathWithFile = "/deploy-manager" + pathWithFile;
+            }
+            else if (IS_WINDOWS && !userDir.contains("\\deploy-manager")) {
+                pathWithFile = "\\deploy-manager" + pathWithFile.replace("/", "\\");
             }
             new FileReader(userDir + pathWithFile);
         } catch (FileNotFoundException e) {
