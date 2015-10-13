@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -19,6 +20,7 @@ import static no.difi.deploymanager.testutils.CustomAssert.assertApplicationList
 import static org.junit.Assert.fail;
 
 @RunWith(SpringJUnit4ClassRunner.class)
+@WebIntegrationTest(value = {"download.source=production", "spring.boot.admin.url=localhost:8090"})
 @SpringApplicationConfiguration(classes = Application.class)
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 public class RestartDaoIntegrationTest {
