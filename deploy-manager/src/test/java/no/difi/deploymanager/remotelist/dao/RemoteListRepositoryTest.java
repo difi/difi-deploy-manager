@@ -50,7 +50,7 @@ public class RemoteListRepositoryTest {
                         "        \"artifactType\": \"JAR\",\n" +
                         "        \"filename\": \"\",\n" +
                         "        \"vmOptions\": \"\",\n" +
-                        "        \"environmentVariables\": \"-Ddownload.source=test\",\n" +
+                        "        \"environmentVariables\": \"-Dapplication.runtime.status=test\",\n" +
                         "        \"mainClass\": \"\"\n" +
                         "    },\n" +
                         "    {\n" +

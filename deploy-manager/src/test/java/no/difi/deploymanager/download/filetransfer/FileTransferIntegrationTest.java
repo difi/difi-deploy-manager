@@ -18,7 +18,7 @@ import static no.difi.deploymanager.testutils.ObjectMotherApplicationData.create
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebIntegrationTest(value = {"download.source=production", "spring.boot.admin.url=localhost:8090"})
+@WebIntegrationTest(value = {"application.runtime.status=production", "spring.boot.admin.url=localhost:8090"})
 @SpringApplicationConfiguration(classes = Application.class)
 public class FileTransferIntegrationTest {
     private FileTransfer fileTransfer;

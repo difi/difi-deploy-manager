@@ -28,7 +28,7 @@ public class FileTransferTest {
 
     @Test
     public void should_use_connection_url_from_test_download_when_download_source_is_test() throws Exception {
-        when(environmentMock.getProperty("download.source")).thenReturn("production");
+        when(environmentMock.getProperty("application.runtime.status")).thenReturn("production");
 
         fileTransfer.makeUrlForDownload(createApplicationData());
 
@@ -38,7 +38,7 @@ public class FileTransferTest {
 
     @Test
     public void should_use_production_download_link_when_download_source_is_production() throws Exception {
-        when(environmentMock.getProperty("download.source")).thenReturn("test");
+        when(environmentMock.getProperty("application.runtime.status")).thenReturn("test");
 
         fileTransfer.makeUrlForDownload(createApplicationData());
 
@@ -48,7 +48,7 @@ public class FileTransferTest {
 
     @Test
     public void should_use_production_download_link_when_download_source_is_not_given() throws Exception {
-        when(environmentMock.getProperty("download.source")).thenReturn("");
+        when(environmentMock.getProperty("application.runtime.status")).thenReturn("");
 
         fileTransfer.makeUrlForDownload(createApplicationData());
 

@@ -7,7 +7,7 @@
         "artifactType": "JAR",
         "filename": "",
         "vmOptions": "",
-        "environmentVariables": "-Ddownload.source=test",
+        "environmentVariables": "-Dapplication.runtime.status=test",
         "mainClass": ""
     },
     {

@@ -40,7 +40,7 @@ public class CheckVersionDao {
      */
     public JSONObject retrieveExternalArtifactStatus(String groupId, String artifactId) throws IOException, ConnectionFailedException {
         String location;
-        if (environment.getProperty("download.source").equals("production")) {
+        if (environment.getProperty("application.runtime.status").equals("production")) {
             location = environment.getRequiredProperty("location.version");
         }
         else {
