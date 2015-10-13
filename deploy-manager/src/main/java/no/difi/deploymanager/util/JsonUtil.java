@@ -8,6 +8,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.SocketException;
 import java.net.URL;
 import java.util.Scanner;
 
@@ -26,9 +27,15 @@ public class JsonUtil {
 
         connection = createConnection(request);
 
-        if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+        try {
+            int responseCode = connection.getResponseCode();
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                throw new ConnectionFailedException("Connection to repository failed.");
+            }
+        } catch (SocketException e) {
             throw new ConnectionFailedException("Connection to repository failed.");
         }
+
         InputStream stream = new BufferedInputStream(connection.getInputStream());
 
         String next = new Scanner(stream).useDelimiter("\\A").next();

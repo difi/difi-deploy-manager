@@ -7,7 +7,7 @@
         "artifactType": "JAR",
         "filename": "",
         "vmOptions": "",
-        "environmentVariables": "-Ddownload.source=test",
+        "environmentVariables": "-Ddownload.source=test -Dspring.application.name=Deploy Manager Testserver -Dspring.boot.admin.url=http://10.243.200.51:8090 ",
         "mainClass": ""
     },
     {
