@@ -25,7 +25,7 @@ public class Scheduler {
     private static final String CRON_RUN_CHECK_FOR_VERSION = "0 5 * * * MON-FRI";
     private static final String CRON_RUN_DOWNLOAD_NEW_VERSION = "30 * * * * MON-FRI";
     private static final String CRON_RESTART_APPLICATIONS = "30 * * * * MON-FRI";
-    private static final String CRON_RUN_EVERY_1MIN = "1 * * * * MON-FRI";
+    private static final String CRON_RUN_EVERY_10MIN = "*/10 * * * * MON-FRI";
     private static final String CRON_RUN_EVERY_HOUR = "0 0 0/1 * * MON-FRI";
 
     private final CheckVersionService checkVersionService;
@@ -41,7 +41,7 @@ public class Scheduler {
         this.restartService = restartService;
     }
 
-    @Scheduled(cron = CRON_RUN_CHECK_FOR_VERSION)
+    @Scheduled(cron = CRON_RUN_EVERY_10MIN)
     public void checkForNewVersion() {
         DateTime start = new DateTime();
 
@@ -53,7 +53,7 @@ public class Scheduler {
         logger.log(Level.INFO, String.format("Checking for new versions took %d sec to run.", duration.getStandardSeconds()));
     }
 
-    @Scheduled(cron = CRON_RUN_DOWNLOAD_NEW_VERSION)
+    @Scheduled(cron = CRON_RUN_EVERY_10MIN)
     public void downloadNewVersion() {
         DateTime start = new DateTime();
 
@@ -65,7 +65,7 @@ public class Scheduler {
         logger.log(Level.INFO, String.format("Checking for new versions took %d sec to run.", duration.getStandardSeconds()));
     }
 
-    @Scheduled(cron = CRON_RESTART_APPLICATIONS)
+    @Scheduled(cron = CRON_RUN_EVERY_10MIN)
     public void restartApplications() {
         DateTime start = new DateTime();
 
