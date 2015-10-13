@@ -8,6 +8,8 @@ import org.apache.logging.log4j.Logger;
 import java.util.List;
 
 public class Common {
+    public static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
+
     public static String replacePropertyParams(String property, String groupId, String artifactId) {
         return property.replace("$GROUP_ID", groupId).replace("$ARTIFACT_ID", artifactId);
     }
