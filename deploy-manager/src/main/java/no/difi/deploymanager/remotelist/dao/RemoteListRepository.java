@@ -80,7 +80,7 @@ public class RemoteListRepository {
                 probePath = probePath.replace("/", "\\");
             }
 
-            if (userDir.contains(probePath)) {
+            if (userDir.contains(probePath) && !userDir.contains("/deploymanager")) {
                 path = "/data/monitorApps.json";
             } else {
                 path = "/deploy-manager/data/monitorApps.json";
