@@ -26,6 +26,7 @@ public class Scheduler {
     private static final String CRON_RUN_DOWNLOAD_NEW_VERSION = "30 * * * * MON-FRI";
     private static final String CRON_RESTART_APPLICATIONS = "30 * * * * MON-FRI";
     private static final String CRON_RUN_EVERY_10MIN = "0 0/10 * * * MON-FRI";
+    private static final String CRON_RUN_EVERY_2MIN = "2 * * * * MON-FRI";
     private static final String CRON_RUN_EVERY_HOUR = "0 0 0/1 * * MON-FRI";
 
     private final CheckVersionService checkVersionService;
@@ -41,7 +42,7 @@ public class Scheduler {
         this.restartService = restartService;
     }
 
-    @Scheduled(cron = CRON_RUN_EVERY_10MIN)
+    @Scheduled(cron = CRON_RUN_EVERY_2MIN)
     public void checkForNewVersion() {
         DateTime start = new DateTime();
 

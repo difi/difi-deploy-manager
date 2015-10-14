@@ -37,8 +37,8 @@ public class RestartService {
     }
 
     public List<Status> execute() {
-        ApplicationList restartList = retrieveRestartList();
-        ApplicationList runningAppList = retrieveRunningAppList();
+        ApplicationList restartList = retrieveRestartListWithStatus();
+        ApplicationList runningAppList = retrieveRunningAppListWithStatus();
 
         List<Integer> removeFromRestartIndex = new ArrayList<>(2);
         if (restartList != null && restartList.getApplications() != null) {
@@ -92,7 +92,7 @@ public class RestartService {
         return restartList;
     }
 
-    private ApplicationList retrieveRunningAppList() {
+    private ApplicationList retrieveRunningAppListWithStatus() {
         try {
             return checkVersionService.retrieveRunningAppsList();
         } catch (IOException e) {
@@ -101,7 +101,11 @@ public class RestartService {
         return null;
     }
 
-    private ApplicationList retrieveRestartList() {
+    public ApplicationList retrieveRestartList() throws IOException {
+        return restartDao.retrieveRestartList();
+    }
+
+    private ApplicationList retrieveRestartListWithStatus() {
         try {
             return restartDao.retrieveRestartList();
         } catch (IOException e) {

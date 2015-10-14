@@ -42,7 +42,7 @@ public class DownloadService {
     public List<Status> execute() {
         ApplicationList forDownload = new ApplicationList.Builder().build();
         try {
-            forDownload = downloadDao.retrieveDownloadList();
+            forDownload = retrieveDownloadList();
         } catch (IOException e) {
             statuses.add(statusError("Failed to retrieve download list."));
         }
@@ -72,6 +72,10 @@ public class DownloadService {
         }
 
         return statuses;
+    }
+
+    public ApplicationList retrieveDownloadList() throws IOException {
+        return downloadDao.retrieveDownloadList();
     }
 
     private ApplicationList updateNotDownloadedList(ApplicationList restartList, ApplicationList forDownload) {

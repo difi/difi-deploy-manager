@@ -50,7 +50,7 @@ public class RemoteListRepositoryTest {
                         "        \"artifactType\": \"JAR\",\n" +
                         "        \"filename\": \"\",\n" +
                         "        \"vmOptions\": \"\",\n" +
-                        "        \"environmentVariables\": \"-Dapplication.runtime.status=test\",\n" +
+                        "        \"environmentVariables\": \"-Dapplication.runtime.status=test -Dspring.application.name=\\\"Deploy Manager Testserver\\\" -Dspring.boot.admin.url=http://10.243.200.51:9000 \",\n" +
                         "        \"mainClass\": \"\"\n" +
                         "    },\n" +
                         "    {\n" +
