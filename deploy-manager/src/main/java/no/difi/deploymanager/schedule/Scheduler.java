@@ -46,29 +46,7 @@ public class Scheduler {
         DateTime start = new DateTime();
 
         Common.logStatus(checkVersionService.execute(), logger);
-
-        DateTime stop = new DateTime();
-        Duration duration = new Duration(start, stop);
-
-        logger.log(Level.INFO, String.format("Checking for new versions took %d sec to run.", duration.getStandardSeconds()));
-    }
-
-    @Scheduled(cron = CRON_RUN_EVERY_10MIN)
-    public void downloadNewVersion() {
-        DateTime start = new DateTime();
-
         Common.logStatus(downloadService.execute(), logger);
-
-        DateTime stop = new DateTime();
-        Duration duration = new Duration(start, stop);
-
-        logger.log(Level.INFO, String.format("Checking for new versions took %d sec to run.", duration.getStandardSeconds()));
-    }
-
-    @Scheduled(cron = CRON_RUN_EVERY_10MIN)
-    public void restartApplications() {
-        DateTime start = new DateTime();
-
         Common.logStatus(restartService.execute(), logger);
 
         DateTime stop = new DateTime();
