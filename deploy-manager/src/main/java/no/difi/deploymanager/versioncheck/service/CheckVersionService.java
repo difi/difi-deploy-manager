@@ -45,6 +45,7 @@ public class CheckVersionService {
 
         try {
             for (ApplicationData remoteApp : remoteListService.execute().getApplications()) {
+                System.out.println("...and now I have " + remoteApp.getGroupId());
                 verifyAndAddApplicationForDownloadList(statuses, appList, remoteApp);
             }
         } catch (RemoteApplicationListException | IOException e) {

@@ -51,6 +51,7 @@ public class RemoteListRepository {
         ApplicationList.Builder applications = new ApplicationList.Builder();
 
         if (json != null) {
+            System.out.println("Getting artifacts...");
             JSONArray dataArray = (JSONArray) json.get("artifacts");
 
             for (int i = 0; i < dataArray.length(); i++) {
@@ -89,6 +90,7 @@ public class RemoteListRepository {
                 path = path.replace("/", "\\");
             }
 
+            System.out.println("Trying to fetch from " + userDir + path);
             reader = new FileReader(userDir + path);
         } catch (FileNotFoundException e) {
             return new ApplicationList.Builder().build();
