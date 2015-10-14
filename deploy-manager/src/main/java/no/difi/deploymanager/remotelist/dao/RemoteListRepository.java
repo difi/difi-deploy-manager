@@ -114,10 +114,10 @@ public class RemoteListRepository {
         String pathWithFile = "";
         try {
             pathWithFile = "/data/monitorApps.json";
-            if (!IS_WINDOWS && !userDir.contains("/deploy-manager")) {
+            if (!IS_WINDOWS && (!userDir.contains("/deploy-manager") || !userDir.contains("/deploymanager"))) {
                 pathWithFile = "/deploy-manager" + pathWithFile;
             }
-            else if (IS_WINDOWS && !userDir.contains("\\deploy-manager")) {
+            else if (IS_WINDOWS && (!userDir.contains("\\deploy-manager") || !userDir.contains("\\deploymanager"))) {
                 pathWithFile = "\\deploy-manager" + pathWithFile.replace("/", "\\");
             }
             new FileReader(userDir + pathWithFile);
