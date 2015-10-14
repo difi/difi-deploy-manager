@@ -67,7 +67,7 @@ public class RemoteListRepository {
     }
 
     public ApplicationList getLocalList() throws IOException {
-        validateAndSetDefaultForDownloadIfNoDownloadExists();
+        setDefaultForDownloadIfNoDownloadExists();
 
         FileReader reader;
 
@@ -80,7 +80,7 @@ public class RemoteListRepository {
                 probePath = probePath.replace("/", "\\");
             }
 
-            if (userDir.contains(probePath) && !userDir.contains("/deploymanager")) {
+            if (userDir.contains(probePath) || userDir.contains("/deploymanager")) {
                 path = "/data/monitorApps.json";
             } else {
                 path = "/deploy-manager/data/monitorApps.json";
@@ -111,7 +111,7 @@ public class RemoteListRepository {
     }
 
 
-    private static void validateAndSetDefaultForDownloadIfNoDownloadExists() {
+    private static void setDefaultForDownloadIfNoDownloadExists() {
         String userDir = System.getProperty("user.dir");
         String pathWithFile = "";
         try {
