@@ -12,9 +12,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.springframework.stereotype.Repository;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Retrieve list over applications to monitor.
@@ -25,9 +23,11 @@ import java.io.IOException;
 @Repository
 public class RemoteListRepository {
     private final JsonUtil jsonUtil;
+    private static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
 
     public RemoteListRepository(JsonUtil jsonUtil) {
         this.jsonUtil = jsonUtil;
+        validateAndSetDefaultForDownloadIfNoDownloadExists();
     }
 
     /**
@@ -103,6 +103,54 @@ public class RemoteListRepository {
             return obj.getString(fetch);
         } catch (JSONException e) {
             return "";
+        }
+    }
+
+    private static void validateAndSetDefaultForDownloadIfNoDownloadExists() {
+        String userDir = System.getProperty("user.dir");
+        String pathWithFile = "";
+        try {
+            pathWithFile = "/data/monitorApps.json";
+            if (!IS_WINDOWS && !userDir.contains("/deploy-manager")) {
+                pathWithFile = "/deploy-manager" + pathWithFile;
+            }
+            else if (IS_WINDOWS && !userDir.contains("\\deploy-manager")) {
+                pathWithFile = "\\deploy-manager" + pathWithFile.replace("/", "\\");
+            }
+            new FileReader(userDir + pathWithFile);
+        } catch (FileNotFoundException e) {
+            try {
+                File file = new File(System.getProperty("user.dir") + pathWithFile);
+                file.createNewFile();
+                FileWriter writer = new FileWriter(file);
+                writer.write("{\"artifacts\": [\n" +
+                        "    {\n" +
+                        "        \"name\": \"Difi Deploy Manager\",\n" +
+                        "        \"groupId\": \"no.difi.deploymanager\",\n" +
+                        "        \"artifactId\": \"deploy-manager\",\n" +
+                        "        \"activeVersion\": \"\",\n" +
+                        "        \"artifactType\": \"JAR\",\n" +
+                        "        \"filename\": \"\",\n" +
+                        "        \"vmOptions\": \"\",\n" +
+                        "        \"environmentVariables\": \"-Dapplication.runtime.status=test -Dspring.application.name=\\\"Deploy Manager Testserver\\\" -Dspring.boot.admin.url=http://10.243.200.51:9000 \",\n" +
+                        "        \"mainClass\": \"\"\n" +
+                        "    },\n" +
+                        "    {\n" +
+                        "        \"name\": \"Difi Integrasjonspunkt\",\n" +
+                        "        \"groupId\": \"no.difi.meldingsutveksling\",\n" +
+                        "        \"artifactId\": \"integrasjonspunkt\",\n" +
+                        "        \"activeVersion\": \"\",\n" +
+                        "        \"filename\": \"\",\n" +
+                        "        \"vmOptions\": \"\",\n" +
+                        "        \"environmentVariables\": \"-Dprivatekeyalias=910094092 -Dprivatekeypassword=changeit -Dkeystorelocation=/home/miif/test-certificates.jks -Dserver.port=9092 -Dorgnumber=910094092 -Daltinn.username=2435 -Daltinn.password=ROBSTAD1 -Dspring.profiles.active=dev\",\n" +
+                        "        \"mainClass\": \"no.difi.meldingsutveksling.IntegrasjonspunktApplication\"\n" +
+                        "    }]\n" +
+                        "}");
+                writer.flush();
+                writer.close();
+            } catch (IOException e1) {
+                System.out.println("Failed creating json that is necessary for the test");
+            }
         }
     }
 }
