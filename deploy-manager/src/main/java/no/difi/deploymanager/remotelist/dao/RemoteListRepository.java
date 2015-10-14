@@ -22,12 +22,12 @@ import java.io.*;
  */
 @Repository
 public class RemoteListRepository {
-    private final JsonUtil jsonUtil;
     private static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
+
+    private final JsonUtil jsonUtil;
 
     public RemoteListRepository(JsonUtil jsonUtil) {
         this.jsonUtil = jsonUtil;
-        validateAndSetDefaultForDownloadIfNoDownloadExists();
     }
 
     /**
@@ -66,6 +66,8 @@ public class RemoteListRepository {
     }
 
     public ApplicationList getLocalList() throws IOException {
+        validateAndSetDefaultForDownloadIfNoDownloadExists();
+
         FileReader reader;
 
         try {
@@ -106,6 +108,7 @@ public class RemoteListRepository {
         }
     }
 
+
     private static void validateAndSetDefaultForDownloadIfNoDownloadExists() {
         String userDir = System.getProperty("user.dir");
         String pathWithFile = "";
@@ -120,6 +123,9 @@ public class RemoteListRepository {
             new FileReader(userDir + pathWithFile);
         } catch (FileNotFoundException e) {
             try {
+                System.out.println("*** monitorApps.json does not exist ***");
+                System.out.println("Trying to create default monitorApps.json in folder "
+                        + System.getProperty("user.dir") + pathWithFile);
                 File file = new File(System.getProperty("user.dir") + pathWithFile);
                 file.createNewFile();
                 FileWriter writer = new FileWriter(file);

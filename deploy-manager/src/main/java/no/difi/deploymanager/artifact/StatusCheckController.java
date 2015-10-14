@@ -67,9 +67,4 @@ public class StatusCheckController {
             return null;
         }
     }
-
-//    @RequestMapping(method = RequestMethod.GET, value = "/statuslog")
-//    public @ResponseBody String statusLog() {
-//        return "";
-//    }
 }

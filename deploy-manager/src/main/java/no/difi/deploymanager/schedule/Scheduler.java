@@ -46,6 +46,7 @@ public class Scheduler {
     public void checkForNewVersion() {
         DateTime start = new DateTime();
 
+        System.out.println("*** Checking for new versions to download ***");
         Common.logStatus(checkVersionService.execute(), logger);
         Common.logStatus(downloadService.execute(), logger);
         Common.logStatus(restartService.execute(), logger);
@@ -53,6 +54,7 @@ public class Scheduler {
         DateTime stop = new DateTime();
         Duration duration = new Duration(start, stop);
 
+        System.out.println(String.format("Took me %d sec check for new version, download and update included.", duration.getStandardSeconds()));
         logger.log(Level.INFO, String.format("Checking for new versions took %d sec to run.", duration.getStandardSeconds()));
     }
 }
