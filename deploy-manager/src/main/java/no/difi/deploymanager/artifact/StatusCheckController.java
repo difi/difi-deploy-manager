@@ -31,28 +31,10 @@ public class StatusCheckController {
         this.remoteListService = remoteListService;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/checkversion")
+    @RequestMapping(method = RequestMethod.GET, value = "/running")
     public @ResponseBody ApplicationList checkVersion() {
         try {
             return checkVersionService.retrieveRunningAppsList();
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
-    @RequestMapping(method = RequestMethod.GET, value = "/downloads")
-    public @ResponseBody ApplicationList downloads() {
-        try {
-            return downloadService.retrieveDownloadList();
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
-    @RequestMapping(method = RequestMethod.GET, value = "/restarting")
-    public @ResponseBody ApplicationList monitoringApplications() {
-        try {
-            return restartService.retrieveRestartList();
         } catch (IOException e) {
             return null;
         }
