@@ -42,7 +42,7 @@ public class Scheduler {
         this.restartService = restartService;
     }
 
-    @Scheduled(cron = CRON_RUN_EVERY_2MIN)
+    @Scheduled(cron = CRON_RUN_EVERY_10MIN)
     public void checkForNewVersion() {
         DateTime start = new DateTime();
 
