@@ -42,6 +42,7 @@ public class JsonUtil {
         JSONObject json = new JSONObject(next);
 
         closeConnection();
+        stream.close();
 
         return json;
     }
