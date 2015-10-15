@@ -53,16 +53,6 @@ public class RemoteListRepositoryTest {
                         "        \"environmentVariables\": \"-Dapplication.runtime.status=test -Dspring.application.name=\\\"Deploy Manager Testserver\\\" -Dspring.boot.admin.url=http://10.243.200.51:9000 \",\n" +
                         "        \"mainClass\": \"\"\n" +
                         "    },\n" +
-                        "    {\n" +
-                        "        \"name\": \"Difi Integrasjonspunkt\",\n" +
-                        "        \"groupId\": \"no.difi.meldingsutveksling\",\n" +
-                        "        \"artifactId\": \"integrasjonspunkt\",\n" +
-                        "        \"activeVersion\": \"\",\n" +
-                        "        \"filename\": \"\",\n" +
-                        "        \"vmOptions\": \"\",\n" +
-                        "        \"environmentVariables\": \"-Dprivatekeyalias=910094092 -Dprivatekeypassword=changeit -Dkeystorelocation=/home/miif/test-certificates.jks -Dserver.port=9092 -Dorgnumber=910094092 -Daltinn.username=2435 -Daltinn.password=ROBSTAD1 -Dspring.profiles.active=dev\",\n" +
-                        "        \"mainClass\": \"no.difi.meldingsutveksling.IntegrasjonspunktApplication\"\n" +
-                        "    }]\n" +
                         "}");
                 writer.flush();
                 writer.close();
