@@ -17,7 +17,7 @@
         "activeVersion": "",
         "filename": "",
         "vmOptions": "",
-        "environmentVariables": "-Dprivatekeyalias=910094092 -Dprivatekeypassword=changeit -Dkeystorelocation=/home/miif/test-certificates.jks -Dserver.port=9092 -Dorgnumber=910094092 -Daltinn.username=2435 -Daltinn.password=ROBSTAD1 -Dspring.profiles.active=dev",
+        "environmentVariables": "-Dprivatekeyalias=910094092 -Dprivatekeypassword=changeit -Dkeystorelocation=/home/miif/test-certificates.jks -Dserver.port=9092 -Dorgnumber=910094092 -Daltinn.username=2435 -Daltinn.password=ROBSTAD1 -Dspring.profiles.active=dev -Dspring.boot.admin.url=http://10.243.200.51:8090 -Dspring.boot.admin.client.serviceUrl=http://localhost:8080 -Dspring.application.name=\"DIFI Integrasjonspunkt Røn\" ",
         "mainClass": "no.difi.meldingsutveksling.IntegrasjonspunktApplication"
     }]
 }

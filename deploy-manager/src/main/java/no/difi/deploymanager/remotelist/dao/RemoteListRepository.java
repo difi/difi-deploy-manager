@@ -51,7 +51,6 @@ public class RemoteListRepository {
         ApplicationList.Builder applications = new ApplicationList.Builder();
 
         if (json != null) {
-            System.out.println("Getting artifacts...");
             JSONArray dataArray = (JSONArray) json.get("artifacts");
 
             for (int i = 0; i < dataArray.length(); i++) {
