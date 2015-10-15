@@ -2,10 +2,7 @@ package no.difi.deploymanager.restart.dao;
 
 import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.Self;
-import no.difi.deploymanager.util.Common;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Repository;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -18,13 +15,11 @@ import static org.springframework.util.StringUtils.isEmpty;
 /***
  * Class handle start, stop and restart of applications for both Linux and Windows operating systems.
  */
-@Repository
 public class RestartCommandLine {
     private static final String ROOT_PATH_FOR_SH = "/bin/sh";
 
     private final Environment environment;
 
-    @Autowired
     public RestartCommandLine(Environment environment) {
         this.environment = environment;
     }

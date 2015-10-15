@@ -2,9 +2,7 @@ package no.difi.deploymanager.download.filetransfer;
 
 import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Repository;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,13 +17,11 @@ import static no.difi.deploymanager.util.Common.replacePropertyParams;
 /***
  * FileTransfer perform the actual download of new applications/processes to be started or updated by Deploy Manager.
  */
-@Repository
 public class FileTransfer {
     private static final int BUFFER_SIZE = 4096;
 
     private final Environment environment;
 
-    @Autowired
     public FileTransfer(Environment environment) {
         this.environment = environment;
     }

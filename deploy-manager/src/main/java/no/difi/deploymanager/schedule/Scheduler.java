@@ -9,9 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 
 /***
  * Scheduler trigger check for version, download and restart by set intervals and logs processing and responses from the services.
@@ -20,7 +18,6 @@ import org.springframework.stereotype.Component;
  * @see no.difi.deploymanager.download.service.DownloadService
  * @see no.difi.deploymanager.restart.service.RestartService
  */
-@Component
 public class Scheduler {
     private static final String CRON_RUN_CHECK_FOR_VERSION = "0 5 * * * MON-FRI";
     private static final String CRON_RUN_DOWNLOAD_NEW_VERSION = "30 * * * * MON-FRI";
@@ -35,7 +32,6 @@ public class Scheduler {
 
     private static final Logger logger = LogManager.getLogger(Scheduler.class);
 
-    @Autowired
     public Scheduler(CheckVersionService checkVersionService, DownloadService downloadService, RestartService restartService) {
         this.checkVersionService = checkVersionService;
         this.downloadService = downloadService;

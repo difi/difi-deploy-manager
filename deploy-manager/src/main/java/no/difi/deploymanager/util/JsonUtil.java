@@ -2,7 +2,6 @@ package no.difi.deploymanager.util;
 
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
 import org.json.JSONObject;
-import org.springframework.stereotype.Component;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -15,7 +14,6 @@ import java.util.Scanner;
 /***
  * General class for retrieving JSON object from a specified URL.
  */
-@Component
 public class JsonUtil {
     private static final int CONNECTION_TIMEOUT = 5000; // ms for connection to occur
     private static final int DATARETRIEVAL_TIMEOUT = 10000; // ms for next byte to be read

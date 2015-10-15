@@ -10,8 +10,6 @@ import no.difi.deploymanager.versioncheck.dao.CheckVersionDao;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -26,13 +24,11 @@ import static no.difi.deploymanager.util.StatusFactory.*;
  * CheckVersionService is checking if any of the monitored appication (including self) have a new version available in external repository.
  * If new version is available, it will update the list over applications/artifacts to download.
  */
-@Service
 public class CheckVersionService {
     private final RemoteListService remoteListService;
     private final CheckVersionDao checkVersionDao;
     private final DownloadDao downloadDao;
 
-    @Autowired
     public CheckVersionService(RemoteListService remoteListService, CheckVersionDao checkVersionDao, DownloadDao downloadDao) {
         this.remoteListService = remoteListService;
         this.checkVersionDao = checkVersionDao;

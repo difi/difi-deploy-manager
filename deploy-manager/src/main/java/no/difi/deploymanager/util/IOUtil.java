@@ -2,7 +2,6 @@ package no.difi.deploymanager.util;
 
 import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.domain.Self;
-import org.springframework.stereotype.Component;
 
 import java.io.*;
 
@@ -11,7 +10,6 @@ import java.io.*;
  *
  * @see no.difi.deploymanager.domain.ApplicationList
  */
-@Component
 public class IOUtil {
     public ApplicationList retrieveApplicationList(String folder, String filename) throws IOException {
         return (ApplicationList) retrieve(folder, filename);

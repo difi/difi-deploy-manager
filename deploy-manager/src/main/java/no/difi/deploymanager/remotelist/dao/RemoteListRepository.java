@@ -10,7 +10,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import org.springframework.stereotype.Repository;
 
 import java.io.*;
 
@@ -20,7 +19,6 @@ import java.io.*;
  * Required parameters: name, groupId and artifactId.
  * Optional parameters: version and startParameters.
  */
-@Repository
 public class RemoteListRepository {
     private final JsonUtil jsonUtil;
     private static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");

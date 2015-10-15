@@ -2,9 +2,7 @@ package no.difi.deploymanager.download.dao;
 
 import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.util.IOUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 
@@ -15,12 +13,10 @@ import java.io.IOException;
  * @see no.difi.deploymanager.versioncheck.service.CheckVersionService
  * @see no.difi.deploymanager.schedule.Scheduler
  */
-@Repository
 public class DownloadDao {
     private final Environment environment;
     private final IOUtil ioUtil;
 
-    @Autowired
     public DownloadDao(Environment environment, IOUtil ioUtil) {
         this.environment = environment;
         this.ioUtil = ioUtil;
