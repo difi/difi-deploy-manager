@@ -1,10 +1,8 @@
 package no.difi.deploymanager.artifact;
 
 import no.difi.deploymanager.domain.ApplicationList;
-import no.difi.deploymanager.download.service.DownloadService;
 import no.difi.deploymanager.remotelist.exception.RemoteApplicationListException;
 import no.difi.deploymanager.remotelist.service.RemoteListService;
-import no.difi.deploymanager.restart.service.RestartService;
 import no.difi.deploymanager.versioncheck.service.CheckVersionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,16 +16,11 @@ import java.io.IOException;
 @RequestMapping("/api")
 public class StatusCheckController {
     private final CheckVersionService checkVersionService;
-    private final DownloadService downloadService;
-    private final RestartService restartService;
     private final RemoteListService remoteListService;
 
     @Autowired
-    public StatusCheckController(CheckVersionService checkVersionService, DownloadService downloadService,
-                                 RestartService restartService, RemoteListService remoteListService) {
+    public StatusCheckController(CheckVersionService checkVersionService, RemoteListService remoteListService) {
         this.checkVersionService = checkVersionService;
-        this.downloadService = downloadService;
-        this.restartService = restartService;
         this.remoteListService = remoteListService;
     }
 
