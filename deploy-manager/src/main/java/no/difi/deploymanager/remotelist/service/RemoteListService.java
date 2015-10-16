@@ -3,16 +3,12 @@ package no.difi.deploymanager.remotelist.service;
 import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.remotelist.dao.RemoteListRepository;
 import no.difi.deploymanager.remotelist.exception.RemoteApplicationListException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
-@Service
 public class RemoteListService {
     private final RemoteListRepository remoteListRepository;
 
-    @Autowired
     public RemoteListService(RemoteListRepository remoteListRepository) {
         this.remoteListRepository = remoteListRepository;
     }

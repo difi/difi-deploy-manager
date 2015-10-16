@@ -6,8 +6,6 @@ import no.difi.deploymanager.domain.Status;
 import no.difi.deploymanager.restart.dao.RestartCommandLine;
 import no.difi.deploymanager.restart.dao.RestartDao;
 import no.difi.deploymanager.versioncheck.service.CheckVersionService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,7 +19,6 @@ import static no.difi.deploymanager.util.StatusFactory.statusSuccess;
 /***
  * Restart service contains business logic and error handling for starting, stopping and restarting applications.
  */
-@Service
 public class RestartService {
     private final RestartCommandLine restartCommandline;
     private final RestartDao restartDao;
@@ -29,7 +26,6 @@ public class RestartService {
 
     private List<Status> statuses = new ArrayList<>();
 
-    @Autowired
     public RestartService(RestartDao restartDao, RestartCommandLine restartCommandline, CheckVersionService checkVersionService) {
         this.restartDao = restartDao;
         this.restartCommandline = restartCommandline;

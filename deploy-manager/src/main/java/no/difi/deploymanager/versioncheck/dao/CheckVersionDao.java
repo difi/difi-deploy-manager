@@ -6,9 +6,7 @@ import no.difi.deploymanager.util.IOUtil;
 import no.difi.deploymanager.util.JsonUtil;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Repository;
 
 import java.io.IOException;
 
@@ -16,13 +14,11 @@ import java.io.IOException;
  * CheckVersionDao will retrieve and update the list over applications that is monitored by Deploy manager.
  * The download list Restart in scheduler.
  */
-@Repository
 public class CheckVersionDao {
     private final Environment environment;
     private final IOUtil ioUtil;
     private final JsonUtil jsonUtil;
 
-    @Autowired
     public CheckVersionDao(Environment environment, IOUtil ioUtil, JsonUtil jsonUtil) {
         this.environment = environment;
         this.ioUtil = ioUtil;

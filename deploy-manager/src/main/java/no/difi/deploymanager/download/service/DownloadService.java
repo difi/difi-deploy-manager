@@ -8,8 +8,6 @@ import no.difi.deploymanager.download.dao.DownloadDao;
 import no.difi.deploymanager.download.filetransfer.FileTransfer;
 import no.difi.deploymanager.restart.service.RestartService;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -24,7 +22,6 @@ import static no.difi.deploymanager.util.StatusFactory.statusSuccess;
 /***
  * DownloadService contains logic for downloading application, and logs result of steps in the process.
  */
-@Service
 public class DownloadService {
     private final DownloadDao downloadDao;
     private final FileTransfer fileTransfer;
@@ -32,7 +29,6 @@ public class DownloadService {
 
     private final List<Status> statuses = new ArrayList<>();
 
-    @Autowired
     public DownloadService(DownloadDao downloadDao, FileTransfer fileTransfer, RestartService restartService) {
         this.downloadDao = downloadDao;
         this.fileTransfer = fileTransfer;

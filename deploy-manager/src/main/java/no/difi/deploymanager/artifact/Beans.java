@@ -23,73 +23,73 @@ import org.springframework.core.env.Environment;
 public class Beans {
     @Autowired Environment enviroment;
 
-    @Bean(name = "checkVersionService")
-    public CheckVersionService checkVersionServiceBean() {
-        return new CheckVersionService(remoteListServiceBean(), checkVersionDaoBean(), downloadDaoBean());
+    @Bean
+    public CheckVersionService checkVersionService() {
+        return new CheckVersionService(remoteListService(), checkVersionDao(), downloadDao());
     }
 
-    @Bean(name = "checkVersionDao")
-    public CheckVersionDao checkVersionDaoBean() {
-        return new CheckVersionDao(enviroment, ioUtilBean(), jsonUtilBean());
+    @Bean
+    public CheckVersionDao checkVersionDao() {
+        return new CheckVersionDao(enviroment, ioUtil(), jsonUtil());
     }
 
-    @Bean(name = "downloadService")
-    public DownloadService downloadServiceBean() {
-        return new DownloadService(downloadDaoBean(), fileTransferBean(), restartServiceBean());
+    @Bean
+    public DownloadService downloadService() {
+        return new DownloadService(downloadDao(), fileTransfer(), restartService());
     }
 
-    @Bean(name = "downloadDao")
-    public DownloadDao downloadDaoBean() {
-        return new DownloadDao(enviroment, ioUtilBean());
+    @Bean
+    public DownloadDao downloadDao() {
+        return new DownloadDao(enviroment, ioUtil());
     }
 
-    @Bean(name = "restartService")
-    public RestartService restartServiceBean() {
-        return new RestartService(restartDaoBean(), restartCommandLineBean(), checkVersionServiceBean());
+    @Bean
+    public RestartService restartService() {
+        return new RestartService(restartDao(), restartCommandLine(), checkVersionService());
     }
 
-    @Bean(name = "restartDao")
-    public RestartDao restartDaoBean() {
-        return new RestartDao(enviroment, ioUtilBean());
+    @Bean
+    public RestartDao restartDao() {
+        return new RestartDao(enviroment, ioUtil());
     }
 
-    @Bean(name = "restartCommandLine")
-    public RestartCommandLine restartCommandLineBean() {
+    @Bean
+    public RestartCommandLine restartCommandLine() {
         return new RestartCommandLine(enviroment);
     }
 
-    @Bean(name = "remoteListService")
-    public RemoteListService remoteListServiceBean() {
-        return new RemoteListService(remoteListRepositoryBean());
+    @Bean
+    public RemoteListService remoteListService() {
+        return new RemoteListService(remoteListRepository());
     }
 
-    @Bean(name = "remoteListRepository")
-    public RemoteListRepository remoteListRepositoryBean() {
-        return new RemoteListRepository(jsonUtilBean());
+    @Bean
+    public RemoteListRepository remoteListRepository() {
+        return new RemoteListRepository(jsonUtil());
     }
 
-    @Bean(name = "scheduler")
-    public Scheduler schedulerBean() {
-        return new Scheduler(checkVersionServiceBean(), downloadServiceBean(), restartServiceBean());
+    @Bean
+    public Scheduler scheduler() {
+        return new Scheduler(checkVersionService(), downloadService(), restartService());
     }
 
-    @Bean(name = "fileTransfer")
-    public FileTransfer fileTransferBean() {
+    @Bean
+    public FileTransfer fileTransfer() {
         return new FileTransfer(enviroment);
     }
 
-    @Bean(name = "ioUtil")
-    public IOUtil ioUtilBean() {
+    @Bean
+    public IOUtil ioUtil() {
         return new IOUtil();
     }
 
-    @Bean(name = "jsonUtil")
-    public JsonUtil jsonUtilBean() {
+    @Bean
+    public JsonUtil jsonUtil() {
         return new JsonUtil();
     }
 
-    @Bean(name = "startup")
-    public Startup startupBean() {
-        return new Startup(checkVersionServiceBean(), downloadServiceBean(), restartServiceBean());
+    @Bean
+    public Startup startup() {
+        return new Startup(checkVersionService(), downloadService(), restartService());
     }
 }
