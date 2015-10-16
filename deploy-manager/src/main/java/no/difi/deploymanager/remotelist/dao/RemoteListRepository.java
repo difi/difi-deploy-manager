@@ -73,13 +73,15 @@ public class RemoteListRepository {
         try {
             String userDir = System.getProperty("user.dir");
             String probePath = "/deploy-manager";
+            String probePath2 = "/deploymanager";
             String path = "";
 
             if (Common.IS_WINDOWS) {
                 probePath = probePath.replace("/", "\\");
+                probePath2 = probePath2.replace("/", "\\");
             }
 
-            if (userDir.contains(probePath) || userDir.contains("/deploymanager")) {
+            if (userDir.contains(probePath) || userDir.contains(probePath2)) {
                 path = "/data/monitorApps.json";
             } else {
                 path = "/deploy-manager/data/monitorApps.json";
