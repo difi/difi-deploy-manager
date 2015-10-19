@@ -174,7 +174,7 @@ public class RestartCommandLine {
                 String line;
                 try {
                     while ((line = br.readLine()) != null) {
-                        printStream.println("process stream: " + line);
+                        printStream.println(line);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

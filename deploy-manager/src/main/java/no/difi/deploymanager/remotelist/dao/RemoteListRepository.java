@@ -89,7 +89,6 @@ public class RemoteListRepository {
                 path = path.replace("/", "\\");
             }
 
-            System.out.println("Trying to fetch from " + userDir + path);
             reader = new FileReader(userDir + path);
         } catch (FileNotFoundException e) {
             return new ApplicationList.Builder().build();
