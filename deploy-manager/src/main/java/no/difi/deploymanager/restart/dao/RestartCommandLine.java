@@ -55,7 +55,7 @@ public class RestartCommandLine {
     public boolean startProcess(ApplicationData processToStart) {
         try {
             if (IS_WINDOWS) {
-                String startCommand = "java -jar ";
+                String startCommand = "javaw -jar ";
                 String fileWithPath = (System.getProperty("user.dir") + environment.getProperty("download.base.path")
                                 + "/" + processToStart.getFilename()).replace("/", "\\");
 
