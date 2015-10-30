@@ -20,7 +20,7 @@ import static no.difi.deploymanager.testutils.CustomAssert.assertApplicationList
 import static org.junit.Assert.fail;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebIntegrationTest(value = {"application.runtime.status=production", "spring.boot.admin.url=localhost:8090"})
+@WebIntegrationTest(value = {"application.runtime.environment=production", "spring.boot.admin.url=localhost:8090"})
 @SpringApplicationConfiguration(classes = Application.class)
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 public class RestartDaoIntegrationTest {

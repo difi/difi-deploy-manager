@@ -19,7 +19,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebIntegrationTest(value = {"application.runtime.status=production", "spring.boot.admin.url=localhost:8090"})
+@WebIntegrationTest(value = {"application.runtime.environment=production", "spring.boot.admin.url=localhost:8090"})
 @SpringApplicationConfiguration(classes = Application.class)
 public class RestartCommandLineIntegrationTest {
     private static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
