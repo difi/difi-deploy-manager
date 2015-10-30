@@ -38,7 +38,7 @@ public class CheckVersionDaoTest {
 
     @Test(expected = IllegalStateException.class)
     public void should_throw_illegalstateexception_when_location_version_not_found() throws Exception {
-        when(environmentMock.getProperty("application.runtime.status")).thenReturn("production");
+        when(environmentMock.getProperty("application.runtime.environment")).thenReturn("production");
         when(environmentMock.getRequiredProperty("location.version")).thenThrow(new IllegalStateException());
 
         repository.retrieveExternalArtifactStatus(GROUPID, ARTIFACTID);
@@ -46,7 +46,7 @@ public class CheckVersionDaoTest {
 
     @Test(expected = JSONException.class)
     public void should_throw_json_exception_when_result_is_not_a_json_with_object_data() throws Exception {
-        when(environmentMock.getProperty("application.runtime.status")).thenReturn("production");
+        when(environmentMock.getProperty("application.runtime.environment")).thenReturn("production");
         when(environmentMock.getRequiredProperty(anyString())).thenReturn(TEST_URL);
         when(jsonUtilMock.retrieveJsonObject(anyString())).thenReturn(new JSONObject("{}"));
 
@@ -55,7 +55,7 @@ public class CheckVersionDaoTest {
 
     @Test
     public void should_return_json_object_when_data_is_available_in_result() throws Exception {
-        when(environmentMock.getProperty("application.runtime.status")).thenReturn("production");
+        when(environmentMock.getProperty("application.runtime.environment")).thenReturn("production");
         when(environmentMock.getRequiredProperty(anyString())).thenReturn("url");
         when(jsonUtilMock.retrieveJsonObject(anyString())).thenReturn(JSON_OBJECT);
 
@@ -66,7 +66,7 @@ public class CheckVersionDaoTest {
 
     @Test
     public void should_use_production_location_for_download_when_production_is_set_in_property_for_download_source() throws Exception {
-        when(environmentMock.getProperty("application.runtime.status")).thenReturn("production");
+        when(environmentMock.getProperty("application.runtime.environment")).thenReturn("production");
         when(environmentMock.getRequiredProperty("location.version")).thenReturn(TEST_URL);
         when(jsonUtilMock.retrieveJsonObject(anyString())).thenReturn(JSON_OBJECT);
 
@@ -78,7 +78,7 @@ public class CheckVersionDaoTest {
 
     @Test
     public void should_use_test_locaton_for_download_when_test_is_set_in_property_for_dwonload_source() throws Exception {
-        when(environmentMock.getProperty("application.runtime.status")).thenReturn("test");
+        when(environmentMock.getProperty("application.runtime.environment")).thenReturn("test");
         when(environmentMock.getRequiredProperty("location.test.version")).thenReturn(TEST_URL);
         when(jsonUtilMock.retrieveJsonObject(anyString())).thenReturn(JSON_OBJECT);
 
@@ -90,7 +90,7 @@ public class CheckVersionDaoTest {
 
     @Test
     public void should_use_test_location_for_download_when_nothing_is_set_in_property_for_download_source() throws Exception {
-        when(environmentMock.getProperty("application.runtime.status")).thenReturn("");
+        when(environmentMock.getProperty("application.runtime.environment")).thenReturn("");
         when(environmentMock.getRequiredProperty("location.test.version")).thenReturn(TEST_URL);
         when(jsonUtilMock.retrieveJsonObject(anyString())).thenReturn(JSON_OBJECT);
 

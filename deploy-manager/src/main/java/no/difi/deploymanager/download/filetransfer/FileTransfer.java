@@ -91,9 +91,15 @@ public class FileTransfer {
      * @throws MalformedURLException
      */
     public URL makeUrlForDownload(ApplicationData data) throws MalformedURLException {
-        if (environment.getProperty("application.runtime.status").equals("production")) {
+        if (environment.getProperty("application.runtime.environment").equals("production")) {
             return new URL(
                     replacePropertyParams(environment.getRequiredProperty("location.download"),
+                            data.getGroupId(), data.getArtifactId())
+            );
+        }
+        else if (environment.getProperty("application.runtime.environment").equals("staging")) {
+            return new URL(
+                    replacePropertyParams(environment.getRequiredProperty("location.staging.download"),
                             data.getGroupId(), data.getArtifactId())
             );
         }

@@ -21,6 +21,7 @@ public class FileTransferTest {
         initMocks(this);
 
         when(environmentMock.getRequiredProperty("location.test.download")).thenReturn(HTTP_DUMMY_VALUE);
+        when(environmentMock.getRequiredProperty("location.staging.download")).thenReturn(HTTP_DUMMY_VALUE);
         when(environmentMock.getRequiredProperty("location.download")).thenReturn(HTTP_DUMMY_VALUE);
 
         fileTransfer = new FileTransfer(environmentMock);
@@ -28,27 +29,40 @@ public class FileTransferTest {
 
     @Test
     public void should_use_connection_url_from_test_download_when_download_source_is_test() throws Exception {
-        when(environmentMock.getProperty("application.runtime.status")).thenReturn("production");
+        when(environmentMock.getProperty("application.runtime.environment")).thenReturn("test");
 
         fileTransfer.makeUrlForDownload(createApplicationData());
 
-        verify(environmentMock, times(1)).getRequiredProperty("location.download");
+        verify(environmentMock, never()).getRequiredProperty("location.download");
+        verify(environmentMock, never()).getRequiredProperty("location.staging.download");
+        verify(environmentMock, times(1)).getRequiredProperty("location.test.download");
+    }
+
+    @Test
+    public void should_use_connection_url_from_staging_download_when_download_source_is_staging() throws Exception {
+        when(environmentMock.getProperty("application.runtime.environment")).thenReturn("staging");
+
+        fileTransfer.makeUrlForDownload(createApplicationData());
+
+        verify(environmentMock, never()).getRequiredProperty("location.download");
+        verify(environmentMock, times(1)).getRequiredProperty("location.staging.download");
         verify(environmentMock, never()).getRequiredProperty("location.test.download");
     }
 
     @Test
     public void should_use_production_download_link_when_download_source_is_production() throws Exception {
-        when(environmentMock.getProperty("application.runtime.status")).thenReturn("test");
+        when(environmentMock.getProperty("application.runtime.environment")).thenReturn("production");
 
         fileTransfer.makeUrlForDownload(createApplicationData());
 
-        verify(environmentMock, never()).getRequiredProperty("location.download");
-        verify(environmentMock, times(1)).getRequiredProperty("location.test.download");
+        verify(environmentMock, times(1)).getRequiredProperty("location.download");
+        verify(environmentMock, never()).getRequiredProperty("location.staging.download");
+        verify(environmentMock, never()).getRequiredProperty("location.test.download");
     }
 
     @Test
     public void should_use_production_download_link_when_download_source_is_not_given() throws Exception {
-        when(environmentMock.getProperty("application.runtime.status")).thenReturn("");
+        when(environmentMock.getProperty("application.runtime.environment")).thenReturn("");
 
         fileTransfer.makeUrlForDownload(createApplicationData());
 
