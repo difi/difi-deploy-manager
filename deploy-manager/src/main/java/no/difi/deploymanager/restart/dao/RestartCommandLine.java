@@ -64,7 +64,6 @@ public class RestartCommandLine {
                                 + fileWithPath + " "
                                 + processToStart.getMainClass() + " "
                                 + processToStart.getVmOptions()
-                        , "DeployManager"
                 );
             }
             else {
@@ -77,7 +76,6 @@ public class RestartCommandLine {
                                 + fileWithPath + " "
                                 + processToStart.getMainClass() + " "
                                 + processToStart.getVmOptions()
-                        , processToStart.getFilename()
                 );
             }
 
@@ -162,10 +160,10 @@ public class RestartCommandLine {
         return "";
     }
 
-    private void doStart(String startCommand, String logPrefixFilename) throws IOException {
+    private void doStart(String startCommand) throws IOException {
         Process process = Runtime.getRuntime().exec(startCommand);
-        setUpStreamThread(process.getInputStream(), new PrintStream(new File(logPrefixFilename + "_Output.log")));
-        setUpStreamThread(process.getErrorStream(), new PrintStream(new File(logPrefixFilename + "_Error.log")));
+        setUpStreamThread(process.getInputStream(), new PrintStream(new File("DeployManager_Output.log")));
+        setUpStreamThread(process.getErrorStream(), new PrintStream(new File("DeployManager_Error.log")));
     }
 
     private static void setUpStreamThread(final InputStream inputStream, final PrintStream printStream) {
@@ -176,7 +174,7 @@ public class RestartCommandLine {
                 String line;
                 try {
                     while ((line = br.readLine()) != null) {
-                        printStream.println(line);
+                        printStream.append(line);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
