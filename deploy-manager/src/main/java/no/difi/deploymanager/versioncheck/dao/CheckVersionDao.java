@@ -50,6 +50,18 @@ public class CheckVersionDao {
         return (JSONObject) json.get("data");
     }
 
+    public String retrieveIntegrasjonspunktThroughLuceneSearch() {
+        String location = environment.getProperty("location.staging.search");
+
+        try {
+            JSONObject json = jsonUtil.retrieveJsonObject(location);
+            return json.getString("latestSnapshot");
+        } catch (IOException | ConnectionFailedException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
     public void saveRunningAppsList(ApplicationList applicationList) throws IOException {
         ioUtil.saveApplicationList(
                 applicationList,

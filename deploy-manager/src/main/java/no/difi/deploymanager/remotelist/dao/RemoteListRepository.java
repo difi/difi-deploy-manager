@@ -56,7 +56,17 @@ public class RemoteListRepository {
             for (int i = 0; i < dataArray.length(); i++) {
                 JSONObject dataObject = dataArray.getJSONObject(i);
 
-                ApplicationData app = new ApplicationData.Builder().name(fetchElement(dataObject, "name")).groupId(fetchElement(dataObject, "groupId")).artifactId(fetchElement(dataObject, "artifactId")).activeVersion(fetchElement(dataObject, "version")).artifactType(fetchElement(dataObject, "applicationType")).filename(fetchElement(dataObject, "filename")).vmOptions(fetchElement(dataObject, "vmOptions")).environmentVariables(fetchElement(dataObject, "environmentVariables")).mainClass(fetchElement(dataObject, "mainClass")).build();
+                ApplicationData app = new ApplicationData.Builder()
+                        .name(fetchElement(dataObject, "name"))
+                        .groupId(fetchElement(dataObject, "groupId"))
+                        .artifactId(fetchElement(dataObject, "artifactId"))
+                        .activeVersion(fetchElement(dataObject, "version"))
+                        .artifactType(fetchElement(dataObject, "applicationType"))
+                        .filename(fetchElement(dataObject, "filename"))
+                        .vmOptions(fetchElement(dataObject, "vmOptions"))
+                        .environmentVariables(fetchElement(dataObject, "environmentVariables"))
+                        .mainClass(fetchElement(dataObject, "mainClass"))
+                        .build();
 
                 applications.addApplicationData(app);
             }

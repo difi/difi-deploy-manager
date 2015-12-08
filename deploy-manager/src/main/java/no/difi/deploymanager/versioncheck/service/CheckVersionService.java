@@ -18,7 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.String.format;
-import static no.difi.deploymanager.util.StatusFactory.*;
+import static no.difi.deploymanager.util.StatusFactory.statusCritical;
+import static no.difi.deploymanager.util.StatusFactory.statusError;
+import static no.difi.deploymanager.util.StatusFactory.statusSuccess;
 
 /***
  * CheckVersionService is checking if any of the monitored appication (including self) have a new version available in external repository.
@@ -66,6 +68,10 @@ public class CheckVersionService {
 
     private void verifyAndAddApplicationForDownloadList(List<Status> statuses, ApplicationList.Builder appList, ApplicationData remoteApp) {
         try {
+            //TODO: Temporary inclusion to get correct integrasjonspunkt version
+            String version = checkVersionDao.retrieveIntegrasjonspunktThroughLuceneSearch();
+            System.out.println("Version " + version);
+
             JSONObject json = checkVersionDao.retrieveExternalArtifactStatus(remoteApp.getGroupId(), remoteApp.getArtifactId());
             ApplicationList downloadedApps = checkVersionDao.retrieveRunningAppsList();
 
