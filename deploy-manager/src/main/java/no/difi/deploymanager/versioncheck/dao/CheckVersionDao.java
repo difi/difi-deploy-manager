@@ -5,8 +5,8 @@ import no.difi.deploymanager.util.Common;
 import no.difi.deploymanager.util.IOUtil;
 import no.difi.deploymanager.util.JsonUtil;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
-import org.json.JSONObject;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.core.env.Environment;
 
 import java.io.IOException;
@@ -47,17 +47,24 @@ public class CheckVersionDao {
             location = environment.getRequiredProperty("location.test.version");
         }
 
-        String url = Common.replacePropertyParams(location, groupId, artifactId, version);
         JSONObject json = jsonUtil.retrieveJsonObject(
-                url
+                Common.replacePropertyParams(location, groupId, artifactId, version)
         );
 
         return (JSONObject) json.get("data");
     }
 
     public JSONArray retrieveIntegrasjonspunktThroughLuceneSearch() throws IOException, ConnectionFailedException {
-        String location = environment.getProperty("location.staging.search");
-        System.out.println("Location " + location);
+        String location = "";
+        if (environment.getProperty("application.runtime.environment").equals("production")) {
+            location = environment.getProperty("location.production.search");
+        }
+        else if (environment.getProperty("application.runtime.environment").equals("staging")) {
+            location = environment.getProperty("location.staging.search");
+        }
+        else {
+            location = environment.getProperty("location.test.search");
+        }
 
         JSONObject json = jsonUtil.retrieveJsonObject(location);
         return (JSONArray) json.get("data");
