@@ -23,6 +23,7 @@ public class CheckVersionDaoTest {
 
     private static final String GROUPID = "groupid";
     private static final String ARTIFACTID = "artifactid";
+    private static final String VERSION = "version";
     private static final String TEST_URL = "http://testurl/?r=central-proxy&g=$GROUP_ID&a=$ARTIFACT_ID&v=RELEASE";
 
     @Mock private Environment environmentMock;
@@ -41,7 +42,7 @@ public class CheckVersionDaoTest {
         when(environmentMock.getProperty("application.runtime.environment")).thenReturn("production");
         when(environmentMock.getRequiredProperty("location.version")).thenThrow(new IllegalStateException());
 
-        repository.retrieveExternalArtifactStatus(GROUPID, ARTIFACTID);
+        repository.retrieveExternalArtifactStatus(GROUPID, ARTIFACTID, VERSION);
     }
 
     @Test(expected = JSONException.class)
@@ -50,7 +51,7 @@ public class CheckVersionDaoTest {
         when(environmentMock.getRequiredProperty(anyString())).thenReturn(TEST_URL);
         when(jsonUtilMock.retrieveJsonObject(anyString())).thenReturn(new JSONObject("{}"));
 
-        repository.retrieveExternalArtifactStatus(GROUPID, ARTIFACTID);
+        repository.retrieveExternalArtifactStatus(GROUPID, ARTIFACTID, VERSION);
     }
 
     @Test
@@ -59,7 +60,7 @@ public class CheckVersionDaoTest {
         when(environmentMock.getRequiredProperty(anyString())).thenReturn("url");
         when(jsonUtilMock.retrieveJsonObject(anyString())).thenReturn(JSON_OBJECT);
 
-        JSONObject result = repository.retrieveExternalArtifactStatus(GROUPID, ARTIFACTID);
+        JSONObject result = repository.retrieveExternalArtifactStatus(GROUPID, ARTIFACTID, VERSION);
 
         assertTrue(result.getString("something").equals("1234"));
     }
@@ -70,7 +71,7 @@ public class CheckVersionDaoTest {
         when(environmentMock.getRequiredProperty("location.version")).thenReturn(TEST_URL);
         when(jsonUtilMock.retrieveJsonObject(anyString())).thenReturn(JSON_OBJECT);
 
-        repository.retrieveExternalArtifactStatus(GROUPID, ARTIFACTID);
+        repository.retrieveExternalArtifactStatus(GROUPID, ARTIFACTID, VERSION);
 
         verify(environmentMock, times(1)).getRequiredProperty("location.version");
         verify(environmentMock, never()).getRequiredProperty("location.test.version");
@@ -82,7 +83,7 @@ public class CheckVersionDaoTest {
         when(environmentMock.getRequiredProperty("location.test.version")).thenReturn(TEST_URL);
         when(jsonUtilMock.retrieveJsonObject(anyString())).thenReturn(JSON_OBJECT);
 
-        repository.retrieveExternalArtifactStatus(GROUPID, ARTIFACTID);
+        repository.retrieveExternalArtifactStatus(GROUPID, ARTIFACTID, VERSION);
 
         verify(environmentMock, never()).getRequiredProperty("location.version");
         verify(environmentMock, times(1)).getRequiredProperty("location.test.version");
@@ -94,7 +95,7 @@ public class CheckVersionDaoTest {
         when(environmentMock.getRequiredProperty("location.test.version")).thenReturn(TEST_URL);
         when(jsonUtilMock.retrieveJsonObject(anyString())).thenReturn(JSON_OBJECT);
 
-        repository.retrieveExternalArtifactStatus(GROUPID, ARTIFACTID);
+        repository.retrieveExternalArtifactStatus(GROUPID, ARTIFACTID, VERSION);
 
         verify(environmentMock, never()).getRequiredProperty("location.version");
         verify(environmentMock, times(1)).getRequiredProperty("location.test.version");

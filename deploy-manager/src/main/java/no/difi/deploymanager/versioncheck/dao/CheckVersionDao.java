@@ -6,6 +6,7 @@ import no.difi.deploymanager.util.IOUtil;
 import no.difi.deploymanager.util.JsonUtil;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
 import org.json.JSONObject;
+import org.json.JSONArray;
 import org.springframework.core.env.Environment;
 
 import java.io.IOException;
@@ -34,32 +35,32 @@ public class CheckVersionDao {
      * @throws IOException
      * @throws ConnectionFailedException
      */
-    public JSONObject retrieveExternalArtifactStatus(String groupId, String artifactId) throws IOException, ConnectionFailedException {
+    public JSONObject retrieveExternalArtifactStatus(String groupId, String artifactId, String version) throws IOException, ConnectionFailedException {
         String location;
         if (environment.getProperty("application.runtime.environment").equals("production")) {
             location = environment.getRequiredProperty("location.version");
+        }
+        else if (environment.getProperty("application.runtime.environment").equals("staging")) {
+            location = environment.getRequiredProperty("location.staging.version");
         }
         else {
             location = environment.getRequiredProperty("location.test.version");
         }
 
+        String url = Common.replacePropertyParams(location, groupId, artifactId, version);
         JSONObject json = jsonUtil.retrieveJsonObject(
-                Common.replacePropertyParams(location, groupId, artifactId)
+                url
         );
 
         return (JSONObject) json.get("data");
     }
 
-    public String retrieveIntegrasjonspunktThroughLuceneSearch() {
+    public JSONArray retrieveIntegrasjonspunktThroughLuceneSearch() throws IOException, ConnectionFailedException {
         String location = environment.getProperty("location.staging.search");
+        System.out.println("Location " + location);
 
-        try {
-            JSONObject json = jsonUtil.retrieveJsonObject(location);
-            return json.getString("latestSnapshot");
-        } catch (IOException | ConnectionFailedException e) {
-            e.printStackTrace();
-        }
-        return "";
+        JSONObject json = jsonUtil.retrieveJsonObject(location);
+        return (JSONArray) json.get("data");
     }
 
     public void saveRunningAppsList(ApplicationList applicationList) throws IOException {

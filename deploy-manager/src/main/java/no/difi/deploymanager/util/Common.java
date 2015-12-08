@@ -14,6 +14,10 @@ public class Common {
         return property.replace("$GROUP_ID", groupId).replace("$ARTIFACT_ID", artifactId);
     }
 
+    public static String replacePropertyParams(String property, String groupId, String artifactId, String version) {
+        return property.replace("$GROUP_ID", groupId).replace("$ARTIFACT_ID", artifactId).replace("&v=LATEST", "&v=" + version);
+    }
+
     public static void logStatus(List<Status> result, Logger logManager) {
         Level logLevel;
         for (Status status : result) {

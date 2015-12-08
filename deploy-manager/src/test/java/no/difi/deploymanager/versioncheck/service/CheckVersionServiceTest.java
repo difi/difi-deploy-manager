@@ -45,7 +45,7 @@ public class CheckVersionServiceTest {
 
     @Test
     public void should_get_error_when_url_is_malformed() throws Exception {
-        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenThrow(new MalformedURLException());
+        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString(), anyString())).thenThrow(new MalformedURLException());
 
         Status actual = service.execute().get(0);
 
@@ -54,7 +54,7 @@ public class CheckVersionServiceTest {
 
     @Test
     public void should_get_error_when_socket_timeout_occur() throws Exception {
-        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenThrow(new SocketTimeoutException());
+        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString(), anyString())).thenThrow(new SocketTimeoutException());
 
         Status actual = service.execute().get(0);
 
@@ -63,7 +63,7 @@ public class CheckVersionServiceTest {
 
     @Test
     public void should_get_error_when_IOException_occur() throws Exception {
-        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenThrow(new IOException());
+        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString(), anyString())).thenThrow(new IOException());
 
         Status actual = service.execute().get(0);
 
@@ -72,7 +72,7 @@ public class CheckVersionServiceTest {
 
     @Test
     public void should_get_error_when_connection_failed_exception_occur() throws Exception {
-        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenThrow(new ConnectionFailedException("Message"));
+        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString(), anyString())).thenThrow(new ConnectionFailedException("Message"));
 
         Status actual = service.execute().get(0);
 
@@ -81,7 +81,7 @@ public class CheckVersionServiceTest {
 
     @Test
     public void should_get_critical_error_when_JSON_exception_occur() throws Exception {
-        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenThrow(new JSONException("Message"));
+        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString(), anyString())).thenThrow(new JSONException("Message"));
 
         Status actual = service.execute().get(0);
 
@@ -90,7 +90,7 @@ public class CheckVersionServiceTest {
 
     @Test
     public void should_get_critical_error_when_returned_object_is_not_valid_JSON() throws Exception{
-        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenReturn(new JSONObject());
+        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString(), anyString())).thenReturn(new JSONObject());
 
         Status actual = service.execute().get(0);
 
@@ -101,7 +101,7 @@ public class CheckVersionServiceTest {
     public void should_not_add_item_to_download_list_when_already_in_download_list() throws Exception {
         ApplicationList appList = createApplicationListWithData();
         ApplicationData appData = appList.getApplications().get(0);
-        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenReturn(
+        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString(), anyString())).thenReturn(
                 createJsonObject(appData.getActiveVersion(), appData.getArtifactId(), appData.getGroupId())
         );
         when(downloadDaoMock.retrieveDownloadList()).thenReturn(appList);
@@ -115,7 +115,7 @@ public class CheckVersionServiceTest {
     public void should_get_success_when_operation_completed_without_error_and_no_download_needed() throws Exception {
         ApplicationList sameList = createApplicationListWithData();
         ApplicationData sameData = sameList.getApplications().get(0);
-        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenReturn(
+        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString(), anyString())).thenReturn(
                 createJsonObject(sameData.getActiveVersion(), sameData.getGroupId(), sameData.getArtifactId())
         );
         when(downloadDaoMock.retrieveDownloadList()).thenReturn(sameList);
@@ -130,7 +130,7 @@ public class CheckVersionServiceTest {
         ApplicationList otherVersionList = createApplicationListWithData();
         ApplicationData otherVersionData = otherVersionList.getApplications().get(0);
 
-        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString())).thenReturn(
+        when(checkVersionDaoMock.retrieveExternalArtifactStatus(anyString(), anyString(), anyString())).thenReturn(
                 createJsonObject("someVersion", otherVersionData.getGroupId(), otherVersionData.getArtifactId())
         );
         when(downloadDaoMock.retrieveDownloadList()).thenReturn(otherVersionList);

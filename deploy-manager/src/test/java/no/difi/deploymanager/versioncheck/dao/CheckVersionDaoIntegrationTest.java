@@ -27,6 +27,7 @@ import static org.junit.Assert.*;
 @WebIntegrationTest(value = {"application.runtime.environment=production", "spring.boot.admin.url=localhost:8090"})
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 public class CheckVersionDaoIntegrationTest {
+    public static final String TEST_VERSION = "Version";
     private CheckVersionDao checkVersionDao;
 
     @Autowired Environment environment;
@@ -58,12 +59,12 @@ public class CheckVersionDaoIntegrationTest {
 
     @Test(expected = ConnectionFailedException.class)
     public void should_get_connection_exception_when_connection_fails() throws Exception {
-        checkVersionDao.retrieveExternalArtifactStatus("", "");
+        checkVersionDao.retrieveExternalArtifactStatus("", "", "");
     }
 
     @Test
     public void should_retrieve_external_version_when_new_list_is_available() throws Exception {
-        JSONObject json = checkVersionDao.retrieveExternalArtifactStatus(TEST_GROUP_ID, TEST_ARTIFACT_ID);
+        JSONObject json = checkVersionDao.retrieveExternalArtifactStatus(TEST_GROUP_ID, TEST_ARTIFACT_ID, TEST_VERSION);
 
         assertTrue(json.keySet().contains("version"));
         assertEquals(json.get("groupId"), TEST_GROUP_ID);

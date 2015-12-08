@@ -10,6 +10,7 @@ import no.difi.deploymanager.versioncheck.dao.CheckVersionDao;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONArray;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -69,10 +70,14 @@ public class CheckVersionService {
     private void verifyAndAddApplicationForDownloadList(List<Status> statuses, ApplicationList.Builder appList, ApplicationData remoteApp) {
         try {
             //TODO: Temporary inclusion to get correct integrasjonspunkt version
-            String version = checkVersionDao.retrieveIntegrasjonspunktThroughLuceneSearch();
-            System.out.println("Version " + version);
+            String tempString = checkVersionDao.retrieveIntegrasjonspunktThroughLuceneSearch().toString();
+            int index = tempString.indexOf("\"latestSnapshot\"");
+            int start = tempString.indexOf(":\"", index) + 2;
+            int end = tempString.indexOf("\"}", index);
 
-            JSONObject json = checkVersionDao.retrieveExternalArtifactStatus(remoteApp.getGroupId(), remoteApp.getArtifactId());
+            String result = tempString.substring(start, end);
+
+            JSONObject json = checkVersionDao.retrieveExternalArtifactStatus(remoteApp.getGroupId(), remoteApp.getArtifactId(), result);
             ApplicationList downloadedApps = checkVersionDao.retrieveRunningAppsList();
 
             if (isInDownloadList(json, downloadDao.retrieveDownloadList())) {
