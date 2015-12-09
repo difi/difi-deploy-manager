@@ -47,6 +47,7 @@ public class CheckVersionDao {
             location = environment.getRequiredProperty("location.test.version");
         }
 
+        System.out.println("Location for retrieving artifact: " + location);
         JSONObject json = jsonUtil.retrieveJsonObject(
                 Common.replacePropertyParams(location, groupId, artifactId, version)
         );
@@ -66,6 +67,7 @@ public class CheckVersionDao {
             location = environment.getProperty("location.test.search");
         }
 
+        System.out.println("Location for search: " + location);
         JSONObject json = jsonUtil.retrieveJsonObject(location);
         return (JSONArray) json.get("data");
     }
