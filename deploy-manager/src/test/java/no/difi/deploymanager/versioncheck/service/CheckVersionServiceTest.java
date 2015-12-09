@@ -5,7 +5,6 @@ import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.domain.Status;
 import no.difi.deploymanager.domain.StatusCode;
 import no.difi.deploymanager.download.dao.DownloadDao;
-import no.difi.deploymanager.remotelist.exception.RemoteApplicationListException;
 import no.difi.deploymanager.remotelist.service.RemoteListService;
 import no.difi.deploymanager.versioncheck.dao.CheckVersionDao;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
@@ -36,7 +35,7 @@ public class CheckVersionServiceTest {
     @Mock DownloadDao downloadDaoMock;
 
     @Before
-    public void setUp() throws RemoteApplicationListException, Exception {
+    public void setUp() throws Exception {
         initMocks(this);
 
         when(checkVersionDaoMock.retrieveIntegrasjonspunktThroughLuceneSearch()).thenReturn(createJsonLuceneSearchResult());
@@ -144,7 +143,7 @@ public class CheckVersionServiceTest {
 
     private JSONArray createJsonLuceneSearchResult() {
         JSONArray jsonArray = new JSONArray();
-        jsonArray.put("[{\"latestSnapshotRepositoryId\":\"difi.meldingsutveksler\",\"groupId\":\"no.difi.meldingsutveksling\",\"artifactId\":\"integrasjonspunkt\",\"artifactHits\":[{\"artifactLinks\"\n" + ":[{\"extension\":\"pom\"},{\"extension\":\"jar\"}],\"repositoryId\":\"difi.meldingsutveksler\"}],\"version\":\"1.0-SNAPSHOT\",\"latestSnapshot\":\"1.0-SNAPSHOT\"}]");
+        jsonArray.put("[{\"latestSnapshotRepositoryId\":\"difi.meldingsutveksler\",\"groupId\":\"no.difi.meldingsutveksling\",\"artifactId\":\"integrasjonspunkt\",\"artifactHits\":[{\"artifactLinks\"\n" + ":[{\"extension\":\"pom\"},{\"extension\":\"jar\"}],\"repositoryId\":\"difi.meldingsutveksler\"}],\"latestSnapshot\":\"1.0-SNAPSHOT\",\"version\":\"1.0-SNAPSHOT\"}]");
         return jsonArray;
     }
 }

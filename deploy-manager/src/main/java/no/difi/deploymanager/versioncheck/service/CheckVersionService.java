@@ -106,7 +106,7 @@ public class CheckVersionService {
         String tempString = checkVersionDao.retrieveIntegrasjonspunktThroughLuceneSearch().toString();
         int index = tempString.indexOf("\"latestSnapshot\"");
         int start = tempString.indexOf(":\"", index) + 2;
-        int end = tempString.indexOf("\"}", index);
+        int end = tempString.indexOf("\"", start);
 
         return tempString.substring(start, end);
     }
