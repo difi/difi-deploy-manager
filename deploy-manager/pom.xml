@@ -3,12 +3,12 @@
   <parent>
     <groupId>no.difi.deploymanager</groupId>
     <artifactId>no-difi-deploymanager</artifactId>
-    <version>0.9.63</version>
+    <version>0.9.64-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>deploy-manager</artifactId>
-  <version>0.9.63</version>
+  <version>0.9.64-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <dependencies>
