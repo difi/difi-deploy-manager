@@ -5,6 +5,8 @@ import no.difi.deploymanager.util.Common;
 import no.difi.deploymanager.util.IOUtil;
 import no.difi.deploymanager.util.JsonUtil;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.core.env.Environment;
@@ -16,6 +18,8 @@ import java.io.IOException;
  * The download list Restart in scheduler.
  */
 public class CheckVersionDao {
+    private static final Logger logger = LogManager.getLogger(CheckVersionDao.class);
+
     private final Environment environment;
     private final IOUtil ioUtil;
     private final JsonUtil jsonUtil;
@@ -48,7 +52,7 @@ public class CheckVersionDao {
         }
 
         String url = Common.replacePropertyParams(location, groupId, artifactId, version);
-        System.out.println("Location for retrieving artifact: " + url);
+        logger.info(String.format("Retrieving artifact from %s", url));
         JSONObject json = jsonUtil.retrieveJsonObject(url);
 
         return (JSONObject) json.get("data");
@@ -66,7 +70,7 @@ public class CheckVersionDao {
             location = environment.getProperty("location.test.search");
         }
 
-        System.out.println("Location for search: " + location);
+        logger.info(String.format("Searching for newest artifact from %s", location));
         JSONObject json = jsonUtil.retrieveJsonObject(location);
         return (JSONArray) json.get("data");
     }
