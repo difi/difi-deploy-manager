@@ -5,7 +5,7 @@
   <groupId>no.difi.deploymanager</groupId>
   <artifactId>no-difi-deploymanager</artifactId>
   <packaging>pom</packaging>
-  <version>0.9.64</version>
+  <version>0.9.65-SNAPSHOT</version>
   <modules>
     <module>deploy-manager</module>
     <module>deploy-manager-admin</module>
@@ -15,7 +15,7 @@
     <connection>scm:git:https://github.com/difi/difi-deploy-manager.git</connection>
     <developerConnection>scm:git:git@github.com:difi/difi-deploy-manager.git</developerConnection>
     <url>https://github.com/difi/difi-deploy-manager.git</url>
-    <tag>v/0.9.64-RC</tag>
+    <tag>v/0.9.50-RC</tag>
   </scm>
 
   <parent>
