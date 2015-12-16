@@ -29,7 +29,7 @@ public class RestartCommandLine {
      *
      * @param oldVersion Application data for the application to stop.
      * @param newVersion Application data for the application to start.
-     * @param self Used to check if application to restart is current app.
+     * @param self       Used to check if application to restart is current app.
      * @return Returns true if restart is successful, otherwise false.
      * @throws IOException
      * @throws InterruptedException
@@ -57,25 +57,24 @@ public class RestartCommandLine {
             if (IS_WINDOWS) {
                 String startCommand = "javaw -jar ";
                 String fileWithPath = (System.getProperty("user.dir") + environment.getProperty("download.base.path")
-                                + "/" + processToStart.getFilename()).replace("/", "\\");
+                        + "/" + processToStart.getFilename()).replace("/", "\\");
 
                 doStart(startCommand
-                                + processToStart.getEnvironmentVariables() + " "
-                                + fileWithPath + " "
-                                + processToStart.getMainClass() + " "
-                                + processToStart.getVmOptions()
+                        + processToStart.getEnvironmentVariables() + " "
+                        + fileWithPath + " "
+                        + processToStart.getMainClass() + " "
+                        + processToStart.getVmOptions()
                 );
-            }
-            else {
+            } else {
                 String startCommand = "java -jar ";
                 String fileWithPath = System.getProperty("user.dir")
                         + environment.getProperty("download.base.path") + "/" + processToStart.getFilename();
 
                 doStart(startCommand
-                                + processToStart.getEnvironmentVariables() + " "
-                                + fileWithPath + " "
-                                + processToStart.getMainClass() + " "
-                                + processToStart.getVmOptions()
+                        + processToStart.getEnvironmentVariables() + " "
+                        + fileWithPath + " "
+                        + processToStart.getMainClass() + " "
+                        + processToStart.getVmOptions()
                 );
             }
 
@@ -97,8 +96,7 @@ public class RestartCommandLine {
             String killCommand;
             if (IS_WINDOWS) {
                 killCommand = "taskkill /F /pid ";
-            }
-            else {
+            } else {
                 killCommand = "kill 9 ";
             }
 
@@ -143,8 +141,7 @@ public class RestartCommandLine {
                     if (!isEmpty(processIdPart)) {
                         return processIdPart;
                     }
-                }
-                else {
+                } else {
                     List<String> processParts = asList(running.split(" "));
                     // Give process time to destroy itself.
                     Thread.sleep(100);
@@ -174,7 +171,7 @@ public class RestartCommandLine {
                 String line;
                 try {
                     while ((line = br.readLine()) != null) {
-                        printStream.append(line);
+                        printStream.println(line);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -206,13 +203,12 @@ public class RestartCommandLine {
         List<String> output = new ArrayList<>();
 
         if (IS_WINDOWS) {
-            String[] findWindowsApp = new String[] {
+            String[] findWindowsApp = new String[]{
                     "tasklist", "/v", "/fo", "csv"
             };
             process = Runtime.getRuntime().exec(findWindowsApp);
-        }
-        else {
-            String[] findUnixApp = new String[] {
+        } else {
+            String[] findUnixApp = new String[]{
                     ROOT_PATH_FOR_SH,
                     "-c", "ps -ax | grep java | grep " + oldVersion.getFilename() + " | grep -v grep"
             };
