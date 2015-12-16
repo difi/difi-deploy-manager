@@ -43,7 +43,7 @@ public class CheckVersionService {
 
         try {
             for (ApplicationData remoteApp : remoteListService.execute().getApplications()) {
-                verifyAndAddApplicationForDownloadList(statuses, appList, remoteApp);
+                statuses.addAll(verifyAndAddApplicationForDownloadList(appList, remoteApp));
             }
         } catch (RemoteApplicationListException | IOException e) {
             statuses.add(statusCritical(format("Can not fetch remote application list with versions.%s", e.getCause())));
@@ -66,7 +66,8 @@ public class CheckVersionService {
         checkVersionDao.saveRunningAppsList(applicationList);
     }
 
-    private void verifyAndAddApplicationForDownloadList(List<Status> statuses, ApplicationList.Builder appList, ApplicationData remoteApp) {
+    private List<Status> verifyAndAddApplicationForDownloadList(ApplicationList.Builder appList, ApplicationData remoteApp) {
+        List<Status> statuses = new ArrayList<>();
         try {
             JSONObject json = checkVersionDao.retrieveExternalArtifactStatus(
                     remoteApp.getGroupId(),
@@ -100,6 +101,8 @@ public class CheckVersionService {
         catch (IllegalStateException e) {
             statuses.add(statusCritical("Environment property 'location.version' not found."));
         }
+
+        return statuses;
     }
 
     private String getVersionFromJson() throws IOException, ConnectionFailedException {
