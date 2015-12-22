@@ -51,19 +51,8 @@ public class FileTransfer {
 
         String fileName = "";
         if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-            String disposition = connection.getHeaderField("Content-Disposition");
-
-            if (disposition != null) {
-                // extracts file name from header field
-                int index = disposition.indexOf("filename=");
-                if (index > 0) {
-                    fileName = disposition.substring(index + 10,
-                            disposition.length() - 1);
-                }
-            }
-
-            InputStream sourceInput = connection.getInputStream();
-            saveFile(destinationPath, fileName, sourceInput);
+            fileName = fetchFilenameFromHeader(connection, fileName);
+            saveFile(destinationPath, fileName, connection.getInputStream());
         } else {
             throw new ConnectionFailedException("Could not download file " + fileName);
         }
@@ -73,10 +62,24 @@ public class FileTransfer {
         return fileName;
     }
 
+    private String fetchFilenameFromHeader(HttpURLConnection connection, String fileName) {
+        String disposition = connection.getHeaderField("Content-Disposition");
+
+        if (disposition != null) {
+            // extracts file name from header field
+            int index = disposition.indexOf("filename=");
+            if (index > 0) {
+                fileName = disposition.substring(index + 10,
+                        disposition.length() - 1);
+            }
+        }
+        return fileName;
+    }
+
     private void saveFile(File destinationPath, String fileName, InputStream sourceInput) throws IOException {
         String fileToSave = destinationPath + File.separator + fileName;
 
-        if (new File(fileToSave).exists()) {
+        if (!new File(fileToSave).exists()) {
             FileOutputStream fileOutput = new FileOutputStream(fileToSave);
 
             int bytesRead;
