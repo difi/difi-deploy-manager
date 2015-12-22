@@ -9,6 +9,9 @@ public class ObjectMotherJSONObject {
         jsonObject.put("artifactId", artifactId);
         jsonObject.put("version", version);
         jsonObject.put("snapshot", false);
+        jsonObject.put("vmOptions", "");
+        jsonObject.put("environmentVariables", "");
+        jsonObject.put("mainClass", "");
         return jsonObject;
     }
 }
