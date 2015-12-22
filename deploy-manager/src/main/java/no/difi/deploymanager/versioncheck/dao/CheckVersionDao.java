@@ -59,7 +59,7 @@ public class CheckVersionDao {
     }
 
     public JSONArray retrieveIntegrasjonspunktThroughLuceneSearch() throws IOException, ConnectionFailedException {
-        String location = "";
+        String location;
         if (environment.getProperty("application.runtime.environment").equals("production")) {
             location = environment.getProperty("location.production.search");
         }

@@ -13,6 +13,9 @@ public class ObjectMotherApplicationData {
                 .groupId(groupId)
                 .artifactId(artifactId)
                 .activeVersion(version)
+                .vmOptions("")
+                .environmentVariables("")
+                .mainClass("")
                 .build();
     }
 
