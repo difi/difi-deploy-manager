@@ -63,9 +63,21 @@ public class FileTransfer {
             }
 
             InputStream sourceInput = connection.getInputStream();
-            String saveFilePath = destinationPath + File.separator + fileName;
+            saveFile(destinationPath, fileName, sourceInput);
+        } else {
+            throw new ConnectionFailedException("Could not download file " + fileName);
+        }
 
-            FileOutputStream fileOutput = new FileOutputStream(saveFilePath);
+        connection.disconnect();
+
+        return fileName;
+    }
+
+    private void saveFile(File destinationPath, String fileName, InputStream sourceInput) throws IOException {
+        String fileToSave = destinationPath + File.separator + fileName;
+
+        if (new File(fileToSave).exists()) {
+            FileOutputStream fileOutput = new FileOutputStream(fileToSave);
 
             int bytesRead;
             byte[] buffer = new byte[BUFFER_SIZE];
@@ -75,12 +87,7 @@ public class FileTransfer {
 
             fileOutput.close();
             sourceInput.close();
-        } else {
-            throw new ConnectionFailedException("Could not download file " + fileName);
         }
-        connection.disconnect();
-
-        return fileName;
     }
 
     /***
@@ -90,7 +97,7 @@ public class FileTransfer {
      * @return The full filename that has been downloaded.
      * @throws MalformedURLException
      */
-    public URL makeUrlForDownload(ApplicationData data) throws MalformedURLException {
+    protected URL makeUrlForDownload(ApplicationData data) throws MalformedURLException {
         if (environment.getProperty("application.runtime.environment").equals("production")) {
             return new URL(
                     replacePropertyParams(environment.getRequiredProperty("location.download"),
