@@ -11,9 +11,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Retrieve list over applications to monitor.
@@ -22,7 +24,6 @@ import java.io.IOException;
  * Optional parameters: version and startParameters.
  */
 public class RemoteListRepository {
-    private static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
 
     private final JsonUtil jsonUtil;
 
@@ -76,13 +77,13 @@ public class RemoteListRepository {
     }
 
     public ApplicationList getLocalList() throws IOException {
-        FileReader reader;
+        InputStreamReader reader;
 
         try {
             String userDir = System.getProperty("user.dir");
             String probePath = "/deploy-manager";
             String probePath2 = "/deploymanager";
-            String path = "";
+            String path;
 
             if (Common.IS_WINDOWS) {
                 probePath = probePath.replace("/", "\\");
@@ -99,7 +100,7 @@ public class RemoteListRepository {
                 path = path.replace("/", "\\");
             }
 
-            reader = new FileReader(userDir + path);
+            reader = new InputStreamReader(new FileInputStream((userDir + path)), StandardCharsets.UTF_8);
         } catch (FileNotFoundException e) {
             return new ApplicationList.Builder().build();
         }

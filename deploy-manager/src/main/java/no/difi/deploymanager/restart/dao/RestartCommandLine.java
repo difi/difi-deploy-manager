@@ -4,7 +4,13 @@ import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.Self;
 import org.springframework.core.env.Environment;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -131,7 +137,7 @@ public class RestartCommandLine {
                     Process checkProcess = Runtime.getRuntime().exec(command);
 
                     InputStream input = checkProcess.getInputStream();
-                    BufferedReader stdout = new BufferedReader(new InputStreamReader(input));
+                    BufferedReader stdout = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8));
 
                     String processIdPart = findPidOnWinOS(version, pid, stdout);
 
@@ -159,12 +165,12 @@ public class RestartCommandLine {
 
     private void doStart(String startCommand) throws IOException {
         Process process = Runtime.getRuntime().exec(startCommand);
-        setUpStreamThread(process.getInputStream(), new PrintStream(new File("DeployManager_Output.log")));
-        setUpStreamThread(process.getErrorStream(), new PrintStream(new File("DeployManager_Error.log")));
+        setUpStreamThread(process.getInputStream(), new PrintStream(new FileOutputStream("DeployManager_Output.log"), true, StandardCharsets.UTF_8.name()));
+        setUpStreamThread(process.getErrorStream(), new PrintStream(new FileOutputStream("DeployManager_Error.log"), true, StandardCharsets.UTF_8.name()));
     }
 
     private static void setUpStreamThread(final InputStream inputStream, final PrintStream printStream) {
-        final InputStreamReader streamReader = new InputStreamReader(inputStream);
+        final InputStreamReader streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
         new Thread(new Runnable() {
             public void run() {
                 BufferedReader br = new BufferedReader(streamReader);
@@ -217,20 +223,21 @@ public class RestartCommandLine {
         }
 
         InputStream input = process.getInputStream();
-        BufferedReader stdout = new BufferedReader(new InputStreamReader(input));
-        String line;
+        try (BufferedReader stdout = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8))) {
+            String line;
 
-        do {
-            line = stdout.readLine();
-            if (IS_WINDOWS && line != null && line.contains("java.exe") || !IS_WINDOWS) {
-                output.add(line);
+            do {
+                line = stdout.readLine();
+                if (IS_WINDOWS && line != null && line.contains("java.exe") || !IS_WINDOWS) {
+                    output.add(line);
+                }
             }
+            while (line != null);
+
+            process.waitFor();
+            process.destroy();
+
+            return output;
         }
-        while (line != null);
-
-        process.waitFor();
-        process.destroy();
-
-        return output;
     }
 }

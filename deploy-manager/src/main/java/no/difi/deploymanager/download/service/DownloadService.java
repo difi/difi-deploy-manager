@@ -51,6 +51,7 @@ public class DownloadService {
                 statuses.add(statusError("Failed to download applications."));
             }
 
+            // TODO: fix FindBugs problem: restartList can be null when it should not
             ApplicationList notDownloaded = updateNotDownloadedList(restartList, forDownload);
             try {
                 downloadDao.saveDownloadList(notDownloaded);

@@ -1,6 +1,7 @@
 package no.difi.deploymanager.download.filetransfer;
 
 import no.difi.deploymanager.domain.ApplicationData;
+import no.difi.deploymanager.util.IOUtil;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
 import org.springframework.core.env.Environment;
 
@@ -40,10 +41,7 @@ public class FileTransfer {
 
         String filePath = System.getProperty("user.dir") + environment.getRequiredProperty("download.base.path");
 
-        File destinationPath = new File(filePath);
-        if (!destinationPath.exists()) {
-            destinationPath.mkdir();
-        }
+        File destinationPath = IOUtil.createDestinationFolder(filePath);
 
         HttpURLConnection connection = (HttpURLConnection) source.openConnection();
         HttpURLConnection.setFollowRedirects(true);
@@ -64,17 +62,16 @@ public class FileTransfer {
 
             InputStream sourceInput = connection.getInputStream();
             String saveFilePath = destinationPath + File.separator + fileName;
+            try(FileOutputStream fileOutput = new FileOutputStream(saveFilePath)) {
 
-            FileOutputStream fileOutput = new FileOutputStream(saveFilePath);
-
-            int bytesRead;
-            byte[] buffer = new byte[BUFFER_SIZE];
-            while ((bytesRead = sourceInput.read(buffer)) != -1) {
-                fileOutput.write(buffer, 0, bytesRead);
+                int bytesRead;
+                byte[] buffer = new byte[BUFFER_SIZE];
+                while ((bytesRead = sourceInput.read(buffer)) != -1) {
+                    fileOutput.write(buffer, 0, bytesRead);
+                }
+            } finally {
+                sourceInput.close();
             }
-
-            fileOutput.close();
-            sourceInput.close();
         } else {
             throw new ConnectionFailedException("Could not download file " + fileName);
         }

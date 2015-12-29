@@ -3,7 +3,12 @@ package no.difi.deploymanager.util;
 import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.domain.Self;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 /***
  * General class for object serialization of application list.
@@ -47,11 +52,9 @@ public class IOUtil {
         String path = System.getProperty("user.dir");
 
         //Make sure that folder exists before creating file.
-        File pathStructure = new File(path + folder);
-        if (!pathStructure.exists()) {
-            pathStructure.mkdir();
-        }
-        File file = new File(path + folder + filename);
+        final String destinationPath = path + folder;
+        File pathStructure = IOUtil.createDestinationFolder(destinationPath);
+        File file = new File(pathStructure, filename);
 
         ObjectOutputStream oos = new ObjectOutputStream(
                 new FileOutputStream(file, false)
@@ -60,6 +63,17 @@ public class IOUtil {
         oos.writeObject(objectToSave);
 
         oos.close();
+    }
+
+    public static File createDestinationFolder(String filePath) {
+        File destinationPath = new File(filePath);
+        if (!destinationPath.exists()) {
+            final boolean directoryCreated = destinationPath.mkdir();
+            if(!directoryCreated) {
+                throw new RuntimeException("Failed to create destination folder");
+            }
+        }
+        return destinationPath;
     }
 
     public synchronized Self getVersion() {
