@@ -1,6 +1,7 @@
 package no.difi.deploymanager.download.filetransfer;
 
 import no.difi.deploymanager.domain.ApplicationData;
+import no.difi.deploymanager.util.IOUtil;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
 import org.springframework.core.env.Environment;
 
@@ -40,10 +41,7 @@ public class FileTransfer {
 
         String filePath = System.getProperty("user.dir") + environment.getRequiredProperty("download.base.path");
 
-        File destinationPath = new File(filePath);
-        if (!destinationPath.exists()) {
-            destinationPath.mkdir();
-        }
+        File destinationPath = IOUtil.createDestinationFolder(filePath);
 
         HttpURLConnection connection = (HttpURLConnection) source.openConnection();
         HttpURLConnection.setFollowRedirects(true);
@@ -78,17 +76,15 @@ public class FileTransfer {
 
     private void saveFile(File destinationPath, String fileName, InputStream sourceInput) throws IOException {
         String fileToSave = destinationPath + File.separator + fileName;
-
-        if (!new File(fileToSave).exists()) {
-            FileOutputStream fileOutput = new FileOutputStream(fileToSave);
+        String saveFilePath = destinationPath + File.separator + fileName;
+        try(FileOutputStream fileOutput = new FileOutputStream(saveFilePath)) {
 
             int bytesRead;
             byte[] buffer = new byte[BUFFER_SIZE];
             while ((bytesRead = sourceInput.read(buffer)) != -1) {
                 fileOutput.write(buffer, 0, bytesRead);
             }
-
-            fileOutput.close();
+        } finally {
             sourceInput.close();
         }
     }

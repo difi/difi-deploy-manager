@@ -8,7 +8,10 @@ import org.junit.Test;
 
 import java.io.File;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 //Requirements for this test class is access to write on disk. Doing a real test for file IO operations.
 public class IOUtilIntegrationTest {
@@ -58,7 +61,7 @@ public class IOUtilIntegrationTest {
             fail(String.format("Cleanup of file %s failed. Manually cleanup necessary!", TESTFILENAME));
         }
         if (!new File(SELF_PATH + TESTFOLDER).delete()) {
-            fail(String.format("Cleanup of folder %s failed. Maually cleanup necessary!", TESTFOLDER));
+            fail(String.format("Cleanup of folder %s failed. Manually cleanup necessary!", TESTFOLDER));
         }
     }
 }

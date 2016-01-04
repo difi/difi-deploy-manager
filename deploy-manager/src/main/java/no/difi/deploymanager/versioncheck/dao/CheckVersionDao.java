@@ -40,35 +40,50 @@ public class CheckVersionDao {
      * @throws ConnectionFailedException
      */
     public JSONObject retrieveExternalArtifactStatus(String groupId, String artifactId, String version) throws IOException, ConnectionFailedException {
-        String location;
-        if (environment.getProperty("application.runtime.environment").equals("production")) {
-            location = environment.getRequiredProperty("location.version");
-        }
-        else if (environment.getProperty("application.runtime.environment").equals("staging")) {
-            location = environment.getRequiredProperty("location.staging.version");
-        }
-        else {
-            location = environment.getRequiredProperty("location.test.version");
-        }
-
-        String url = Common.replacePropertyParams(location, groupId, artifactId, version);
+        String url = getArtifactUrl(groupId, artifactId, version);
         logger.info(String.format("Retrieving artifact from %s", url));
         JSONObject json = jsonUtil.retrieveJsonObject(url);
 
         return (JSONObject) json.get("data");
     }
 
+    private String getArtifactUrl(String groupId, String artifactId, String version) {
+        String baseUrl;
+        if (isProduction()) {
+            baseUrl = environment.getRequiredProperty("location.version");
+        }
+        else if (isStaging()) {
+            baseUrl = environment.getRequiredProperty("location.staging.version");
+        }
+        else {
+            baseUrl = environment.getRequiredProperty("location.test.version");
+        }
+        return Common.replacePropertyParams(baseUrl, groupId, artifactId, version);
+    }
+
+
     public JSONArray retrieveIntegrasjonspunktThroughLuceneSearch() throws IOException, ConnectionFailedException {
+        String url;
+        url = getUrlForArtifactSearch();
+
+        logger.info(String.format("Searching for newest artifact from %s", url));
+        JSONObject json = jsonUtil.retrieveJsonObject(url);
+        return (JSONArray) json.get("data");
+    }
+
+    private String getUrlForArtifactSearch() {
         String location;
-        if (environment.getProperty("application.runtime.environment").equals("production")) {
+        if (isProduction()) {
             location = environment.getProperty("location.production.search");
         }
-        else if (environment.getProperty("application.runtime.environment").equals("staging")) {
+        else if (isStaging()) {
             location = environment.getProperty("location.staging.search");
         }
         else {
             location = environment.getProperty("location.test.search");
         }
+        return location;
+    }
 
         logger.info(String.format("Searching for newest artifact from %s", location));
         JSONObject json = jsonUtil.retrieveJsonObject(location);

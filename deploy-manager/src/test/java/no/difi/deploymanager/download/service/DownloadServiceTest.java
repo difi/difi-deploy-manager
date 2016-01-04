@@ -16,7 +16,11 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class DownloadServiceTest {
@@ -89,7 +93,7 @@ public class DownloadServiceTest {
     }
 
     @Test
-    public void should_update_download_list_when_download_have_occured() throws Exception{
+    public void should_update_download_list_when_download_have_occurred() throws Exception{
         when(downloadDaoMock.retrieveDownloadList()).thenReturn(ObjectMotherApplicationList.createApplicationListWithData());
 
         Status actual = service.execute().get(0);

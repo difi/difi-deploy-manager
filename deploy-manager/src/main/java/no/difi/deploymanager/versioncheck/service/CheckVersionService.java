@@ -23,7 +23,7 @@ import static no.difi.deploymanager.util.StatusFactory.statusError;
 import static no.difi.deploymanager.util.StatusFactory.statusSuccess;
 
 /***
- * CheckVersionService is checking if any of the monitored appication (including self) have a new version available in external repository.
+ * CheckVersionService is checking if any of the monitored application (including self) have a new version available in external repository.
  * If new version is available, it will update the list over applications/artifacts to download.
  */
 public class CheckVersionService {
@@ -42,9 +42,8 @@ public class CheckVersionService {
         ApplicationList.Builder appList = new ApplicationList.Builder();
 
         try {
-            List<ApplicationData> applications = remoteListService.execute().getApplications();
-            for (ApplicationData remoteApp : applications) {
-                verifyAndAddApplicationForDownloadList(statuses, appList, remoteApp);
+            for (ApplicationData remoteApp : remoteListService.execute().getApplications()) {
+                statuses.addAll(verifyAndAddApplicationForDownloadList(appList, remoteApp));
             }
         } catch (RemoteApplicationListException | IOException e) {
             statuses.add(statusCritical(format("Can not fetch remote application list with versions.%s", e.getCause())));
@@ -67,7 +66,8 @@ public class CheckVersionService {
         checkVersionDao.saveRunningAppsList(applicationList);
     }
 
-    private void verifyAndAddApplicationForDownloadList(List<Status> statuses, ApplicationList.Builder appList, ApplicationData remoteApp) {
+    private List<Status> verifyAndAddApplicationForDownloadList(ApplicationList.Builder appList, ApplicationData remoteApp) {
+        List<Status> statuses = new ArrayList<>();
         try {
             JSONObject json = checkVersionDao.retrieveExternalArtifactStatus(
                     remoteApp.getGroupId(),
@@ -93,7 +93,7 @@ public class CheckVersionService {
             statuses.add(statusError(String.format("Failed to compose url to retrieve latest version for %s", remoteApp.getName())));
         }
         catch (SocketTimeoutException e) {
-            statuses.add(statusError(format("Socket timeout occured. Cannot get latest version for %s", remoteApp.getName())));
+            statuses.add(statusError(format("Socket timeout occurred. Cannot get latest version for %s", remoteApp.getName())));
         }
         catch (IOException | ConnectionFailedException e) {
             statuses.add(statusError(format("Failed to retrieve latest version for %s", remoteApp.getName())));
@@ -104,6 +104,8 @@ public class CheckVersionService {
         catch (IllegalStateException e) {
             statuses.add(statusCritical("Environment property 'location.version' not found."));
         }
+
+        return statuses;
     }
 
     private String getVersionFromJson() throws IOException, ConnectionFailedException {

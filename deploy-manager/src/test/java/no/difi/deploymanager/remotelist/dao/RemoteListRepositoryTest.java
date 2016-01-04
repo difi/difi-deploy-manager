@@ -8,7 +8,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
@@ -39,7 +43,6 @@ public class RemoteListRepositoryTest {
         } catch (FileNotFoundException e) {
             try {
                 File file = new File(System.getProperty("user.dir") + pathWithFile);
-                file.createNewFile();
                 FileWriter writer = new FileWriter(file);
                 writer.write("{\"artifacts\": [\n" +
                         "    {\n" +

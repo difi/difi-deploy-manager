@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.SocketException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 /***
@@ -36,13 +37,26 @@ public class JsonUtil {
 
         InputStream stream = new BufferedInputStream(connection.getInputStream());
 
-        String next = new Scanner(stream).useDelimiter("\\A").next();
+        String next = getStringFrom(stream);
         JSONObject json = new JSONObject(next);
 
         closeConnection();
         stream.close();
 
         return json;
+    }
+
+    /**
+     * Converts an InputStream into a String
+     *
+     * Referred to as the Stupid Scanner trick
+     * For instance http://nosymbolfound.blogspot.no/2013/01/stupid-scanner-tricks.html
+     *
+     * @param stream where the String comes from
+     * @return the content of the stream as a String
+     */
+    private String getStringFrom(InputStream stream) {
+        return new Scanner(stream, StandardCharsets.UTF_8.name()).useDelimiter("\\A").next();
     }
 
     private HttpURLConnection createConnection(URL request) throws IOException {
