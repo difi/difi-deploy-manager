@@ -113,7 +113,7 @@ public class DownloadService {
             } catch (MalformedURLException e) {
                 statuses.add(statusError(format("Failed to compose URL for %s.", data.getName())));
             } catch (SocketTimeoutException e) {
-                statuses.add(statusError(format("Timeout occured. It too too long to download %s %s", data.getName(), data.getFilename())));
+                statuses.add(statusError(format("Timeout occurred. It too too long to download %s %s", data.getName(), data.getFilename())));
             } catch (ConnectionFailedException e) {
                 statuses.add(statusError("Connection for downloading updates failed."));
             }

@@ -143,11 +143,11 @@ public class ApplicationData implements Serializable {
             return this;
         }
 
-        public Builder addDownloadedVersion(DownloadedVersion downloadedVerision) {
+        public Builder addDownloadedVersion(DownloadedVersion downloadedVersion) {
             if (this.downloadedVersions == null) {
                 this.downloadedVersions = new ArrayList<>();
             }
-            this.downloadedVersions.add(downloadedVerision);
+            this.downloadedVersions.add(downloadedVersion);
             return this;
         }
 

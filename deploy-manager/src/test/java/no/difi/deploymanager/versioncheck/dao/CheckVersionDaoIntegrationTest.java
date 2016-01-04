@@ -20,14 +20,16 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.File;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
 @WebIntegrationTest(value = {"application.runtime.environment=production", "spring.boot.admin.url=localhost:8090"})
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 public class CheckVersionDaoIntegrationTest {
-    public static final String TEST_VERSION = "Version";
+    private static final String TEST_VERSION = "Version";
     private CheckVersionDao checkVersionDao;
 
     @Autowired Environment environment;

@@ -132,13 +132,9 @@ public class RestartService {
     }
 
     private Status restartApplicationInProcessWithNewVersion(ApplicationData newApp, ApplicationData oldApp) throws IOException {
-        try {
-            boolean result = restartCommandline.executeRestart(oldApp, newApp, restartDao.fetchSelfVersion());
-            if (result) {
-                return statusSuccess(format("Application %s updated to version %s", newApp.getArtifactId(), newApp.getActiveVersion()));
-            }
-        } catch (InterruptedException e) {
-            return failoverRestartOldVersion(oldApp);
+        boolean result = restartCommandline.executeRestart(oldApp, newApp, restartDao.fetchSelfVersion());
+        if (result) {
+            return statusSuccess(format("Application %s updated to version %s", newApp.getArtifactId(), newApp.getActiveVersion()));
         }
         return statusError(String.format("Failed start of %s", newApp.getName()));
     }

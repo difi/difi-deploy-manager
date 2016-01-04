@@ -21,7 +21,7 @@ import org.springframework.core.env.Environment;
 @Configuration
 @SuppressWarnings("SpringFacetCodeInspection")
 public class Beans {
-    @Autowired Environment enviroment;
+    @Autowired Environment environment;
 
     @Bean
     public CheckVersionService checkVersionService() {
@@ -30,7 +30,7 @@ public class Beans {
 
     @Bean
     public CheckVersionDao checkVersionDao() {
-        return new CheckVersionDao(enviroment, ioUtil(), jsonUtil());
+        return new CheckVersionDao(environment, ioUtil(), jsonUtil());
     }
 
     @Bean
@@ -40,7 +40,7 @@ public class Beans {
 
     @Bean
     public DownloadDao downloadDao() {
-        return new DownloadDao(enviroment, ioUtil());
+        return new DownloadDao(environment, ioUtil());
     }
 
     @Bean
@@ -50,12 +50,12 @@ public class Beans {
 
     @Bean
     public RestartDao restartDao() {
-        return new RestartDao(enviroment, ioUtil());
+        return new RestartDao(environment, ioUtil());
     }
 
     @Bean
     public RestartCommandLine restartCommandLine() {
-        return new RestartCommandLine(enviroment);
+        return new RestartCommandLine(environment);
     }
 
     @Bean
@@ -75,7 +75,7 @@ public class Beans {
 
     @Bean
     public FileTransfer fileTransfer() {
-        return new FileTransfer(enviroment);
+        return new FileTransfer(environment);
     }
 
     @Bean

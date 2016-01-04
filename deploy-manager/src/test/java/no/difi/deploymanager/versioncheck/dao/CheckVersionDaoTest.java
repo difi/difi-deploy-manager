@@ -12,13 +12,16 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.env.Environment;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CheckVersionDaoTest {
-    public static final JSONObject JSON_OBJECT = new JSONObject("{data: {something: \"1234\"}}");
+    private static final JSONObject JSON_OBJECT = new JSONObject("{data: {something: \"1234\"}}");
     private CheckVersionDao repository;
 
     private static final String GROUPID = "groupid";
@@ -78,7 +81,7 @@ public class CheckVersionDaoTest {
     }
 
     @Test
-    public void should_use_test_locaton_for_download_when_test_is_set_in_property_for_dwonload_source() throws Exception {
+    public void should_use_test_locaton_for_download_when_test_is_set_in_property_for_download_source() throws Exception {
         when(environmentMock.getProperty("application.runtime.environment")).thenReturn("test");
         when(environmentMock.getRequiredProperty("location.test.version")).thenReturn(TEST_URL);
         when(jsonUtilMock.retrieveJsonObject(anyString())).thenReturn(JSON_OBJECT);

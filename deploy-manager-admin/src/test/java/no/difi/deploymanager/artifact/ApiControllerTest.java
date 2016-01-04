@@ -13,11 +13,11 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class ApiControllerTest {
-    public static final String TEST_GROUP_ID = "groupId";
-    public static final String TEST_ARTIFACT_ID = "artifactId";
-    public static final String TEST_VERSION = "version";
-    public static final String TEST_PARAMS = "startParams";
-    public static final String TEST_NAME = "name";
+    private static final String TEST_GROUP_ID = "groupId";
+    private static final String TEST_ARTIFACT_ID = "artifactId";
+    private static final String TEST_VERSION = "version";
+    private static final String TEST_PARAMS = "startParams";
+    private static final String TEST_NAME = "name";
     private ApiController apiController;
 
     @Mock private ArtifactService artifactServiceMock;

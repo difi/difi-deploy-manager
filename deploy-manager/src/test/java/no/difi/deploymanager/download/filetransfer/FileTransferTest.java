@@ -6,11 +6,14 @@ import org.mockito.Mock;
 import org.springframework.core.env.Environment;
 
 import static no.difi.deploymanager.testutils.ObjectMotherApplicationData.createApplicationData;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class FileTransferTest {
-    public static final String HTTP_DUMMY_VALUE = "http://not.relevant/for/test";
+    private static final String HTTP_DUMMY_VALUE = "http://not.relevant/for/test";
     private FileTransfer fileTransfer;
 
     @Mock

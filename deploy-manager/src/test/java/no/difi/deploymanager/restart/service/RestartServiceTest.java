@@ -15,11 +15,15 @@ import org.mockito.Mock;
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class RestartServiceTest {
-    public static final String TEST_PROCESS_ID = "123";
+    private static final String TEST_PROCESS_ID = "123";
     private RestartService service;
 
     @Mock private RestartDao restartDaoMock;
@@ -82,7 +86,7 @@ public class RestartServiceTest {
     }
 
     @Test
-    public void should_get_status_success_when_restart_of_application_has_occured() throws Exception {
+    public void should_get_status_success_when_restart_of_application_has_occurred() throws Exception {
         when(restartDaoMock.retrieveRestartList()).thenReturn(ObjectMotherApplicationList.createApplicationListWithData());
         when(checkVersionServiceMock.retrieveRunningAppsList()).thenReturn(ObjectMotherApplicationList.createApplicationListWithData());
         when(restartCommandLineMock.executeRestart(any(ApplicationData.class), any(ApplicationData.class), any(Self.class))).thenReturn(true);

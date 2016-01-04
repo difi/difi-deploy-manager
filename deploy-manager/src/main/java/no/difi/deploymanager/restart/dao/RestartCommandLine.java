@@ -37,10 +37,8 @@ public class RestartCommandLine {
      * @param newVersion Application data for the application to start.
      * @param self       Used to check if application to restart is current app.
      * @return Returns true if restart is successful, otherwise false.
-     * @throws IOException
-     * @throws InterruptedException
      */
-    public boolean executeRestart(ApplicationData oldVersion, ApplicationData newVersion, Self self) throws IOException, InterruptedException {
+    public boolean executeRestart(ApplicationData oldVersion, ApplicationData newVersion, Self self) {
         if (oldVersion.getName().equals(self.getName())
                 && !oldVersion.getActiveVersion().contains(self.getVersion())) {
             //Have to be opposite from normal restart when self.

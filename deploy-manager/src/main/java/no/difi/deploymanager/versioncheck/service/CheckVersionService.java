@@ -23,7 +23,7 @@ import static no.difi.deploymanager.util.StatusFactory.statusError;
 import static no.difi.deploymanager.util.StatusFactory.statusSuccess;
 
 /***
- * CheckVersionService is checking if any of the monitored appication (including self) have a new version available in external repository.
+ * CheckVersionService is checking if any of the monitored application (including self) have a new version available in external repository.
  * If new version is available, it will update the list over applications/artifacts to download.
  */
 public class CheckVersionService {
@@ -90,7 +90,7 @@ public class CheckVersionService {
             statuses.add(statusError(String.format("Failed to compose url to retrieve latest version for %s", remoteApp.getName())));
         }
         catch (SocketTimeoutException e) {
-            statuses.add(statusError(format("Socket timeout occured. Cannot get latest version for %s", remoteApp.getName())));
+            statuses.add(statusError(format("Socket timeout occurred. Cannot get latest version for %s", remoteApp.getName())));
         }
         catch (IOException | ConnectionFailedException e) {
             statuses.add(statusError(format("Failed to retrieve latest version for %s", remoteApp.getName())));

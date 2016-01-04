@@ -52,8 +52,8 @@ public class JsonUtil {
      * Referred to as the Stupid Scanner trick
      * For instance http://nosymbolfound.blogspot.no/2013/01/stupid-scanner-tricks.html
      *
-     * @param stream
-     * @return
+     * @param stream where the String comes from
+     * @return the content of the stream as a String
      */
     private String getStringFrom(InputStream stream) {
         return new Scanner(stream, StandardCharsets.UTF_8.name()).useDelimiter("\\A").next();
