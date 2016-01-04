@@ -70,7 +70,7 @@ public class IOUtil {
         if (!destinationPath.exists()) {
             final boolean directoryCreated = destinationPath.mkdir();
             if(!directoryCreated) {
-                throw new RuntimeException("Failed to create destination folder");
+                throw new RuntimeException("Failed to create destination folder: " + destinationPath);
             }
         }
         return destinationPath;
