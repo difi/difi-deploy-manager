@@ -49,35 +49,44 @@ public class FileTransfer {
 
         String fileName = "";
         if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-            String disposition = connection.getHeaderField("Content-Disposition");
-
-            if (disposition != null) {
-                // extracts file name from header field
-                int index = disposition.indexOf("filename=");
-                if (index > 0) {
-                    fileName = disposition.substring(index + 10,
-                            disposition.length() - 1);
-                }
-            }
-
-            InputStream sourceInput = connection.getInputStream();
-            String saveFilePath = destinationPath + File.separator + fileName;
-            try(FileOutputStream fileOutput = new FileOutputStream(saveFilePath)) {
-
-                int bytesRead;
-                byte[] buffer = new byte[BUFFER_SIZE];
-                while ((bytesRead = sourceInput.read(buffer)) != -1) {
-                    fileOutput.write(buffer, 0, bytesRead);
-                }
-            } finally {
-                sourceInput.close();
-            }
+            fileName = fetchFilenameFromHeader(connection, fileName);
+            saveFile(destinationPath, fileName, connection.getInputStream());
         } else {
             throw new ConnectionFailedException("Could not download file " + fileName);
         }
+
         connection.disconnect();
 
         return fileName;
+    }
+
+    private String fetchFilenameFromHeader(HttpURLConnection connection, String fileName) {
+        String disposition = connection.getHeaderField("Content-Disposition");
+
+        if (disposition != null) {
+            // extracts file name from header field
+            int index = disposition.indexOf("filename=");
+            if (index > 0) {
+                fileName = disposition.substring(index + 10,
+                        disposition.length() - 1);
+            }
+        }
+        return fileName;
+    }
+
+    private void saveFile(File destinationPath, String fileName, InputStream sourceInput) throws IOException {
+        String fileToSave = destinationPath + File.separator + fileName;
+        String saveFilePath = destinationPath + File.separator + fileName;
+        try(FileOutputStream fileOutput = new FileOutputStream(saveFilePath)) {
+
+            int bytesRead;
+            byte[] buffer = new byte[BUFFER_SIZE];
+            while ((bytesRead = sourceInput.read(buffer)) != -1) {
+                fileOutput.write(buffer, 0, bytesRead);
+            }
+        } finally {
+            sourceInput.close();
+        }
     }
 
     /***
@@ -87,7 +96,7 @@ public class FileTransfer {
      * @return The full filename that has been downloaded.
      * @throws MalformedURLException
      */
-    public URL makeUrlForDownload(ApplicationData data) throws MalformedURLException {
+    protected URL makeUrlForDownload(ApplicationData data) throws MalformedURLException {
         if (environment.getProperty("application.runtime.environment").equals("production")) {
             return new URL(
                     replacePropertyParams(environment.getRequiredProperty("location.download"),

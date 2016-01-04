@@ -82,6 +82,9 @@ public class CheckVersionService {
             else if (isDownloaded(json, downloadedApps)) {
                 statuses.add(statusSuccess(format("Latest version of %s is already downloaded.", remoteApp.getName())));
             }
+            else if (!hasChangedParameters(remoteApp, json)) {
+                statuses.add(statusSuccess("Parameters has not changed for " + remoteApp.getName()));
+            }
             else {
                 statuses.add(addApplicationDataToDownloadList(appList, remoteApp, json));
             }
@@ -156,5 +159,11 @@ public class CheckVersionService {
             }
         }
         return false;
+    }
+
+    private boolean hasChangedParameters(ApplicationData remoteApp, JSONObject json) {
+        return remoteApp.getVmOptions().equals(json.get("vmOptions"))
+                && remoteApp.getEnvironmentVariables().equals(json.get("environmentVariables"))
+                && remoteApp.getMainClass().equals(json.get("mainClass"));
     }
 }

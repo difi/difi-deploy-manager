@@ -33,7 +33,7 @@ public class RestartService {
     }
 
     public List<Status> execute() {
-        ApplicationList restartList = retrieveRestartListWithStatus();
+        ApplicationList restartList = retrieveRestartList();
         ApplicationList runningAppList = retrieveRunningAppListWithStatus();
 
         List<Integer> removeFromRestartIndex = new ArrayList<>(2);
@@ -97,11 +97,7 @@ public class RestartService {
         return null;
     }
 
-    public ApplicationList retrieveRestartList() throws IOException {
-        return restartDao.retrieveRestartList();
-    }
-
-    private ApplicationList retrieveRestartListWithStatus() {
+    private ApplicationList retrieveRestartList() {
         try {
             return restartDao.retrieveRestartList();
         } catch (IOException e) {
