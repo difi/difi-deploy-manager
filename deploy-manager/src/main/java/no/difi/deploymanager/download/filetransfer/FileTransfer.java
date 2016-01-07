@@ -76,8 +76,7 @@ public class FileTransfer {
 
     private void saveFile(File destinationPath, String fileName, InputStream sourceInput) throws IOException {
         String fileToSave = destinationPath + File.separator + fileName;
-        String saveFilePath = destinationPath + File.separator + fileName;
-        try(FileOutputStream fileOutput = new FileOutputStream(saveFilePath)) {
+        try(FileOutputStream fileOutput = new FileOutputStream(fileToSave)) {
 
             int bytesRead;
             byte[] buffer = new byte[BUFFER_SIZE];
