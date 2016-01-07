@@ -85,9 +85,12 @@ public class CheckVersionDao {
         return location;
     }
 
-        logger.info(String.format("Searching for newest artifact from %s", location));
-        JSONObject json = jsonUtil.retrieveJsonObject(location);
-        return (JSONArray) json.get("data");
+    private boolean isProduction() {
+        return environment.getProperty("application.runtime.environment").equals("production");
+    }
+
+    private boolean isStaging() {
+        return environment.getProperty("application.runtime.environment").equals("staging");
     }
 
     public void saveRunningAppsList(ApplicationList applicationList) throws IOException {
