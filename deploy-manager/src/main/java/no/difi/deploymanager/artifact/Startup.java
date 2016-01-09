@@ -2,7 +2,6 @@ package no.difi.deploymanager.artifact;
 
 import no.difi.deploymanager.download.service.DownloadService;
 import no.difi.deploymanager.restart.service.RestartService;
-import no.difi.deploymanager.util.Common;
 import no.difi.deploymanager.versioncheck.service.CheckVersionService;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -26,9 +25,9 @@ public class Startup {
     public void runOnStartup() {
         DateTime start = new DateTime();
 
-        Common.logStatus(checkVersionService.execute(), logger);
-        Common.logStatus(downloadService.execute(), logger);
-        Common.logStatus(restartService.execute(), logger);
+        checkVersionService.execute();
+        downloadService.execute();
+        restartService.execute();
 
         DateTime stop = new DateTime();
         Duration duration = new Duration(start, stop);

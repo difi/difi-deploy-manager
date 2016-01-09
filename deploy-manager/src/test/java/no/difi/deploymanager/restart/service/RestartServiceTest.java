@@ -2,8 +2,6 @@ package no.difi.deploymanager.restart.service;
 
 import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.Self;
-import no.difi.deploymanager.domain.Status;
-import no.difi.deploymanager.domain.StatusCode;
 import no.difi.deploymanager.restart.dao.RestartCommandLine;
 import no.difi.deploymanager.restart.dao.RestartDao;
 import no.difi.deploymanager.testutils.ObjectMotherApplicationList;
@@ -12,9 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
-import java.io.IOException;
-
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -42,15 +37,6 @@ public class RestartServiceTest {
         service.execute();
 
         verify(restartDaoMock, times(1)).retrieveRestartList();
-    }
-
-    @Test
-    public void should_get_status_error_when_restart_service_list_gets_io_exception() throws Exception {
-        when(restartDaoMock.retrieveRestartList()).thenThrow(new IOException());
-
-        Status result = service.execute().get(0);
-
-        assertEquals(StatusCode.ERROR, result.getStatusCode());
     }
 
     @Test
@@ -83,18 +69,6 @@ public class RestartServiceTest {
         service.execute();
 
         verify(restartCommandLineMock, never()).executeRestart(any(ApplicationData.class), any(ApplicationData.class), any(Self.class));
-    }
-
-    @Test
-    public void should_get_status_success_when_restart_of_application_has_occurred() throws Exception {
-        when(restartDaoMock.retrieveRestartList()).thenReturn(ObjectMotherApplicationList.createApplicationListWithData());
-        when(checkVersionServiceMock.retrieveRunningAppsList()).thenReturn(ObjectMotherApplicationList.createApplicationListWithData());
-        when(restartCommandLineMock.executeRestart(any(ApplicationData.class), any(ApplicationData.class), any(Self.class))).thenReturn(true);
-        when(restartCommandLineMock.findProcessId(any(ApplicationData.class))).thenReturn(TEST_PROCESS_ID);
-
-        Status result = service.execute().get(0);
-
-        assertEquals(StatusCode.SUCCESS, result.getStatusCode());
     }
 
     @Test

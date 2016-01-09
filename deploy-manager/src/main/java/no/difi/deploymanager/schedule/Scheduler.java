@@ -2,7 +2,6 @@ package no.difi.deploymanager.schedule;
 
 import no.difi.deploymanager.download.service.DownloadService;
 import no.difi.deploymanager.restart.service.RestartService;
-import no.difi.deploymanager.util.Common;
 import no.difi.deploymanager.versioncheck.service.CheckVersionService;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -43,9 +42,9 @@ public class Scheduler {
         DateTime start = new DateTime();
 
         System.out.println("*** Checking for new versions to download ***");
-        Common.logStatus(checkVersionService.execute(), logger);
-        Common.logStatus(downloadService.execute(), logger);
-        Common.logStatus(restartService.execute(), logger);
+        checkVersionService.execute();
+        downloadService.execute();
+        restartService.execute();
 
         DateTime stop = new DateTime();
         Duration duration = new Duration(start, stop);
