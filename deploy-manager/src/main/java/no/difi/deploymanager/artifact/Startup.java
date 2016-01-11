@@ -31,6 +31,6 @@ public class Startup {
         DateTime stop = new DateTime();
         Duration duration = new Duration(start, stop);
 
-        logger.info(String.format("Checking for new versions took %d sec to run.", duration.getStandardSeconds()));
+        logger.info("Checking for new versions took {} sec to run.", duration.getStandardSeconds());
     }
 }

@@ -14,8 +14,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 
-import static java.lang.String.format;
-
 /***
  * DownloadService contains logic for downloading application, and logs result of steps in the process.
  */
@@ -100,9 +98,9 @@ public class DownloadService {
 
                 restartList.addApplicationData(appData.build());
             } catch (MalformedURLException e) {
-                logger.error(format("Failed to compose URL for %s.", data.getName()));
+                logger.error("Failed to compose URL for {}.", data.getName());
             } catch (SocketTimeoutException e) {
-                logger.error(format("Timeout occurred. It too too long to download %s %s", data.getName(), data.getFilename()));
+                logger.error("Timeout occurred. It too too long to download {} {}", data.getName(), data.getFilename());
             } catch (ConnectionFailedException e) {
                 logger.error("Connection for downloading updates failed.");
             } catch (IOException e) {

@@ -49,6 +49,6 @@ public class Scheduler {
         Duration duration = new Duration(start, stop);
 
         System.out.println(String.format("Took me %d sec check for new version, download and update included.", duration.getStandardSeconds()));
-        logger.info(String.format("Checking for new versions took %d sec to run.", duration.getStandardSeconds()));
+        logger.info("Checking for new versions took {} sec to run.", duration.getStandardSeconds());
     }
 }

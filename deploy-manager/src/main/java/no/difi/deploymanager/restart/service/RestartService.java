@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static java.lang.String.format;
-
 /***
  * Restart service contains business logic and error handling for starting, stopping and restarting applications.
  */
@@ -118,19 +116,19 @@ public class RestartService {
     private void startApplicationInProcess(ApplicationData newApp) {
         boolean result = restartCommandline.startProcess(newApp);
         if (result) {
-            logger.info(format("%s with version %s is started.", newApp.getArtifactId(), newApp.getActiveVersion()));
+            logger.info("{} with version %s is started.", newApp.getArtifactId(), newApp.getActiveVersion());
         }
         else {
-            logger.error(format("Failed restart of %s", newApp.getName()));
+            logger.error("Failed restart of {}", newApp.getName());
         }
     }
 
     private void restartApplicationInProcessWithNewVersion(ApplicationData newApp, ApplicationData oldApp) throws IOException {
         boolean result = restartCommandline.executeRestart(oldApp, newApp, restartDao.fetchSelfVersion());
         if (result) {
-            logger.info(format("Application %s updated to version %s", newApp.getArtifactId(), newApp.getActiveVersion()));
+            logger.info("Application {} updated to version {}", newApp.getArtifactId(), newApp.getActiveVersion());
         }
-        logger.error(format("Failed start of %s", newApp.getName()));
+        logger.error("Failed start of {}", newApp.getName());
     }
 
     public void performSaveOfRestartList(ApplicationList restartList) throws IOException {

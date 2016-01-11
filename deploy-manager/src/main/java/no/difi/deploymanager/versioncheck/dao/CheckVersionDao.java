@@ -42,7 +42,7 @@ public class CheckVersionDao {
      */
     public JSONObject retrieveExternalArtifactStatus(String groupId, String artifactId, String version) throws IOException, ConnectionFailedException {
         String url = getArtifactUrl(groupId, artifactId, version);
-        logger.info(String.format("Retrieving artifact from %s", url));
+        logger.info("Retrieving artifact from {}", url);
         JSONObject json = jsonUtil.retrieveJsonObject(url);
 
         return (JSONObject) json.get("data");
@@ -67,7 +67,7 @@ public class CheckVersionDao {
         String url;
         url = getUrlForArtifactSearch();
 
-        logger.info(String.format("Searching for newest artifact from %s", url));
+        logger.info("Searching for newest artifact from {}", url);
         JSONObject json = jsonUtil.retrieveJsonObject(url);
         return (JSONArray) json.get("data");
     }
