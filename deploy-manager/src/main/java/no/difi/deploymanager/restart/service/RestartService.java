@@ -116,7 +116,7 @@ public class RestartService {
     private void startApplicationInProcess(ApplicationData newApp) {
         boolean result = restartCommandline.startProcess(newApp);
         if (result) {
-            logger.info("{} with version %s is started.", newApp.getArtifactId(), newApp.getActiveVersion());
+            logger.info("{} with version {} is started.", newApp.getArtifactId(), newApp.getActiveVersion());
         }
         else {
             logger.error("Failed restart of {}", newApp.getName());
