@@ -3,18 +3,17 @@ package no.difi.deploymanager.artifact;
 import no.difi.deploymanager.download.service.DownloadService;
 import no.difi.deploymanager.restart.service.RestartService;
 import no.difi.deploymanager.versioncheck.service.CheckVersionService;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Startup {
     private final CheckVersionService checkVersionService;
     private final DownloadService downloadService;
     private final RestartService restartService;
 
-    private static final Logger logger = LogManager.getLogger(Startup.class);
+    private static final Logger logger = LoggerFactory.getLogger(Startup.class);
 
     public Startup(CheckVersionService checkVersionService, DownloadService downloadService, RestartService restartService) {
         this.checkVersionService = checkVersionService;
@@ -32,6 +31,6 @@ public class Startup {
         DateTime stop = new DateTime();
         Duration duration = new Duration(start, stop);
 
-        logger.log(Level.INFO, String.format("Checking for new versions took %d sec to run.", duration.getStandardSeconds()));
+        logger.info(String.format("Checking for new versions took %d sec to run.", duration.getStandardSeconds()));
     }
 }

@@ -5,9 +5,8 @@ import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.restart.dao.RestartCommandLine;
 import no.difi.deploymanager.restart.dao.RestartDao;
 import no.difi.deploymanager.versioncheck.service.CheckVersionService;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ import static java.lang.String.format;
  * Restart service contains business logic and error handling for starting, stopping and restarting applications.
  */
 public class RestartService {
-    private static final Logger logger = LogManager.getLogger(RestartService.class);
+    private static final Logger logger = LoggerFactory.getLogger(RestartService.class);
 
     private final RestartCommandLine restartCommandline;
     private final RestartDao restartDao;
@@ -62,7 +61,7 @@ public class RestartService {
             runningAppList.getApplications().remove(appWithNewVersion);
             runningAppList.getApplications().add(index, app);
         } catch (IOException e) {
-            logger.log(Level.INFO, "Nothing to perform restart on");
+            logger.info("Nothing to perform restart on");
         }
         return runningAppList;
     }
@@ -91,7 +90,7 @@ public class RestartService {
         try {
             return checkVersionService.retrieveRunningAppsList();
         } catch (IOException e) {
-            logger.log(Level.ERROR, "Retrieve running app list not found");
+            logger.error("Retrieve running app list not found");
         }
         return null;
     }
@@ -100,7 +99,7 @@ public class RestartService {
         try {
             return restartDao.retrieveRestartList();
         } catch (IOException e) {
-            logger.log(Level.ERROR, "Restart list not found");
+            logger.error("Restart list not found");
         }
         return null;
     }
@@ -119,19 +118,19 @@ public class RestartService {
     private void startApplicationInProcess(ApplicationData newApp) {
         boolean result = restartCommandline.startProcess(newApp);
         if (result) {
-            logger.log(Level.INFO, format("%s with version %s is started.", newApp.getArtifactId(), newApp.getActiveVersion()));
+            logger.info(format("%s with version %s is started.", newApp.getArtifactId(), newApp.getActiveVersion()));
         }
         else {
-            logger.log(Level.ERROR, format("Failed restart of %s", newApp.getName()));
+            logger.error(format("Failed restart of %s", newApp.getName()));
         }
     }
 
     private void restartApplicationInProcessWithNewVersion(ApplicationData newApp, ApplicationData oldApp) throws IOException {
         boolean result = restartCommandline.executeRestart(oldApp, newApp, restartDao.fetchSelfVersion());
         if (result) {
-            logger.log(Level.INFO, format("Application %s updated to version %s", newApp.getArtifactId(), newApp.getActiveVersion()));
+            logger.info(format("Application %s updated to version %s", newApp.getArtifactId(), newApp.getActiveVersion()));
         }
-        logger.log(Level.ERROR, format("Failed start of %s", newApp.getName()));
+        logger.error(format("Failed start of %s", newApp.getName()));
     }
 
     public void performSaveOfRestartList(ApplicationList restartList) throws IOException {
@@ -153,7 +152,7 @@ public class RestartService {
 
                 verifyThatApplicationsAreRunning(runningAppList);
             } catch (IOException e) {
-                logger.log(Level.INFO, "Currently I have no running apps");
+                logger.info("Currently I have no running apps");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

@@ -3,11 +3,10 @@ package no.difi.deploymanager.schedule;
 import no.difi.deploymanager.download.service.DownloadService;
 import no.difi.deploymanager.restart.service.RestartService;
 import no.difi.deploymanager.versioncheck.service.CheckVersionService;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 
 /***
@@ -29,7 +28,7 @@ public class Scheduler {
     private final DownloadService downloadService;
     private final RestartService restartService;
 
-    private static final Logger logger = LogManager.getLogger(Scheduler.class);
+    private static final Logger logger = LoggerFactory.getLogger(Scheduler.class);
 
     public Scheduler(CheckVersionService checkVersionService, DownloadService downloadService, RestartService restartService) {
         this.checkVersionService = checkVersionService;
@@ -50,6 +49,6 @@ public class Scheduler {
         Duration duration = new Duration(start, stop);
 
         System.out.println(String.format("Took me %d sec check for new version, download and update included.", duration.getStandardSeconds()));
-        logger.log(Level.INFO, String.format("Checking for new versions took %d sec to run.", duration.getStandardSeconds()));
+        logger.info(String.format("Checking for new versions took %d sec to run.", duration.getStandardSeconds()));
     }
 }

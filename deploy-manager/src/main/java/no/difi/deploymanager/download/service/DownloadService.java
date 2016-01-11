@@ -7,9 +7,8 @@ import no.difi.deploymanager.download.dao.DownloadDao;
 import no.difi.deploymanager.download.filetransfer.FileTransfer;
 import no.difi.deploymanager.restart.service.RestartService;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -21,7 +20,7 @@ import static java.lang.String.format;
  * DownloadService contains logic for downloading application, and logs result of steps in the process.
  */
 public class DownloadService {
-    private static final Logger logger = LogManager.getLogger(DownloadService.class);
+    private static final Logger logger = LoggerFactory.getLogger(DownloadService.class);
 
     private final DownloadDao downloadDao;
     private final FileTransfer fileTransfer;
@@ -38,7 +37,7 @@ public class DownloadService {
         try {
             forDownload = retrieveDownloadList();
         } catch (IOException e) {
-            logger.log(Level.ERROR, "Failed to retrieve download list.");
+            logger.error("Failed to retrieve download list.");
         }
 
         if (forDownload != null && forDownload.getApplications() != null) {
@@ -48,16 +47,16 @@ public class DownloadService {
             try {
                 downloadDao.saveDownloadList(notDownloaded);
             } catch (IOException e) {
-                logger.log(Level.ERROR, "Failed to save download list.");
+                logger.error("Failed to save download list.");
             }
 
             try {
                 saveRestartList(restartList);
             } catch (IOException e) {
-                logger.log(Level.ERROR, "Failed to save restart list.");
+                logger.error("Failed to save restart list.");
             }
         } else {
-            logger.log(Level.INFO, "Nothing to download.");
+            logger.error("Nothing to download.");
         }
     }
 
@@ -81,9 +80,9 @@ public class DownloadService {
     private void saveRestartList(ApplicationList restartList) throws IOException {
         if (restartList != null && restartList.getApplications().size() != 0) {
             restartService.performSaveOfRestartList(restartList);
-            logger.log(Level.INFO, "Downloaded apps, prepared for restart.");
+            logger.info("Downloaded apps, prepared for restart.");
         } else {
-            logger.log(Level.INFO, "No applications set for download.");
+            logger.info("No applications set for download.");
         }
     }
 
@@ -101,13 +100,13 @@ public class DownloadService {
 
                 restartList.addApplicationData(appData.build());
             } catch (MalformedURLException e) {
-                logger.log(Level.ERROR, format("Failed to compose URL for %s.", data.getName()));
+                logger.error(format("Failed to compose URL for %s.", data.getName()));
             } catch (SocketTimeoutException e) {
-                logger.log(Level.ERROR, format("Timeout occurred. It too too long to download %s %s", data.getName(), data.getFilename()));
+                logger.error(format("Timeout occurred. It too too long to download %s %s", data.getName(), data.getFilename()));
             } catch (ConnectionFailedException e) {
-                logger.log(Level.ERROR, "Connection for downloading updates failed.");
+                logger.error("Connection for downloading updates failed.");
             } catch (IOException e) {
-                logger.log(Level.ERROR, "Failed to download applications.");
+                logger.error("Failed to download applications.");
             }
         }
 
