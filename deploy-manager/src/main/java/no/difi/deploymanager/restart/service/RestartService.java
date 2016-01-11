@@ -52,6 +52,16 @@ public class RestartService {
         saveRunningAppsAndVerifyRunningStatus(runningAppList);
     }
 
+    public void stopRunningApplications() {
+        ApplicationList runningAppList = retrieveRunningAppListWithStatus();
+
+        if (runningAppList != null) {
+            for (ApplicationData data : runningAppList.getApplications()) {
+                restartCommandline.stopProcess(data);
+            }
+        }
+    }
+
     private ApplicationList restartProcess(ApplicationList runningAppList, ApplicationData app, ApplicationData appWithNewVersion) {
         try {
             restartApplicationInProcessWithNewVersion(app, appWithNewVersion);

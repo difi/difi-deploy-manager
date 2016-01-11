@@ -33,4 +33,10 @@ public class Startup {
 
         logger.info("Checking for new versions took {} sec to run.", duration.getStandardSeconds());
     }
+
+    public void forceStop() {
+        logger.info("Deploy manager stopped. Closing applications.");
+
+        restartService.stopRunningApplications();
+    }
 }
