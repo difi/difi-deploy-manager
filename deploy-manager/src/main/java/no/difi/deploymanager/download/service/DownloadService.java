@@ -3,31 +3,26 @@ package no.difi.deploymanager.download.service;
 import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.domain.DownloadedVersion;
-import no.difi.deploymanager.domain.Status;
 import no.difi.deploymanager.download.dao.DownloadDao;
 import no.difi.deploymanager.download.filetransfer.FileTransfer;
 import no.difi.deploymanager.restart.service.RestartService;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.lang.String.format;
-import static no.difi.deploymanager.util.StatusFactory.statusError;
-import static no.difi.deploymanager.util.StatusFactory.statusSuccess;
 
 /***
  * DownloadService contains logic for downloading application, and logs result of steps in the process.
  */
 public class DownloadService {
+    private static final Logger logger = LoggerFactory.getLogger(DownloadService.class);
+
     private final DownloadDao downloadDao;
     private final FileTransfer fileTransfer;
     private final RestartService restartService;
-
-    private final List<Status> statuses = new ArrayList<>();
 
     public DownloadService(DownloadDao downloadDao, FileTransfer fileTransfer, RestartService restartService) {
         this.downloadDao = downloadDao;
@@ -35,40 +30,32 @@ public class DownloadService {
         this.restartService = restartService;
     }
 
-    public List<Status> execute() {
+    public void execute() {
         ApplicationList forDownload = new ApplicationList.Builder().build();
         try {
             forDownload = retrieveDownloadList();
         } catch (IOException e) {
-            statuses.add(statusError("Failed to retrieve download list."));
+            logger.error("Failed to retrieve download list.");
         }
 
         if (forDownload != null && forDownload.getApplications() != null) {
-            ApplicationList restartList = null;
-            try {
-                restartList = downloadApplications(forDownload);
-            } catch (IOException e) {
-                statuses.add(statusError("Failed to download applications."));
-            }
+            ApplicationList restartList = downloadApplications(forDownload);
 
-            // TODO: fix FindBugs problem: restartList can be null when it should not
             ApplicationList notDownloaded = updateNotDownloadedList(restartList, forDownload);
             try {
                 downloadDao.saveDownloadList(notDownloaded);
             } catch (IOException e) {
-                statuses.add(statusError("Failed to save download list."));
+                logger.error("Failed to save download list.");
             }
 
             try {
                 saveRestartList(restartList);
             } catch (IOException e) {
-                statuses.add(statusError("Failed to save restart list."));
+                logger.error("Failed to save restart list.");
             }
         } else {
-            statuses.add(statusSuccess("Nothing to download."));
+            logger.error("Nothing to download.");
         }
-
-        return statuses;
     }
 
     public ApplicationList retrieveDownloadList() throws IOException {
@@ -91,13 +78,13 @@ public class DownloadService {
     private void saveRestartList(ApplicationList restartList) throws IOException {
         if (restartList != null && restartList.getApplications().size() != 0) {
             restartService.performSaveOfRestartList(restartList);
-            statuses.add(statusSuccess("Downloaded apps, prepared for restart."));
+            logger.info("Downloaded apps, prepared for restart.");
         } else {
-            statuses.add(statusSuccess("No applications set for download."));
+            logger.info("No applications set for download.");
         }
     }
 
-    private ApplicationList downloadApplications(ApplicationList forDownload) throws IOException {
+    private ApplicationList downloadApplications(ApplicationList forDownload) {
         ApplicationList.Builder restartList = new ApplicationList.Builder();
 
         for (ApplicationData data : forDownload.getApplications()) {
@@ -111,11 +98,13 @@ public class DownloadService {
 
                 restartList.addApplicationData(appData.build());
             } catch (MalformedURLException e) {
-                statuses.add(statusError(format("Failed to compose URL for %s.", data.getName())));
+                logger.error("Failed to compose URL for {}.", data.getName());
             } catch (SocketTimeoutException e) {
-                statuses.add(statusError(format("Timeout occurred. It too too long to download %s %s", data.getName(), data.getFilename())));
+                logger.error("Timeout occurred. It too too long to download {} {}", data.getName(), data.getFilename());
             } catch (ConnectionFailedException e) {
-                statuses.add(statusError("Connection for downloading updates failed."));
+                logger.error("Connection for downloading updates failed.");
+            } catch (IOException e) {
+                logger.error("Failed to download applications.");
             }
         }
 
