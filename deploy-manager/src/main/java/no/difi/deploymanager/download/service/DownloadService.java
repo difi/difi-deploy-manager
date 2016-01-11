@@ -44,7 +44,6 @@ public class DownloadService {
         if (forDownload != null && forDownload.getApplications() != null) {
             ApplicationList restartList = downloadApplications(forDownload);
 
-            // TODO: fix FindBugs problem: restartList can be null when it should not
             ApplicationList notDownloaded = updateNotDownloadedList(restartList, forDownload);
             try {
                 downloadDao.saveDownloadList(notDownloaded);
