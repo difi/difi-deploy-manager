@@ -49,16 +49,8 @@ public class CheckVersionDao {
     }
 
     private String getArtifactUrl(String groupId, String artifactId, String version) {
-        String baseUrl;
-        if (isProduction()) {
-            baseUrl = environment.getRequiredProperty("location.version");
-        }
-        else if (isStaging()) {
-            baseUrl = environment.getRequiredProperty("location.staging.version");
-        }
-        else {
-            baseUrl = environment.getRequiredProperty("location.test.version");
-        }
+        String baseUrl = environment.getRequiredProperty("location.version");
+
         return Common.replacePropertyParams(baseUrl, groupId, artifactId, version);
     }
 
@@ -73,25 +65,7 @@ public class CheckVersionDao {
     }
 
     private String getUrlForArtifactSearch() {
-        String location;
-        if (isProduction()) {
-            location = environment.getProperty("location.production.search");
-        }
-        else if (isStaging()) {
-            location = environment.getProperty("location.staging.search");
-        }
-        else {
-            location = environment.getProperty("location.test.search");
-        }
-        return location;
-    }
-
-    private boolean isProduction() {
-        return environment.getProperty("application.runtime.environment").equals("production");
-    }
-
-    private boolean isStaging() {
-        return environment.getProperty("application.runtime.environment").equals("staging");
+        return environment.getProperty("location.search");
     }
 
     public void saveRunningAppsList(ApplicationList applicationList) throws IOException {

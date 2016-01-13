@@ -26,7 +26,7 @@ import static org.junit.Assert.fail;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
-@WebIntegrationTest(value = {"application.runtime.environment=production", "spring.boot.admin.url=localhost:8090"})
+@WebIntegrationTest(value = {"spring.profiles.active=production", "server.port=9002"})
 @SuppressWarnings("SpringJavaAutowiredMembersInspection")
 public class CheckVersionDaoIntegrationTest {
     private static final String TEST_VERSION = "Version";
