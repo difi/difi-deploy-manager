@@ -75,7 +75,7 @@ public class CheckVersionService {
             else if (isDownloaded(json, downloadedApps)) {
                 logger.info("Latest version of {} is already downloaded.", remoteApp.getName());
             }
-            else if (!hasChangedParameters(remoteApp, json)) {
+            else if (!hasChangedParameters(remoteApp)) {
                 logger.info("Parameters has not changed for {}", remoteApp.getName());
             }
             else {
@@ -96,6 +96,8 @@ public class CheckVersionService {
         }
         catch (IllegalStateException e) {
             logger.error("Environment property 'location.version' not found.");
+        } catch (RemoteApplicationListException e) {
+            logger.error("Cannot find list of applications to download (monitorApps.json)", e);
         }
     }
 
@@ -152,9 +154,17 @@ public class CheckVersionService {
         return false;
     }
 
-    private boolean hasChangedParameters(ApplicationData remoteApp, JSONObject json) {
-        return remoteApp.getVmOptions().equals(json.get("vmOptions"))
-                && remoteApp.getEnvironmentVariables().equals(json.get("environmentVariables"))
-                && remoteApp.getMainClass().equals(json.get("mainClass"));
+    private boolean hasChangedParameters(ApplicationData remoteApp) throws RemoteApplicationListException, IOException {
+        final ApplicationList remoteList = remoteListService.execute();
+
+        for (ApplicationData remote : remoteList.getApplications()) {
+            if (remoteApp.getArtifactId().equals(remote.getArtifactId())
+                    && remoteApp.getGroupId().equals(remote.getGroupId())) {
+                return remoteApp.getVmOptions().equals(remote.getVmOptions())
+                        && remoteApp.getEnvironmentVariables().equals(remote.getEnvironmentVariables())
+                        && remoteApp.getMainClass().equals(remote.getMainClass());
+            }
+        }
+        return true;
     }
 }
