@@ -158,13 +158,17 @@ public class CheckVersionService {
         final ApplicationList remoteList = remoteListService.execute();
 
         for (ApplicationData remote : remoteList.getApplications()) {
-            if (remoteApp.getArtifactId().equals(remote.getArtifactId())
-                    && remoteApp.getGroupId().equals(remote.getGroupId())) {
+            if (isSameApplication(remoteApp, remote)) {
                 return remoteApp.getVmOptions().equals(remote.getVmOptions())
                         && remoteApp.getEnvironmentVariables().equals(remote.getEnvironmentVariables())
                         && remoteApp.getMainClass().equals(remote.getMainClass());
             }
         }
         return true;
+    }
+
+    private boolean isSameApplication(ApplicationData local, ApplicationData remote) {
+        return local.getArtifactId().equals(remote.getArtifactId())
+                && local.getGroupId().equals(remote.getGroupId());
     }
 }
