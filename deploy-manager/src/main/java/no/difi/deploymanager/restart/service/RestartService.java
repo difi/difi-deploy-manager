@@ -63,14 +63,11 @@ public class RestartService {
     }
 
     private ApplicationList restartProcess(ApplicationList runningAppList, ApplicationData app, ApplicationData appWithNewVersion) {
-        try {
             restartApplicationInProcessWithNewVersion(app, appWithNewVersion);
             int index = runningAppList.getApplications().indexOf(appWithNewVersion);
             runningAppList.getApplications().remove(appWithNewVersion);
             runningAppList.getApplications().add(index, app);
-        } catch (IOException e) {
-            logger.info("Nothing to perform restart on");
-        }
+
         return runningAppList;
     }
 
@@ -133,12 +130,13 @@ public class RestartService {
         }
     }
 
-    private void restartApplicationInProcessWithNewVersion(ApplicationData newApp, ApplicationData oldApp) throws IOException {
-        boolean result = restartCommandline.executeRestart(oldApp, newApp, restartDao.fetchSelfVersion());
+    private void restartApplicationInProcessWithNewVersion(ApplicationData newApp, ApplicationData oldApp) {
+        final boolean result = restartCommandline.executeRestart(oldApp, newApp, restartDao.fetchSelfVersion());
         if (result) {
             logger.info("Application {} updated to version {}", newApp.getArtifactId(), newApp.getActiveVersion());
+        } else {
+            logger.error("Failed start of {}", newApp.getName());
         }
-        logger.error("Failed start of {}", newApp.getName());
     }
 
     public void performSaveOfRestartList(ApplicationList restartList) throws IOException {
