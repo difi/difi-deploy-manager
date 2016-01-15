@@ -49,6 +49,7 @@ public class RestartCommandLine {
             return stopProcess(oldVersion);
         }
 
+        logger.info("Performing restart on {} ", oldVersion.getName());
         stopProcess(oldVersion);
         return startProcess(newVersion);
     }
@@ -61,6 +62,7 @@ public class RestartCommandLine {
      */
     public boolean startProcess(ApplicationData processToStart) {
         try {
+            logger.info("Starting {}", processToStart.getFilename());
             if (IS_WINDOWS) {
                 String startCommand = "javaw -jar ";
                 String fileWithPath = (System.getProperty("user.dir") + environment.getProperty("download.base.path")
@@ -99,6 +101,7 @@ public class RestartCommandLine {
      * @return true if stopping process were successful, otherwise false.
      */
     public boolean stopProcess(ApplicationData processToStop) {
+        logger.info("Stopping {} ", processToStop.getFilename());
         String processId;
         try {
             String killCommand;
@@ -109,16 +112,19 @@ public class RestartCommandLine {
             }
 
             processId = findProcessId(processToStop);
+            System.out.println("*************************");
+            System.out.println(processId);
+            System.out.println(processToStop.getName());
+            System.out.println(processToStop.getFilename());
             if (!isEmpty(processId)) {
                 Process process = Runtime.getRuntime().exec(killCommand + processId.replace("\"", ""));
                 process.waitFor();
                 process.destroy();
 
-                logger.info("Stopped application. Name: {}, filename: {}", processToStop.getName(), processToStop.getFilename());
                 return true;
             }
+            logger.error("Failed to stop application {} ", processToStop.getFilename());
             return false;
-
         } catch (IOException io) {
             logger.error("Failed to stop process", io);
             return false;
