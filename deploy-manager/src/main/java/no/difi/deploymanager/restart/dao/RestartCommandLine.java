@@ -2,6 +2,8 @@ package no.difi.deploymanager.restart.dao;
 
 import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.Self;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 
 import java.io.BufferedReader;
@@ -22,6 +24,7 @@ import static org.springframework.util.StringUtils.isEmpty;
  * Class handle start, stop and restart of applications for both Linux and Windows operating systems.
  */
 public class RestartCommandLine {
+    private static final Logger logger = LoggerFactory.getLogger(RestartCommandLine.class);
     private static final String ROOT_PATH_FOR_SH = "/bin/sh";
 
     private final Environment environment;
@@ -84,6 +87,7 @@ public class RestartCommandLine {
 
             return true;
         } catch (IOException e) {
+            logger.error("Failed to start process", e);
             return false;
         }
     }
@@ -114,8 +118,10 @@ public class RestartCommandLine {
             return false;
 
         } catch (IOException io) {
+            logger.error("Failed to stop process", io);
             return false;
         } catch (InterruptedException e) {
+            logger.error("Failed to stop process", e);
             return false;
         }
     }
