@@ -113,6 +113,8 @@ public class RestartCommandLine {
                 Process process = Runtime.getRuntime().exec(killCommand + processId.replace("\"", ""));
                 process.waitFor();
                 process.destroy();
+
+                logger.info("Stopped application. Name: {}, filename: {}", processToStop.getName(), processToStop.getFilename());
                 return true;
             }
             return false;
@@ -154,9 +156,8 @@ public class RestartCommandLine {
                 } else {
                     List<String> processParts = asList(running.split(" "));
                     // Give process time to destroy itself.
-                    Thread.sleep(100);
+                    Thread.sleep(500);
                     if (running.contains(version.getFilename())) {
-
                         // Only one process will be fuond when nix-based system.
                         return processParts.get(0);
                     }
@@ -169,8 +170,8 @@ public class RestartCommandLine {
 
     private void doStart(String startCommand) throws IOException {
         Process process = Runtime.getRuntime().exec(startCommand);
-        setUpStreamThread(process.getInputStream(), new PrintStream(new FileOutputStream("DeployManager_Output.log"), true, StandardCharsets.UTF_8.name()));
-        setUpStreamThread(process.getErrorStream(), new PrintStream(new FileOutputStream("DeployManager_Error.log"), true, StandardCharsets.UTF_8.name()));
+        setUpStreamThread(process.getInputStream(), new PrintStream(new FileOutputStream("deploymanager_output.log"), true, StandardCharsets.UTF_8.name()));
+        setUpStreamThread(process.getErrorStream(), new PrintStream(new FileOutputStream("deploymanager_error.log"), true, StandardCharsets.UTF_8.name()));
     }
 
     private static void setUpStreamThread(final InputStream inputStream, final PrintStream printStream) {
