@@ -39,14 +39,10 @@ public class RestartService {
                 ApplicationData appWithNewVersion = null;
                 if (runningAppList != null) {
                     appWithNewVersion = findAppWithNewVersion(runningAppList, app);
-                    System.out.println("***************");
-                    System.out.println(appWithNewVersion.getFilename());
                 }
                 if (appWithNewVersion != null) {
-                    System.out.println("Restart");
                     runningAppList = restartProcess(runningAppList, app, appWithNewVersion);
                 } else {
-                    System.out.println("Start");
                     runningAppList = startProcess(restartList, runningAppList, removeFromRestartIndex, app);
                 }
             }

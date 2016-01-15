@@ -112,10 +112,6 @@ public class RestartCommandLine {
             }
 
             processId = findProcessId(processToStop);
-            System.out.println("*************************");
-            System.out.println(processId);
-            System.out.println(processToStop.getName());
-            System.out.println(processToStop.getFilename());
             if (!isEmpty(processId)) {
                 Process process = Runtime.getRuntime().exec(killCommand + processId.replace("\"", ""));
                 process.waitFor();
