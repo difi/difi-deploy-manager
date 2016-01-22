@@ -18,7 +18,7 @@ import static no.difi.deploymanager.testutils.ObjectMotherApplicationData.create
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebIntegrationTest(value = {"spring.profiles.active=production", "server.port=9001"})
+@WebIntegrationTest(value = {"spring.profiles.active=dev", "server.port=9001"})
 @SpringApplicationConfiguration(classes = Application.class)
 public class FileTransferIntegrationTest {
     private FileTransfer fileTransfer;
