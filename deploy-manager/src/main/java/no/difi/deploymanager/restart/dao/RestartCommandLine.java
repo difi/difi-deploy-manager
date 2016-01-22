@@ -49,6 +49,7 @@ public class RestartCommandLine {
             return stopProcess(oldVersion);
         }
 
+        logger.info("Performing restart on {} ", oldVersion.getName());
         stopProcess(oldVersion);
         return startProcess(newVersion);
     }
@@ -61,6 +62,7 @@ public class RestartCommandLine {
      */
     public boolean startProcess(ApplicationData processToStart) {
         try {
+            logger.info("Starting {}", processToStart.getFilename());
             if (IS_WINDOWS) {
                 String startCommand = "javaw -jar ";
                 String fileWithPath = (System.getProperty("user.dir") + environment.getProperty("download.base.path")
@@ -99,6 +101,7 @@ public class RestartCommandLine {
      * @return true if stopping process were successful, otherwise false.
      */
     public boolean stopProcess(ApplicationData processToStop) {
+        logger.info("Stopping {} ", processToStop.getFilename());
         String processId;
         try {
             String killCommand;
@@ -113,10 +116,11 @@ public class RestartCommandLine {
                 Process process = Runtime.getRuntime().exec(killCommand + processId.replace("\"", ""));
                 process.waitFor();
                 process.destroy();
+
                 return true;
             }
+            logger.error("Failed to stop application {} ", processToStop.getFilename());
             return false;
-
         } catch (IOException io) {
             logger.error("Failed to stop process", io);
             return false;
@@ -154,9 +158,8 @@ public class RestartCommandLine {
                 } else {
                     List<String> processParts = asList(running.split(" "));
                     // Give process time to destroy itself.
-                    Thread.sleep(100);
+                    Thread.sleep(500);
                     if (running.contains(version.getFilename())) {
-
                         // Only one process will be fuond when nix-based system.
                         return processParts.get(0);
                     }
@@ -169,8 +172,8 @@ public class RestartCommandLine {
 
     private void doStart(String startCommand) throws IOException {
         Process process = Runtime.getRuntime().exec(startCommand);
-        setUpStreamThread(process.getInputStream(), new PrintStream(new FileOutputStream("DeployManager_Output.log"), true, StandardCharsets.UTF_8.name()));
-        setUpStreamThread(process.getErrorStream(), new PrintStream(new FileOutputStream("DeployManager_Error.log"), true, StandardCharsets.UTF_8.name()));
+        setUpStreamThread(process.getInputStream(), new PrintStream(new FileOutputStream("deploymanager_output.log"), true, StandardCharsets.UTF_8.name()));
+        setUpStreamThread(process.getErrorStream(), new PrintStream(new FileOutputStream("deploymanager_error.log"), true, StandardCharsets.UTF_8.name()));
     }
 
     private static void setUpStreamThread(final InputStream inputStream, final PrintStream printStream) {
