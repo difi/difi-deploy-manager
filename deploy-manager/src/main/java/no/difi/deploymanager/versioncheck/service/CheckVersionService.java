@@ -4,7 +4,7 @@ import no.difi.deploymanager.domain.ApplicationData;
 import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.download.dao.DownloadDao;
 import no.difi.deploymanager.remotelist.exception.RemoteApplicationListException;
-import no.difi.deploymanager.remotelist.service.RemoteListService;
+import no.difi.deploymanager.remotelist.service.ApplicationListService;
 import no.difi.deploymanager.versioncheck.dao.CheckVersionDao;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
 import org.json.JSONException;
@@ -23,13 +23,13 @@ import java.net.SocketTimeoutException;
 public class CheckVersionService {
     private static final Logger logger = LoggerFactory.getLogger(CheckVersionService.class);
 
-    private final RemoteListService remoteListService;
+    private final ApplicationListService applicationListService;
     private final CheckVersionDao checkVersionDao;
     private final DownloadDao downloadDao;
 
 
-    public CheckVersionService(RemoteListService remoteListService, CheckVersionDao checkVersionDao, DownloadDao downloadDao) {
-        this.remoteListService = remoteListService;
+    public CheckVersionService(ApplicationListService applicationListService, CheckVersionDao checkVersionDao, DownloadDao downloadDao) {
+        this.applicationListService = applicationListService;
         this.checkVersionDao = checkVersionDao;
         this.downloadDao = downloadDao;
     }
@@ -38,7 +38,7 @@ public class CheckVersionService {
         ApplicationList.Builder appList = new ApplicationList.Builder();
 
         try {
-            for (ApplicationData remoteApp : remoteListService.execute().getApplications()) {
+            for (ApplicationData remoteApp : applicationListService.execute().getApplications()) {
                 verifyAndAddApplicationForDownloadList(appList, remoteApp);
             }
         } catch (RemoteApplicationListException | IOException e) {
@@ -155,7 +155,7 @@ public class CheckVersionService {
     }
 
     private boolean hasChangedParameters(ApplicationData remoteApp) throws RemoteApplicationListException, IOException {
-        final ApplicationList remoteList = remoteListService.execute();
+        final ApplicationList remoteList = applicationListService.execute();
 
         for (ApplicationData remote : remoteList.getApplications()) {
             if (isSameApplication(remoteApp, remote)) {

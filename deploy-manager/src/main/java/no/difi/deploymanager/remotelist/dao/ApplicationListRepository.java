@@ -23,11 +23,11 @@ import java.nio.charset.StandardCharsets;
  * Required parameters: name, groupId and artifactId.
  * Optional parameters: version and startParameters.
  */
-public class RemoteListRepository {
+public class ApplicationListRepository {
 
     private final JsonUtil jsonUtil;
 
-    public RemoteListRepository(JsonUtil jsonUtil) {
+    public ApplicationListRepository(JsonUtil jsonUtil) {
         this.jsonUtil = jsonUtil;
     }
 

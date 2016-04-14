@@ -3,8 +3,8 @@ package no.difi.deploymanager.artifact;
 import no.difi.deploymanager.download.dao.DownloadDao;
 import no.difi.deploymanager.download.filetransfer.FileTransfer;
 import no.difi.deploymanager.download.service.DownloadService;
-import no.difi.deploymanager.remotelist.dao.RemoteListRepository;
-import no.difi.deploymanager.remotelist.service.RemoteListService;
+import no.difi.deploymanager.remotelist.dao.ApplicationListRepository;
+import no.difi.deploymanager.remotelist.service.ApplicationListService;
 import no.difi.deploymanager.restart.dao.RestartCommandLine;
 import no.difi.deploymanager.restart.dao.RestartDao;
 import no.difi.deploymanager.restart.service.RestartService;
@@ -59,13 +59,13 @@ public class Beans {
     }
 
     @Bean
-    public RemoteListService remoteListService() {
-        return new RemoteListService(remoteListRepository());
+    public ApplicationListService remoteListService() {
+        return new ApplicationListService(remoteListRepository());
     }
 
     @Bean
-    public RemoteListRepository remoteListRepository() {
-        return new RemoteListRepository(jsonUtil());
+    public ApplicationListRepository remoteListRepository() {
+        return new ApplicationListRepository(jsonUtil());
     }
 
     @Bean

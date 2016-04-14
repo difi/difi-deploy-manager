@@ -20,8 +20,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.initMocks;
 
-public class RemoteListRepositoryTest {
-    private RemoteListRepository remoteListRepository;
+public class ApplicationListRepositoryTest {
+    private ApplicationListRepository applicationListRepository;
 
     private static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
 
@@ -36,19 +36,19 @@ public class RemoteListRepositoryTest {
     public void setUp() {
         initMocks(this);
 
-        remoteListRepository = new RemoteListRepository(jsonUtilMock);
+        applicationListRepository = new ApplicationListRepository(jsonUtilMock);
     }
 
     @Test
     public void should_have_parsed_elements_from_list_when_local_list_is_retrieved() throws Exception {
-        ApplicationList localList = remoteListRepository.getLocalList();
+        ApplicationList localList = applicationListRepository.getLocalList();
 
         assertTrue(localList.getApplications().size() > 0);
     }
 
     @Test
     public void should_have_elements_in_list_when_local_list_is_retrieved() throws Exception {
-        ApplicationData data = remoteListRepository.getLocalList().getApplications().get(0);
+        ApplicationData data = applicationListRepository.getLocalList().getApplications().get(0);
 
         assertTrue(data.getName().length() > 0);
         assertTrue(data.getGroupId().length() > 0);
@@ -56,7 +56,7 @@ public class RemoteListRepositoryTest {
 
     @Test
     public void should_call_retrieve_on_json_when_fetching_remote_list() throws Exception {
-        remoteListRepository.getRemoteList();
+        applicationListRepository.getRemoteList();
 
         verify(jsonUtilMock, times(1)).retrieveJsonObject(anyString());
     }

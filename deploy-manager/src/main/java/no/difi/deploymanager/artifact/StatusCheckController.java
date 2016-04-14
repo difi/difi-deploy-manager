@@ -2,7 +2,7 @@ package no.difi.deploymanager.artifact;
 
 import no.difi.deploymanager.domain.ApplicationList;
 import no.difi.deploymanager.remotelist.exception.RemoteApplicationListException;
-import no.difi.deploymanager.remotelist.service.RemoteListService;
+import no.difi.deploymanager.remotelist.service.ApplicationListService;
 import no.difi.deploymanager.versioncheck.service.CheckVersionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,12 +16,12 @@ import java.io.IOException;
 @RequestMapping("/api")
 public class StatusCheckController {
     private final CheckVersionService checkVersionService;
-    private final RemoteListService remoteListService;
+    private final ApplicationListService applicationListService;
 
     @Autowired
-    public StatusCheckController(CheckVersionService checkVersionService, RemoteListService remoteListService) {
+    public StatusCheckController(CheckVersionService checkVersionService, ApplicationListService applicationListService) {
         this.checkVersionService = checkVersionService;
-        this.remoteListService = remoteListService;
+        this.applicationListService = applicationListService;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/running")
@@ -37,7 +37,7 @@ public class StatusCheckController {
     public @ResponseBody
     ApplicationList remoteList() {
         try {
-            return remoteListService.execute();
+            return applicationListService.execute();
         } catch (RemoteApplicationListException | IOException e) {
             return null;
         }
