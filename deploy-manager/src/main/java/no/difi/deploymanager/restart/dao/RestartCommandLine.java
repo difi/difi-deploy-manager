@@ -13,6 +13,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,41 +59,30 @@ public class RestartCommandLine {
     /***
      * Starting application defined in processToStart.
      *
-     * @param processToStart Contains data about the application to start.
+     * @param application Contains data about the application to start.
      * @return true if starting application were successful, otherwise false.
      */
-    public boolean startProcess(ApplicationData processToStart) {
+    public boolean startProcess(ApplicationData application) {
         try {
-            logger.info("Starting {}", processToStart.getFilename());
-            if (IS_WINDOWS) {
-                String startCommand = "javaw -jar ";
-                String fileWithPath = (System.getProperty("user.dir") + environment.getProperty("download.base.path")
-                        + "/" + processToStart.getFilename()).replace("/", "\\");
+            logger.info("Starting {}", application.getFilename());
+            String startCommand = IS_WINDOWS ?  "javaw -jar " : "java -jar ";
 
-                doStart(startCommand
-                        + processToStart.getEnvironmentVariables() + " "
-                        + fileWithPath + " "
-                        + processToStart.getMainClass() + " "
-                        + processToStart.getVmOptions()
-                );
-            } else {
-                String startCommand = "java -jar ";
-                String fileWithPath = System.getProperty("user.dir")
-                        + environment.getProperty("download.base.path") + "/" + processToStart.getFilename();
-
-                doStart(startCommand
-                        + processToStart.getEnvironmentVariables() + " "
-                        + fileWithPath + " "
-                        + processToStart.getMainClass() + " "
-                        + processToStart.getVmOptions()
-                );
-            }
-
-            return true;
+            Path jarFile = Paths.get(
+                    System.getProperty("user.dir"),
+                    environment.getProperty("download.base.path"),
+                    application.getFilename()
+            );
+            doStart(startCommand
+                    + application.getEnvironmentVariables() + " "
+                    + jarFile + " "
+                    + application.getMainClass() + " "
+                    + application.getVmOptions());
         } catch (IOException e) {
             logger.error("Failed to start process", e);
             return false;
         }
+
+        return true;
     }
 
     /***

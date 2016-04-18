@@ -63,7 +63,7 @@ public class CheckVersionService {
 
     private void verifyAndAddApplicationForDownloadList(ApplicationList.Builder appList, ApplicationData remoteApp) {
         try {
-            final MavenArtificat mavenArtificat = new MavenArtificat(
+            MavenArtificat mavenArtificat = new MavenArtificat(
                     remoteApp.getGroupId(),
                     remoteApp.getArtifactId(),
                     getVersionFromJson()
