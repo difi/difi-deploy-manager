@@ -2,9 +2,10 @@ package no.difi.deploymanager.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-public class ApplicationList implements Serializable {
+public class ApplicationList implements Serializable, Iterable<ApplicationData> {
     private List<ApplicationData> applications;
 
     public ApplicationList(Builder builder) {
@@ -27,6 +28,11 @@ public class ApplicationList implements Serializable {
             }
         }
         return false;
+    }
+
+    @Override
+    public Iterator<ApplicationData> iterator() {
+        return applications.iterator();
     }
 
     public static class Builder {

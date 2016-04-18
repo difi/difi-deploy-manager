@@ -13,7 +13,7 @@ public class ApplicationListService {
         this.applicationListRepository = applicationListRepository;
     }
 
-    public ApplicationList execute() throws RemoteApplicationListException, IOException {
+    public ApplicationList getApplications() throws RemoteApplicationListException, IOException {
         //RemoteApplicationListException is thrown from remote list. Gets warning when hardcoded list is active.
         return applicationListRepository.getLocalList();
     }

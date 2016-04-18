@@ -38,7 +38,7 @@ public class CheckVersionService {
         ApplicationList.Builder appList = new ApplicationList.Builder();
 
         try {
-            for (ApplicationData remoteApp : applicationListService.execute().getApplications()) {
+            for (ApplicationData remoteApp : applicationListService.getApplications()) {
                 verifyAndAddApplicationForDownloadList(appList, remoteApp);
             }
         } catch (RemoteApplicationListException | IOException e) {
@@ -155,7 +155,7 @@ public class CheckVersionService {
     }
 
     private boolean hasChangedParameters(ApplicationData remoteApp) throws RemoteApplicationListException, IOException {
-        final ApplicationList remoteList = applicationListService.execute();
+        final ApplicationList remoteList = applicationListService.getApplications();
 
         for (ApplicationData remote : remoteList.getApplications()) {
             if (isSameApplication(remoteApp, remote)) {

@@ -37,7 +37,7 @@ public class StatusCheckController {
     public @ResponseBody
     ApplicationList remoteList() {
         try {
-            return applicationListService.execute();
+            return applicationListService.getApplications();
         } catch (RemoteApplicationListException | IOException e) {
             return null;
         }
