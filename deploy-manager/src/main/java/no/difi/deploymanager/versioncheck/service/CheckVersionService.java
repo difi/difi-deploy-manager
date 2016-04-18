@@ -6,6 +6,7 @@ import no.difi.deploymanager.download.dao.DownloadDao;
 import no.difi.deploymanager.remotelist.exception.RemoteApplicationListException;
 import no.difi.deploymanager.remotelist.service.ApplicationListService;
 import no.difi.deploymanager.versioncheck.dao.CheckVersionDao;
+import no.difi.deploymanager.versioncheck.dao.MavenArtificat;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,11 +63,12 @@ public class CheckVersionService {
 
     private void verifyAndAddApplicationForDownloadList(ApplicationList.Builder appList, ApplicationData remoteApp) {
         try {
-            JSONObject json = checkVersionDao.retrieveExternalArtifactStatus(
+            final MavenArtificat mavenArtificat = new MavenArtificat(
                     remoteApp.getGroupId(),
                     remoteApp.getArtifactId(),
                     getVersionFromJson()
             );
+            JSONObject json = checkVersionDao.retrieveExternalArtifactStatus(mavenArtificat);
             ApplicationList downloadedApps = checkVersionDao.retrieveRunningAppsList();
 
             if (isInDownloadList(json, downloadDao.retrieveDownloadList())) {

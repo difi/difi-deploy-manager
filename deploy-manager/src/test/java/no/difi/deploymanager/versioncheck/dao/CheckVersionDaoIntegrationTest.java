@@ -61,12 +61,12 @@ public class CheckVersionDaoIntegrationTest {
 
     @Test(expected = ConnectionFailedException.class)
     public void should_get_connection_exception_when_connection_fails() throws Exception {
-        checkVersionDao.retrieveExternalArtifactStatus("", "", "");
+        checkVersionDao.retrieveExternalArtifactStatus(new MavenArtificat("", "", ""));
     }
 
     @Test
     public void should_retrieve_external_version_when_new_list_is_available() throws Exception {
-        JSONObject json = checkVersionDao.retrieveExternalArtifactStatus(TEST_GROUP_ID, TEST_ARTIFACT_ID, TEST_VERSION);
+        JSONObject json = checkVersionDao.retrieveExternalArtifactStatus(new MavenArtificat(TEST_GROUP_ID, TEST_ARTIFACT_ID, TEST_VERSION));
 
         assertTrue(json.keySet().contains("version"));
         assertEquals(json.get("groupId"), TEST_GROUP_ID);
