@@ -16,6 +16,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Retrieve list over applications to monitor.
@@ -80,27 +82,16 @@ public class ApplicationListRepository {
         InputStreamReader reader;
 
         try {
-            String userDir = System.getProperty("user.dir");
-            String probePath = "/deploy-manager";
-            String probePath2 = "/deploymanager";
-            String path;
+            Path userDir = Paths.get(System.getProperty("user.dir"));
 
-            if (Common.IS_WINDOWS) {
-                probePath = probePath.replace("/", "\\");
-                probePath2 = probePath2.replace("/", "\\");
-            }
-
-            if (userDir.contains(probePath) || userDir.contains(probePath2)) {
-                path = "/data/monitorApps.json";
+            Path path;
+            if (userDir.endsWith("deploymanager") || userDir.endsWith("deploy-manager")) {
+                path = userDir.resolve("data/monitorApps.json");
             } else {
-                path = "/deploy-manager/data/monitorApps.json";
+                path = userDir.resolve("deploy-manager/data/monitorApps.json");
             }
 
-            if (Common.IS_WINDOWS) {
-                path = path.replace("/", "\\");
-            }
-
-            reader = new InputStreamReader(new FileInputStream((userDir + path)), StandardCharsets.UTF_8);
+            reader = new InputStreamReader(new FileInputStream(path.toFile()), StandardCharsets.UTF_8);
         } catch (FileNotFoundException e) {
             return new ApplicationList.Builder().build();
         }
