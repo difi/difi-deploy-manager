@@ -20,9 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.File;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = Application.class)
@@ -61,12 +59,12 @@ public class CheckVersionDaoIntegrationTest {
 
     @Test(expected = ConnectionFailedException.class)
     public void should_get_connection_exception_when_connection_fails() throws Exception {
-        checkVersionDao.retrieveExternalArtifactStatus(new MavenArtificat("", "", ""));
+        checkVersionDao.retrieveExternalArtifactStatus(new MavenArtifact("", "", ""));
     }
 
     @Test
     public void should_retrieve_external_version_when_new_list_is_available() throws Exception {
-        JSONObject json = checkVersionDao.retrieveExternalArtifactStatus(new MavenArtificat(TEST_GROUP_ID, TEST_ARTIFACT_ID, TEST_VERSION));
+        JSONObject json = checkVersionDao.retrieveExternalArtifactStatus(new MavenArtifact(TEST_GROUP_ID, TEST_ARTIFACT_ID, TEST_VERSION));
 
         assertTrue(json.keySet().contains("version"));
         assertEquals(json.get("groupId"), TEST_GROUP_ID);

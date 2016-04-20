@@ -34,23 +34,23 @@ public class CheckVersionDao {
     /***
      * Retrieving external artifact that Deploy Manager is set to monitor.
      *
-     * @param mavenArtificat identifying the maven artifact to verify latest version
+     * @param mavenArtifact identifying the maven artifact to verify latest version
      * @return Inner JSON object with only essential data to continue processing.
      * @throws IOException
      * @throws ConnectionFailedException
      */
-    public JSONObject retrieveExternalArtifactStatus(MavenArtificat mavenArtificat) throws IOException, ConnectionFailedException {
-        String url = getArtifactUrl(mavenArtificat);
+    public JSONObject retrieveExternalArtifactStatus(MavenArtifact mavenArtifact) throws IOException, ConnectionFailedException {
+        String url = getArtifactUrl(mavenArtifact);
         logger.info("Retrieving artifact from {}", url);
         JSONObject json = jsonUtil.retrieveJsonObject(url);
 
         return (JSONObject) json.get("data");
     }
 
-    private String getArtifactUrl(MavenArtificat mavenArtificat) {
+    private String getArtifactUrl(MavenArtifact mavenArtifact) {
         String baseUrl = environment.getRequiredProperty("location.version");
 
-        return Common.replacePropertyParams(baseUrl, mavenArtificat.getGroupId(), mavenArtificat.getArtifactId(), mavenArtificat.getVersion());
+        return Common.replacePropertyParams(baseUrl, mavenArtifact.getGroupId(), mavenArtifact.getArtifactId(), mavenArtifact.getVersion());
     }
 
 

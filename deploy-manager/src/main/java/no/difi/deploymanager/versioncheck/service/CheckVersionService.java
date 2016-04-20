@@ -6,7 +6,7 @@ import no.difi.deploymanager.download.dao.DownloadDao;
 import no.difi.deploymanager.remotelist.exception.RemoteApplicationListException;
 import no.difi.deploymanager.remotelist.service.ApplicationListService;
 import no.difi.deploymanager.versioncheck.dao.CheckVersionDao;
-import no.difi.deploymanager.versioncheck.dao.MavenArtificat;
+import no.difi.deploymanager.versioncheck.dao.MavenArtifact;
 import no.difi.deploymanager.versioncheck.exception.ConnectionFailedException;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,18 +63,14 @@ public class CheckVersionService {
 
     private void verifyAndAddApplicationForDownloadList(ApplicationList.Builder appList, ApplicationData remoteApp) {
         try {
-            MavenArtificat mavenArtificat = new MavenArtificat(
-                    remoteApp.getGroupId(),
-                    remoteApp.getArtifactId(),
-                    getVersionFromJson()
-            );
-            JSONObject json = checkVersionDao.retrieveExternalArtifactStatus(mavenArtificat);
+            JSONObject json = checkVersionDao.retrieveExternalArtifactStatus(remoteApp.getMavenArtifact());
+            MavenArtifact artifact = new MavenArtifact(json.getString("groupId"), json.getString("artifactId"), json.getString("version"));
             ApplicationList downloadedApps = checkVersionDao.retrieveRunningAppsList();
 
-            if (isInDownloadList(json, downloadDao.retrieveDownloadList())) {
+            if (isInDownloadList(artifact, downloadDao.retrieveDownloadList())) {
                 logger.info("{} already prepared for download.", remoteApp.getName());
             }
-            else if (isDownloaded(json, downloadedApps)) {
+            else if (isDownloaded(artifact, downloadedApps)) {
                 logger.info("Latest version of {} is already downloaded.", remoteApp.getName());
             }
             else if (!hasChangedParameters(remoteApp)) {
@@ -115,8 +111,7 @@ public class CheckVersionService {
     private void addApplicationDataToDownloadList(ApplicationList.Builder appList, ApplicationData remoteApp, JSONObject json) {
         ApplicationData data = new ApplicationData.Builder()
                 .name(remoteApp.getName())
-                .groupId(remoteApp.getGroupId())
-                .artifactId(remoteApp.getArtifactId())
+                .mavenArtifact(new MavenArtifact(remoteApp.getMavenArtifact()))
                 .activeVersion(json.getString("version"))
                 .vmOptions(remoteApp.getVmOptions())
                 .environmentVariables(remoteApp.getEnvironmentVariables())
@@ -128,12 +123,10 @@ public class CheckVersionService {
         logger.info("Application {} is prepared for download.", data.getName());
     }
 
-    private boolean isInDownloadList(JSONObject json, ApplicationList applicationList) {
+    private boolean isInDownloadList(MavenArtifact artifact, ApplicationList applicationList) {
         if (applicationList != null && applicationList.getApplications() != null) {
             for (ApplicationData data : applicationList.getApplications()) {
-                if (data.getGroupId().equals(json.getString("groupId"))
-                    && data.getArtifactId().equals(json.getString("artifactId")))
-                    if (data.getActiveVersion() != null && data.getActiveVersion().equals(json.getString("version"))) {
+                if (data.isMavenArtifact(artifact)) {
                         return true;
                 }
             }
@@ -141,18 +134,15 @@ public class CheckVersionService {
         return false;
     }
 
-    private boolean isDownloaded(JSONObject json, ApplicationList downloadedApps) {
+    private boolean isDownloaded(MavenArtifact artifact, ApplicationList downloadedApps) {
         if (downloadedApps != null) {
             for (ApplicationData downloaded : downloadedApps.getApplications()) {
-                if (downloaded.getGroupId().equals(json.getString("groupId"))
-                        && downloaded.getArtifactId().equals(json.getString("artifactId"))) {
-                    if (downloaded.getActiveVersion() == null
-                            || downloaded.getActiveVersion().equals(json.getString("version"))) {
+                if (downloaded.isMavenArtifact(artifact)) {
                         return true;
-                    }
                 }
             }
         }
+
         return false;
     }
 
@@ -170,7 +160,6 @@ public class CheckVersionService {
     }
 
     private boolean isSameApplication(ApplicationData local, ApplicationData remote) {
-        return local.getArtifactId().equals(remote.getArtifactId())
-                && local.getGroupId().equals(remote.getGroupId());
+        return local.getMavenArtifact().equalsIgnoreVersion(remote.getMavenArtifact());
     }
 }

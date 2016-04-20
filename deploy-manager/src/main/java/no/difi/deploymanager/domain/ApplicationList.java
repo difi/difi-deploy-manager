@@ -1,5 +1,7 @@
 package no.difi.deploymanager.domain;
 
+import no.difi.deploymanager.versioncheck.dao.MavenArtifact;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -19,11 +21,19 @@ public class ApplicationList implements Serializable, Iterable<ApplicationData> 
         return applications;
     }
 
+    public boolean containsMavenArtifact(final MavenArtifact artificat) {
+        for(ApplicationData data : applications) {
+            if(data.isMavenArtifact(artificat)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean hasApplicationData(ApplicationData data) {
         for (ApplicationData inList : applications) {
-            if (inList.getName().equals(data.getName())
-                    && inList.getGroupId().equals(data.getGroupId())
-                    && inList.getArtifactId().equals(data.getArtifactId())) {
+            if (inList.getName().equals(data.getName()) &&
+                    inList.isMavenArtifact(data.getMavenArtifact())) {
                 return true;
             }
         }

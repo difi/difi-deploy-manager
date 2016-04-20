@@ -13,10 +13,7 @@ import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.core.env.Environment;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -28,7 +25,7 @@ public class CheckVersionDaoTest {
     private static final String GROUPID = "groupid";
     private static final String ARTIFACTID = "artifactid";
     private static final String VERSION = "version";
-    private final MavenArtificat mavenArtificat = new MavenArtificat(GROUPID, ARTIFACTID, VERSION);
+    private final MavenArtifact mavenArtifact = new MavenArtifact(GROUPID, ARTIFACTID, VERSION);
     private static final String TEST_URL = "http://testurl/?r=central-proxy&g=$GROUP_ID&a=$ARTIFACT_ID&v=RELEASE";
 
     @Mock private Environment environmentMock;
@@ -47,7 +44,7 @@ public class CheckVersionDaoTest {
         when(environmentMock.getProperty("spring.profiles.active")).thenReturn("production");
         when(environmentMock.getRequiredProperty("location.version")).thenThrow(new IllegalStateException());
 
-        repository.retrieveExternalArtifactStatus(mavenArtificat);
+        repository.retrieveExternalArtifactStatus(mavenArtifact);
     }
 
     @Test(expected = JSONException.class)
@@ -56,7 +53,7 @@ public class CheckVersionDaoTest {
         when(environmentMock.getRequiredProperty(anyString())).thenReturn(TEST_URL);
         when(jsonUtilMock.retrieveJsonObject(anyString())).thenReturn(new JSONObject("{}"));
 
-        repository.retrieveExternalArtifactStatus(mavenArtificat);
+        repository.retrieveExternalArtifactStatus(mavenArtifact);
     }
 
     @Test
@@ -65,7 +62,7 @@ public class CheckVersionDaoTest {
         when(environmentMock.getRequiredProperty(anyString())).thenReturn("url");
         when(jsonUtilMock.retrieveJsonObject(anyString())).thenReturn(JSON_OBJECT);
 
-        JSONObject result = repository.retrieveExternalArtifactStatus(mavenArtificat);
+        JSONObject result = repository.retrieveExternalArtifactStatus(mavenArtifact);
 
         assertTrue(result.getString("something").equals("1234"));
     }
@@ -76,7 +73,7 @@ public class CheckVersionDaoTest {
         when(environmentMock.getRequiredProperty("location.version")).thenReturn(TEST_URL);
         when(jsonUtilMock.retrieveJsonObject(anyString())).thenReturn(JSON_OBJECT);
 
-        repository.retrieveExternalArtifactStatus(mavenArtificat);
+        repository.retrieveExternalArtifactStatus(mavenArtifact);
 
         verify(environmentMock, times(1)).getRequiredProperty("location.version");
     }
